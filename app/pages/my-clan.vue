@@ -14,8 +14,8 @@
 
     <div v-else-if="error" class="error-container glass-card">
       <p>⚠️ {{ error }}</p>
-      <NuxtLink to="/dashboard" class="btn-premium btn-outline mt-4"
-        >Retour au Dashboard</NuxtLink
+      <NuxtLink to="/" class="btn-premium btn-outline mt-4"
+        >Retour à l'accueil</NuxtLink
       >
     </div>
 
@@ -28,21 +28,14 @@
         moment.<br />
         Rejoignez un clan dans le jeu, puis synchronisez votre profil.
       </p>
-      <NuxtLink to="/dashboard" class="btn-premium btn-primary mt-4"
-        >Retour au Dashboard</NuxtLink
+      <NuxtLink to="/" class="btn-premium btn-primary mt-4"
+        >Retour à l'accueil</NuxtLink
       >
     </div>
 
     <div v-else class="clan-content">
-      <!-- Active Election Module -->
-      <ElectionModule
-        v-if="activeElection"
-        :election="activeElection"
-        :members="members"
-        @voted="fetchClanData"
-      />
 
-      <!-- Info Header -->
+    <!-- Info Header -->
       <div class="clan-info-banner glass-card" v-if="clanInfo">
         <div class="clan-badge-wrapper">
           <img
@@ -60,46 +53,27 @@
             <span>{{ members.length }} membres</span>
           </div>
         </div>
-        <div class="clan-actions" v-if="user?.profile_status !== 'validated'">
+        <div class="clan-actions" v-if="user?.status !== 'validated'">
           <div class="validation-cta glass-card">
-            <p v-if="user?.profile_status === 'none'">
-              Prêt pour la compétition ? Validez votre profil CoC pour être
-              éligible au tournoi.
+            <p v-if="user?.status === 'pending'">
+        Votre profil est en cours de verification par la CCA
             </p>
-            <p v-else-if="user?.profile_status === 'pending'">
-              Demande en cours d'examen par CCA...
-            </p>
-            <p v-else-if="user?.profile_status === 'rejected'">
+            <p v-else-if="user?.status === 'rejected'">
               Votre profil a été refusé. Veuillez contacter le support.
             </p>
 
             <button
-              v-if="
-                user?.profile_status === 'none' ||
-                user?.profile_status === 'rejected'
-              "
+              v-if="user?.status === 'rejected'"
               @click="submitVerification"
               class="btn-premium btn-primary btn-sm"
             >
               Soumettre mon profil
             </button>
-            <template
-              v-else-if="
-                user?.profile_status === 'validated' && !activeElection
-              "
-            >
-              <button
-                @click="initiateElection"
-                class="btn-premium btn-outline btn-sm"
-              >
-                Initier une élection
-              </button>
-            </template>
             <div
-              v-else-if="user?.profile_status === 'pending'"
+              v-else-if="user?.status === 'pending'"
               class="status-indicator"
             >
-              🕒 En attente de validation
+              <LucideClock :size="18" class="inline mr-1" /> En attente de validation
             </div>
           </div>
         </div>
@@ -121,6 +95,7 @@
             >
           </div>
         </div>
+          <!-- {{members}} -->
 
         <div class="members-grid">
           <div
@@ -145,25 +120,25 @@
 
             <div class="member-main">
               <div class="member-name">{{ member.name }}</div>
-              <div class="member-tag">{{ member.tag_coc }}</div>
+              <div class="member-tag">HDV{{ member.townHallLevel }}</div>
               <div class="member-role">{{ formatRole(member.role_coc) }}</div>
             </div>
 
             <div class="member-platform-status">
               <template v-if="member.is_registered">
                 <div
-                  v-if="member.platform_user.is_validated"
+                  v-if="member.platform_user.status=='validated'"
                   class="status-badge verified"
                   title="Profil validé par CCA"
                 >
-                  🛡️ <span>Vérifié</span>
+                  <LucideShield :size="16" class="inline mr-1" /> <span>Vérifié</span>
                 </div>
                 <div
                   v-else
                   class="status-badge registered"
                   title="Inscrit sur la plateforme"
                 >
-                  👤 <span>Inscrit</span>
+                  <LucideUser :size="16" class="inline mr-1" /> <span>Inscrit</span>
                 </div>
               </template>
               <div
@@ -171,7 +146,7 @@
                 class="status-badge guest"
                 title="Non inscrit sur CCA NL"
               >
-                ❌ <span>Hors CCA</span>
+                <LucideX :size="16" class="inline mr-1" /> <span>Hors CCA</span>
               </div>
             </div>
           </div>
@@ -190,7 +165,6 @@ const noClan = ref(false);
 const members = ref([]);
 const clanTag = ref("");
 const clanInfo = ref(null);
-const activeElection = ref(null);
 
 const fetchClanData = async () => {
   if (!isLoggedIn.value) {
@@ -202,7 +176,6 @@ const fetchClanData = async () => {
     const data = await $api("/clans/my-clan/members");
     members.value = data.members;
     clanTag.value = data.clan_tag;
-    activeElection.value = data.active_election;
 
     // Retirer le '#' du tag pour un segment d'URL propre
     const cleanTag = data.clan_tag.replace("#", "");
@@ -235,7 +208,7 @@ const submitVerification = async () => {
   try {
     const res = await $api("/auth/submit-profile", { method: "POST" });
     if (user.value) {
-      user.value.profile_status = "pending";
+      user.value.status = "pending";
     }
     alert("Demande envoyée ! Un administrateur va vérifier votre profil.");
   } catch (e) {
@@ -243,16 +216,7 @@ const submitVerification = async () => {
   }
 };
 
-const initiateElection = async () => {
-  if (!confirm("Voulez-vous lancer l'élection du capitaine pour ce clan ?"))
-    return;
-  try {
-    await $api("/elections/initiate", { method: "POST" });
-    fetchClanData();
-  } catch (e) {
-    alert(e.data?.message || "Erreur lors du lancement.");
-  }
-};
+
 
 onMounted(() => {
   fetchClanData();

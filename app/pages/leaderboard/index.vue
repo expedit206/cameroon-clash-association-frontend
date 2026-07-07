@@ -25,11 +25,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr
-            v-for="(reg, index) in rankings"
-            :key="reg.id"
-            :class="{ 'top-3': index < 3 }"
-          >
+          <tr v-for="(reg, index) in rankings" :key="reg.id" :class="{ 'top-3': index < 3 }">
             <td class="rank">#{{ index + 1 }}</td>
             <td class="clan-cell">
               <div class="clan-info">
@@ -61,6 +57,35 @@
 const { $api } = useNuxtApp();
 const rankings = ref([]);
 const loading = ref(true);
+
+useHead({
+  title: "Classement Général | CCA National League 🇨🇲",
+  meta: [
+    {
+      name: "description",
+      content:
+        "Suivez l'évolution et les scores réels des clans de Clash of Clans du Cameroun participant au tournoi CCA.",
+    },
+    {
+      name: "keywords",
+      content:
+        "classement clan cameroun, leaderboard coc, score cca, tournoi camerounois, clash of clans cameroun",
+    },
+    {
+      property: "og:title",
+      content: "Classement Général — CCA National League 📊",
+    },
+    {
+      property: "og:description",
+      content:
+        "Statistiques, étoiles obtenues, pourcentages de destruction et points au sommet de la ligue.",
+    },
+    {
+      property: "og:image",
+      content: "/images/cca-affiche1.png",
+    },
+  ],
+});
 
 const fetchRankings = async () => {
   try {
@@ -94,7 +119,7 @@ onMounted(fetchRankings);
 
 .leaderboard-table th {
   padding: 15px;
-  font-family: "Outfit", sans-serif;
+  font-family: var(--font-ui);
   font-size: 0.75rem;
   letter-spacing: 2px;
   text-transform: uppercase;
@@ -109,17 +134,19 @@ onMounted(fetchRankings);
 }
 
 .rank {
-  font-family: "Outfit", sans-serif;
-  font-weight: 800;
+  font-family: var(--font-heading);
+  font-weight: 700;
   font-size: 1.1rem;
 }
 
 .top-3:nth-child(1) .rank {
   color: #ffd700;
 }
+
 .top-3:nth-child(2) .rank {
   color: #c0c0c0;
 }
+
 .top-3:nth-child(3) .rank {
   color: #cd7f32;
 }
@@ -177,6 +204,7 @@ onMounted(fetchRankings);
 }
 
 @media (max-width: 768px) {
+
   .leaderboard-table th:nth-child(3),
   .leaderboard-table td:nth-child(3) {
     display: none;

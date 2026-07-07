@@ -25,9 +25,7 @@
       <!-- Colonne 3 : Participer -->
       <div class="footer-col">
         <p class="footer-col-title">Participer</p>
-        <NuxtLink to="/register" class="footer-link"
-          >Inscrire mon Clan</NuxtLink
-        >
+        <NuxtLink to="/register" class="footer-link">Inscrire mon Clan</NuxtLink>
         <NuxtLink to="/login" class="footer-link">Se connecter</NuxtLink>
         <a href="#" class="footer-link">Paiement (Orange/MTN)</a>
       </div>
@@ -76,12 +74,14 @@
   color: white;
   margin-bottom: 12px;
 }
+
 .footer-tagline {
   color: var(--text-muted);
   font-size: 0.9rem;
   line-height: 1.6;
   margin-bottom: 20px;
 }
+
 .footer-badge {
   display: inline-block;
   padding: 6px 16px;
@@ -100,8 +100,9 @@
   flex-direction: column;
   gap: 12px;
 }
+
 .footer-col-title {
-  font-family: "Outfit", sans-serif;
+  font-family: var(--font-ui);
   font-size: 0.7rem;
   font-weight: 800;
   letter-spacing: 3px;
@@ -109,6 +110,7 @@
   color: var(--text-muted);
   margin-bottom: 6px;
 }
+
 .footer-link {
   color: var(--text-muted);
   text-decoration: none;
@@ -116,6 +118,7 @@
   font-weight: 500;
   transition: color 0.2s;
 }
+
 .footer-link:hover {
   color: white;
 }
@@ -134,6 +137,7 @@
   font-size: 0.8rem;
   color: var(--text-muted);
 }
+
 .footer-disclaimer {
   text-align: right;
   font-size: 0.72rem;
@@ -148,6 +152,7 @@
     gap: 40px;
     padding: 50px 30px 30px;
   }
+
   .footer-brand {
     grid-column: span 2;
   }
@@ -158,14 +163,17 @@
     grid-template-columns: 1fr;
     padding: 40px 24px 24px;
   }
+
   .footer-brand {
     grid-column: span 1;
   }
+
   .footer-bottom {
     flex-direction: column;
     text-align: center;
     padding: 20px 24px;
   }
+
   .footer-disclaimer {
     text-align: center;
     max-width: 100%;

@@ -152,18 +152,18 @@
                   <strong>National League</strong> !
                 </p>
                 <p>
-                  Veuillez effectuer le dépôt de <strong>5 000 FCFA</strong> sur
-                  l'un des numéros suivants :
+                  Veuillez procéder à la validation et au paiement sécurisé de
+                  votre roster pour confirmer votre inscription.
                 </p>
-                <ul class="payment-numbers">
-                  <li>
-                    🟠 <strong>690 00 00 00</strong> (Orange Money - CCA Admin)
-                  </li>
-                  <li>
-                    🟡 <strong>670 00 00 00</strong> (MTN Mobile Money - CCA
-                    Admin)
-                  </li>
-                </ul>
+              </div>
+
+              <div class="text-center py-4">
+                <NuxtLink
+                  to="/tournaments/register"
+                  class="btn-premium btn-primary"
+                >
+                  Procéder au Paiement de l'Équipe
+                </NuxtLink>
               </div>
 
               <form @submit.prevent="submitPayment" class="form-horizontal">
@@ -275,8 +275,12 @@ const fetchUserData = async () => {
   try {
     await fetchUser();
     // Sécurité : si simple joueur, retour à l'accueil
-    if (user.value && user.value.role !== 'admin' && !user.value.capitained_clan) {
-      navigateTo('/');
+    if (
+      user.value &&
+      user.value.role !== "admin" &&
+      !user.value.capitained_clan
+    ) {
+      navigateTo("/");
     }
   } catch (e) {
     console.error(e);

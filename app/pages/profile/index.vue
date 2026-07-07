@@ -30,7 +30,7 @@
         </div>
         <div class="detail-item">
           <span class="label">Statut Profil</span>
-          <span class="value capitalize">{{ user?.profile_status }}</span>
+          <span class="value capitalize">{{ user?.status }}</span>
         </div>
       </div>
 

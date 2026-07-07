@@ -60,8 +60,8 @@
           <NuxtLink to="/admin/users" class="admin-action-btn">
             <span class="btn-icon">👤</span>
             <div class="btn-text">
-              <p>Valider les Joueurs</p>
-              <small>Vérifier les captures d'écran des tags CoC</small>
+              <p>Gestion & Validation Joueurs</p>
+              <small>Rechercher des joueurs, modifier les rôles, supprimer et modérer</small>
             </div>
             <span v-if="stats.pending_users > 0" class="badge-count">{{
               stats.pending_users
@@ -84,6 +84,14 @@
             <div class="btn-text">
               <p>Vérifier les Paiements</p>
               <small>Confirmer les frais d'inscription (5k FCFA)</small>
+            </div>
+          </NuxtLink>
+
+          <NuxtLink to="/admin/tournaments" class="admin-action-btn border-gold/30 bg-gold/5">
+            <span class="btn-icon">🏆</span>
+            <div class="btn-text">
+              <p class="text-gold">Gestion Tournoi</p>
+              <small>Saisie des scores & Bracket</small>
             </div>
           </NuxtLink>
         </div>
@@ -179,8 +187,8 @@ onMounted(fetchStats);
 
 .stat-info .value {
   font-size: 1.8rem;
-  font-weight: 800;
-  font-family: "Outfit", sans-serif;
+  font-weight: 700;
+  font-family: var(--font-heading);
 }
 
 .stat-info small {

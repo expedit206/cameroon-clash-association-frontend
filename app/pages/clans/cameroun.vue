@@ -1,147 +1,227 @@
 <template>
-  <div class="discovery-page container py-10">
-    <!-- Header Hero -->
-    <header class="discovery-header text-center mb-16 animate-float">
-      <h1 class="heading text-5xl">
-        Découvrez les <span class="text-gold">Clans Camerounais</span>
-      </h1>
-      <p class="subtitle mt-4 text-xl opacity-80">
-        Explorez l'élite du Clash au Cameroun 🇨🇲
-      </p>
-    </header>
+  <div class="discovery-page">
+    <div class="container-fluid py-10 px-4 lg:px-10">
+      <!-- Header Hero -->
+      <header class="discovery-header text-center mb-16 animate-float">
+        <h1 class="heading text-6xl font-black italic tracking-tighter">
+          CLANS <span class="text-gold">CAMEROUNAIS</span> 🇨🇲
+        </h1>
+        <p
+          class="subtitle mt-2 text-xl opacity-60 uppercase tracking-[0.3em] font-light"
+        >
+          Analyse du Territoire National
+        </p>
+      </header>
 
-    <!-- Filters Bar -->
-    <div
-      class="filters-bar glass-card p-6 mb-10 flex flex-wrap gap-6 items-end justify-center"
-    >
-      <div class="filter-group">
-        <label class="block text-xs uppercase tracking-widest text-gold mb-2"
-          >Rechercher</label
+      <!-- Filters Bar -->
+      <div class="filters-wrapper mb-12">
+        <div
+          class="filters-bar glass-card p-6 flex flex-wrap gap-6 items-end border-gold/10 shadow-2xl"
         >
-        <input
-          v-model="filters.name"
-          type="text"
-          placeholder="Nom du clan..."
-          class="filter-input"
-          @input="handleSearch"
-        />
-      </div>
-      <div class="filter-group">
-        <label class="block text-xs uppercase tracking-widest text-gold mb-2"
-          >Niveau Min.</label
-        >
-        <select
-          v-model="filters.minClanLevel"
-          class="filter-input"
-          @change="resetAndFetch"
-        >
-          <option :value="1">Tous les niveaux</option>
-          <option v-for="n in 25" :key="n" :value="n">Niveau {{ n }}+</option>
-        </select>
-      </div>
-      <div class="filter-group">
-        <label class="block text-xs uppercase tracking-widest text-gold mb-2"
-          >Membres Min.</label
-        >
-        <select
-          v-model="filters.minMembers"
-          class="filter-input"
-          @change="resetAndFetch"
-        >
-          <option :value="1">Peu importe</option>
-          <option :value="10">10+</option>
-          <option :value="20">20+</option>
-          <option :value="30">30+</option>
-          <option :value="40">40+</option>
-        </select>
-      </div>
-    </div>
-
-    <!-- Clans Grid -->
-    <div
-      v-if="clans.length > 0"
-      class="clans-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"
-    >
-      <div
-        v-for="clan in clans"
-        :key="clan.tag"
-        class="clan-card glass-card hover-glow"
-      >
-        <div class="card-header p-6 flex items-center gap-4">
-          <img :src="clan.badgeUrls.medium" alt="" class="clan-badge-md" />
-          <div class="clan-info">
-            <h3 class="clan-name text-lg font-bold leading-tight">
-              {{ clan.name }}
-            </h3>
-            <p class="clan-tag text-xs font-mono text-gold opacity-80">
-              {{ clan.tag }}
-            </p>
-          </div>
-        </div>
-
-        <div class="card-body p-6 pt-0">
-          <div class="stats-row flex justify-between text-sm mb-4">
-            <div class="stat">
-              <span class="label block text-[10px] uppercase opacity-50"
-                >Niveau</span
-              >
-              <span class="value font-bold">{{ clan.clanLevel }}</span>
-            </div>
-            <div class="stat text-center">
-              <span class="label block text-[10px] uppercase opacity-50"
-                >Membres</span
-              >
-              <span class="value font-bold">{{ clan.members }}/50</span>
-            </div>
-            <div class="stat text-right">
-              <span class="label block text-[10px] uppercase opacity-50"
-                >Points</span
-              >
-              <span class="value font-bold text-gold">{{
-                clan.clanPoints
-              }}</span>
-            </div>
-          </div>
-
-          <div class="clan-meta flex flex-wrap gap-2 mb-6">
-            <span class="meta-badge">{{ clan.type }}</span>
-            <span
-              v-if="clan.warFrequency !== 'unknown'"
-              class="meta-badge italic"
-              >{{ clan.warFrequency }}</span
+          <div class="filter-group flex-1 min-w-[280px]">
+            <label
+              class="block text-[10px] uppercase tracking-widest text-gold mb-2 font-bold"
+              >Rechercher un Clan</label
             >
+            <input
+              v-model="filters.name"
+              type="text"
+              placeholder="Nom du clan..."
+              class="filter-input w-full"
+              @input="handleSearch"
+            />
           </div>
-
-          <NuxtLink
-            :to="`/clans/${clan.tag.replace('#', '')}`"
-            class="btn-premium btn-outline btn-sm w-full text-center"
-          >
-            Voir le Clan
-          </NuxtLink>
+          <div class="filter-group w-32">
+            <label
+              class="block text-[10px] uppercase tracking-widest text-gold mb-2 font-bold"
+              >Niveau Min.</label
+            >
+            <select
+              v-model="filters.minClanLevel"
+              class="filter-input w-full"
+              @change="resetAndFetch"
+            >
+              <option :value="2">Lvl 2+</option>
+              <option v-for="n in 23" :key="n + 2" :value="n + 2" class="bg-gray-800">
+                {{ n + 2 }}+
+              </option>
+            </select>
+          </div>
+          <div class="filter-group w-32">
+            <label
+              class="block text-[10px] uppercase tracking-widest text-gold mb-2 font-bold"
+              >Membres</label
+            >
+            <select
+              v-model="filters.minMembers"
+              class="filter-input w-full"
+              @change="resetAndFetch"
+            >
+              <option :value="2" class="bg-gray-800">2+</option>
+              <option :value="10" class="bg-gray-800">10+</option>
+              <option :value="20" class="bg-gray-800">20+</option>
+              <option :value="30" class="bg-gray-800">30+</option>
+              <option :value="40" class="bg-gray-800">40+</option>
+            </select>
+          </div>
+          <button @click="resetFilters" class="btn-reset">↺</button>
         </div>
       </div>
-    </div>
 
-    <!-- Empty State / Loader -->
-    <div v-if="loading" class="loader-container py-20 text-center">
-      <div class="spinner mx-auto mb-4"></div>
-      <p class="text-gold animate-pulse">
-        Synchronisation avec les serveurs Supercell...
-      </p>
-    </div>
+      <!-- Clans Content -->
+      <div
+        v-if="loading && clans.length === 0"
+        class="loader-container py-32 text-center bg-black/20 rounded-3xl"
+      >
+        <div class="spinner mx-auto mb-6"></div>
+        <p
+          class="text-gold font-bold tracking-[0.5em] animate-pulse uppercase text-xs"
+        >
+          Décodage des signaux...
+        </p>
+      </div>
 
-    <div
-      v-if="!loading && clans.length === 0"
-      class="empty-state text-center py-20"
-    >
-      <p class="text-2xl opacity-50">Aucun clan trouvé avec ces critères 🛡️</p>
-      <button @click="resetFilters" class="mt-4 text-gold hover:underline">
-        Réinitialiser les filtres
-      </button>
-    </div>
+      <div
+        v-else-if="clans.length === 0"
+        class="empty-state py-32 text-center bg-black/20 rounded-3xl border border-white/5"
+      >
+        <div class="text-6xl mb-6">🏰</div>
+        <p class="opacity-40 text-xl font-black uppercase tracking-widest">
+          Zone déserte... aucun clan repéré
+        </p>
+        <button @click="resetFilters" class="mt-8 btn-premium btn-sm">
+          Réinitialiser les filtres
+        </button>
+      </div>
 
-    <!-- Infinite Scroll Anchor -->
-    <div ref="scrollAnchor" class="h-10"></div>
+      <div v-else class="clans-results">
+        <!-- Desktop/Tablet Table View -->
+        <div
+          class="hidden md:block clans-container shadow-2xl border border-white/5 overflow-hidden rounded-3xl"
+        >
+          <div class="table-responsive">
+            <table class="clans-table w-full">
+              <thead>
+                <tr
+                  class="text-gold text-[11px] uppercase tracking-[0.25em] font-black border-b border-white/10 text-left"
+                >
+                  <th class="p-6 w-24 text-center">Blason</th>
+                  <th class="p-6">Clan</th>
+                  <th class="p-6 w-32 text-center hidden md:table-cell">Niv</th>
+                  <th class="p-6 w-48 text-center hidden md:table-cell">
+                    Membres
+                  </th>
+                  <th class="p-6 text-right w-48">Pts</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  v-for="clan in clans"
+                  :key="clan.tag"
+                  class="clan-row transition-all duration-300 border-b border-white/5 hover:bg-white/5 cursor-pointer"
+                  @click="navigateToClan(clan.tag)"
+                >
+                  <td class="p-6 text-center">
+                    <img
+                      :src="clan.badgeUrls.medium"
+                      alt=""
+                      class="clan-badge-table"
+                      @error="
+                        (e) =>
+                          (e.target.src =
+                            'https://api-assets.clashofclans.com/badges/200/uofw477qfC2pT5E5K4H9fE44-S8y6E7u8H7u5u7u.png')
+                      "
+                    />
+                  </td>
+                  <td class="p-6">
+                    <div
+                      class="name text-xl font-black text-white group-hover:text-gold transition-colors leading-tight mb-1"
+                    >
+                      {{ clan.name }}
+                    </div>
+                    <div
+                      class="tag text-[10px] font-mono opacity-30 mt-1 uppercase tracking-tighter"
+                    >
+                      {{ clan.tag }}
+                    </div>
+                  </td>
+                  <td class="p-6 text-center hidden md:table-cell">
+                    <div class="level-badge">{{ clan.clanLevel }}</div>
+                  </td>
+                  <td class="p-6 text-center hidden md:table-cell">
+                    <div class="members-display font-bold text-white/60">
+                      <span class="text-white">{{ clan.members }}</span> / 50
+                    </div>
+                  </td>
+                  <td class="p-6 text-right">
+                    <div class="points-meta inline-flex items-center gap-3">
+                      <div
+                        class="points-val text-3xl font-black italic tracking-tighter"
+                      >
+                        {{ clan.clanPoints }}
+                      </div>
+                      <span class="text-gold text-xl">🛡️</span>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Mobile Horizontal Cards (Ultra-Minimalist) -->
+       <!-- Mobile Horizontal Cards (Ultra-Minimalist) -->
+        <div class="sm:hidden flex flex-col gap-3">
+          <div v-for="clan in clans" :key="clan.tag"
+            class="mobile-clan-card glass-card border-white/5 flex items-start p-3 gap-4"
+            @click="navigateToClan(clan.tag)">
+            <!-- Badge avec niveau (inchangé) -->
+            <div class="relative w-14 h-14 flex-shrink-0">
+              <img :src="clan.badgeUrls.medium" class="w-full h-full object-contain filter drop-shadow-md" @error="
+                (e) =>
+                (e.target.src =
+                  'https://api-assets.clashofclans.com/badges/200/uofw477qfC2pT5E5K4H9fE44-S8y6E7u8H7u5u7u.png')
+              " />
+              <div
+                class="absolute -bottom-1 -right-1 bg-black/80 border border-white/20 text-gold text-[9px] font-black px-1.5 py-0.5 rounded-md min-w-[20px] text-center">
+                {{ clan.clanLevel }}
+              </div>
+            </div>
+
+            <!-- Colonne principale : nom + infos en deux lignes -->
+            <div class="flex-1 min-w-0">
+              <!-- Nom du clan (sans truncate, retour à la ligne si nécessaire) -->
+              <div class="text-white font-black text-lg leading-tight break-words">
+                {{ clan.name }}
+              </div>
+
+              <!-- Deuxième ligne : membres à gauche, score à droite -->
+              <div class="flex items-center justify-between mt-1">
+                <span class="text-[10px] font-bold text-white/40 uppercase tracking-widest">
+                  {{ clan.members }} / 50
+                </span>
+                <span class="text-white font-black text-base italic tracking-tighter">
+                  Pts: {{ clan.clanPoints }}
+                </span>
+              </div>
+
+              <!-- (Optionnel) "National Score" peut être placé sous le score ou supprimé -->
+              <div class="text-[9px] font-bold text-gold opacity-50 uppercase tracking-tighter text-right mt-0.5">
+                National Score
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Loading Footer for Infinite Scroll -->
+      <div v-if="loading && clans.length > 0" class="py-10 text-center">
+        <div class="spinner-sm mx-auto"></div>
+      </div>
+
+      <!-- Infinite Scroll Anchor -->
+      <div ref="scrollAnchor" class="h-20"></div>
+    </div>
   </div>
 </template>
 
@@ -149,14 +229,43 @@
 const { $api } = useNuxtApp();
 const clans = ref([]);
 const loading = ref(false);
+
+useHead({
+  title: "Clans Camerounais — Annuaire National | CCA League 🇨🇲",
+  meta: [
+    {
+      name: "description",
+      content:
+        "Explorez l'annuaire complet des clans Clash of Clans actifs au Cameroun. Suivez leur niveau, le nombre de membres et leurs points défensifs.",
+    },
+    {
+      name: "keywords",
+      content:
+        "clans camerounais, coc cameroun, clan clash of clans, meilleur clan cameroun, cca league, cameroun ranking",
+    },
+    {
+      property: "og:title",
+      content: "Clans Camerounais — Annuaire National | CCA 🛡️",
+    },
+    {
+      property: "og:description",
+      content:
+        "Trouvez un clan ou comparez vos statistiques par rapport au score national.",
+    },
+    {
+      property: "og:image",
+      content: "/images/cca-affiche1.png",
+    },
+  ],
+});
 const nextMarker = ref(null);
 const hasMore = ref(true);
 const scrollAnchor = ref(null);
 
 const filters = ref({
   name: "",
-  minClanLevel: 1,
-  minMembers: 1,
+  minClanLevel: 2,
+  minMembers: 2,
 });
 
 let searchTimeout = null;
@@ -166,28 +275,17 @@ const fetchClans = async (isNew = false) => {
 
   loading.value = true;
   try {
-    const params = {
-      limit: 24,
-      ...filters.value,
-    };
-
-    if (!isNew && nextMarker.value) {
-      params.after = nextMarker.value;
-    }
-
-    // On ne veut pas de noms vides dans l'URL si on cherche par loc
+    const params = { limit: 24, ...filters.value };
+    if (!isNew && nextMarker.value) params.after = nextMarker.value;
     if (!params.name) delete params.name;
 
     const data = await $api("/clans/cameroun", { params });
 
-    if (isNew) {
-      clans.value = data.items || [];
-    } else {
-      clans.value.push(...(data.items || []));
-    }
+    if (isNew) clans.value = data.items || [];
+    else clans.value.push(...(data.items || []));
 
     nextMarker.value = data.paging?.cursors?.after || null;
-    hasMore.value = !!nextMarker.value && data.items?.length > 0;
+    hasMore.value = !!nextMarker.value && (data.items?.length || 0) > 0;
   } catch (e) {
     console.error("Error discovery clans:", e);
   } finally {
@@ -197,9 +295,7 @@ const fetchClans = async (isNew = false) => {
 
 const handleSearch = () => {
   clearTimeout(searchTimeout);
-  searchTimeout = setTimeout(() => {
-    resetAndFetch();
-  }, 500);
+  searchTimeout = setTimeout(() => resetAndFetch(), 500);
 };
 
 const resetAndFetch = () => {
@@ -209,85 +305,130 @@ const resetAndFetch = () => {
 };
 
 const resetFilters = () => {
-  filters.value = {
-    name: "",
-    minClanLevel: 1,
-    minMembers: 1,
-  };
+  filters.value = { name: "", minClanLevel: 2, minMembers: 2 };
   resetAndFetch();
 };
 
-// Infinite Scroll logic
+const navigateToClan = (tag) => {
+  navigateTo(`/clans/${tag.replace("#", "")}`);
+};
+
 onMounted(() => {
   fetchClans(true);
-
   const observer = new IntersectionObserver(
     (entries) => {
-      if (entries[0].isIntersecting && !loading.value && hasMore.value) {
+      if (entries[0].isIntersecting && !loading.value && hasMore.value)
         fetchClans();
-      }
     },
     { threshold: 0.1 },
   );
-
-  if (scrollAnchor.value) {
-    observer.observe(scrollAnchor.value);
-  }
+  if (scrollAnchor.value) observer.observe(scrollAnchor.value);
 });
 </script>
 
 <style scoped>
 .discovery-page {
+  background:
+    radial-gradient(
+      circle at 50% 0%,
+      rgba(212, 175, 55, 0.1) 0%,
+      transparent 50%
+    ),
+    linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.4));
   min-height: 100vh;
 }
 
+.clans-container {
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(20px);
+}
+.clan-badge-table {
+  width: 54px;
+  height: 54px;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.6));
+}
+
+.mobile-clan-card {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(10px);
+  border-radius: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.mobile-clan-card:active {
+  transform: scale(0.98);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.level-badge {
+  display: inline-block;
+  padding: 6px 14px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 100px;
+  font-weight: 800;
+  font-size: 0.9rem;
+}
+
+.points-val {
+  background: linear-gradient(to bottom, #fff, #999);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
 .filter-input {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid var(--glass-border);
-  border-radius: var(--radius-sm);
-  padding: 10px 15px;
-  color: white;
-  min-width: 200px;
-  outline: none;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(18, 17, 17, 0.471);
+  border-radius: 12px;
+  padding: 14px 18px;
+  color: #fff;
   transition: all 0.3s ease;
 }
 
 .filter-input:focus {
   border-color: var(--primary);
-  background: rgba(255, 255, 255, 0.1);
-  box-shadow: 0 0 10px rgba(212, 175, 55, 0.1);
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 0 20px rgba(212, 175, 55, 0.1);
 }
 
-.clan-card {
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+.btn-reset {
+  width: 52px;
+  height: 52px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  color: var(--primary);
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
 }
 
-.clan-card:hover {
-  transform: translateY(-10px) scale(1.02);
+.btn-reset:hover {
+  background: var(--primary);
+  color: #000;
+  transform: rotate(180deg);
 }
 
-.clan-badge-md {
-  width: 60px;
-  height: 60px;
-  filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.5));
-}
-
-.meta-badge {
-  font-size: 0.75rem;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid var(--glass-border);
-  padding: 4px 10px;
-  border-radius: 4px;
-  color: var(--text-muted);
-}
-
-.loader-container .spinner {
-  width: 50px;
-  height: 50px;
-  border: 4px solid var(--glass-border);
+.spinner,
+.spinner-sm {
+  border: 4px solid rgba(255, 255, 255, 0.03);
   border-top-color: var(--primary);
   border-radius: 50%;
-  animation: spin 1s linear infinite;
+  animation: spin 0.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+.spinner {
+  width: 70px;
+  height: 70px;
+}
+.spinner-sm {
+  width: 30px;
+  height: 30px;
+  border-width: 2px;
 }
 
 @keyframes spin {
@@ -295,10 +436,29 @@ onMounted(() => {
     transform: rotate(360deg);
   }
 }
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-15px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+.animate-float {
+  animation: float 8s ease-in-out infinite;
+}
 
 @media (max-width: 640px) {
-  .filter-input {
-    width: 100%;
+  .heading {
+    font-size: 2.2rem;
+    line-height: 1;
+  }
+  /* .discovery-header { mb-10; } */
+  .filters-bar {
+    padding: 18px;
   }
 }
 </style>

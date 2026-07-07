@@ -12,17 +12,6 @@
       <form @submit.prevent="handleRegister" class="auth-form">
         <div class="form-grid">
           <div class="form-group">
-            <label for="name">Pseudo Plateforme</label>
-            <input
-              v-model="form.name"
-              type="text"
-              id="name"
-              placeholder="Ex: Chef_Guerrier"
-              required
-            />
-          </div>
-
-          <div class="form-group">
             <label for="tag">Tag CoC</label>
             <div class="input-with-icon">
               <span class="icon">#</span>
@@ -47,7 +36,7 @@
             />
           </div>
 
-          <div class="form-group">
+          <div class="form-group full-width">
             <label for="password">Mot de passe</label>
             <input
               v-model="form.password"
@@ -59,14 +48,15 @@
           </div>
 
           <div class="form-group full-width">
-            <label for="proof">Preuve d'appartenance (Screenshot profil)</label>
+            <label for="proof">Capture d'écran du profil de votre compte Clash of Clans(votre id# doit etre visible)</label>
             <div
               class="file-upload glass-card"
               @click="$refs.fileInput.click()"
             >
               <div v-if="!fileName" class="upload-placeholder">
-                <span>📁 Cliquez pour choisir une image</span>
-                <p class="small">Max 2Mo / Format JPG, PNG ou WEBP</p>
+                <LucideFolder :size="40" class="inline mb-2" />
+                <p>Cliquez pour choisir une image</p>
+                <p class="small">Max 5Mo / Format JPG, PNG ou WEBP</p>
               </div>
               <div v-else class="upload-selected">
                 <span>✅ {{ fileName }}</span>
@@ -82,7 +72,7 @@
           </div>
         </div>
 
-        <div v-if="error" class="error-msg glass-card">⚠️ {{ error }}</div>
+        <!-- Toast system will handle errors -->
 
         <div class="auth-footer">
           <button
@@ -105,10 +95,10 @@
 
 <script setup>
 const { fetchApi } = useApi();
+const { $toast } = useNuxtApp();
 const router = useRouter();
 
 const form = reactive({
-  name: "",
   tag_coc: "",
   phone_whatsapp: "",
   password: "",
@@ -118,24 +108,18 @@ const form = reactive({
 const fileProof = ref(null);
 const fileName = ref("");
 const loading = ref(false);
-const error = ref(null);
 
 const handleFileChange = (e) => {
   const file = e.target.files[0];
   if (file) {
-    if (file.size > 2 * 1024 * 1024) {
-      error.value = "L'image est trop lourde (Max 2Mo)";
-      return;
-    }
+ 
     fileProof.value = file;
     fileName.value = file.name;
-    error.value = null;
   }
 };
 
 const handleRegister = async () => {
   loading.value = true;
-  error.value = null;
   form.password_confirmation = form.password; // Sync for simplicity in UI
 
   try {
@@ -153,12 +137,13 @@ const handleRegister = async () => {
     // Success -> Redirect to pending or login with message
     router.push("/login?registered=1");
   } catch (e) {
+    let msg = "Une erreur est survenue lors de l'inscription.";
     if (e.data?.errors) {
-      error.value = Object.values(e.data.errors).flat()[0];
-    } else {
-      error.value =
-        e.data?.message || "Une erreur est survenue lors de l'inscription.";
+      msg = Object.values(e.data.errors).flat()[0];
+    } else if (e.data?.message) {
+      msg = e.data.message;
     }
+    $toast.error(msg);
   } finally {
     loading.value = false;
   }

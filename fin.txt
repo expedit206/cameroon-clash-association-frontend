@@ -1,0 +1,5 @@
+compersser les image de screen proof sans limite de donné possible . juste compresser.
+donner la possibilité a l'user de ressoumettre son screen shot proof en cas de refus 
+verifier le roster lors de la soumission par le capitaine(1 hdv par niveau)
+permettre la modification du screenshot
+permettre a 'ladmin de gerer les user et de faire la recherche par tag et nom et de voir leur clan.

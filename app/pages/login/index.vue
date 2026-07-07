@@ -11,10 +11,6 @@
         <p>Entrez vos identifiants CoC pour rejoindre votre clan.</p>
       </div>
 
-      <div v-if="registered" class="success-msg glass-card">
-        ✅ Inscription réussie ! (veuillez vous connecter)
-      </div>
-
       <form @submit.prevent="handleLogin" class="auth-form">
         <div class="form-group">
           <label for="tag">Tag CoC</label>
@@ -41,7 +37,7 @@
           />
         </div>
 
-        <div v-if="error" class="error-msg glass-card">⚠️ {{ error }}</div>
+        <!-- Toast system will handle errors -->
 
         <div class="auth-footer">
           <button
@@ -66,6 +62,7 @@
 
 <script setup>
 const { login, user } = useAuth();
+const { $toast } = useNuxtApp();
 const router = useRouter();
 const route = useRoute();
 
@@ -80,10 +77,10 @@ const registered = computed(() => route.query.registered === "1");
 
 const handleLogin = async () => {
   loading.value = true;
-  error.value = null;
 
   try {
     await login(form);
+    $toast.success("Bon retour dans l'arène !");
 
     // Redirection basée sur le rôle
     if (user.value.role === "admin") {
@@ -95,12 +92,21 @@ const handleLogin = async () => {
       router.push("/");
     }
   } catch (e) {
-    error.value =
-      e.data?.message || "Identifiants incorrects ou compte non validé.";
+    $toast.error(
+      e.data?.message || "Identifiants incorrects ou compte non validé.",
+    );
   } finally {
     loading.value = false;
   }
 };
+
+onMounted(() => {
+  if (registered.value) {
+    $toast.success(
+      "Inscription réussie ! Vous pouvez maintenant vous connecter.",
+    );
+  }
+});
 
 useHead({
   title: "Connexion | CCA National League",

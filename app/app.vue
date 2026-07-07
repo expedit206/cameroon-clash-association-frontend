@@ -4,10 +4,14 @@
     <NuxtLayout>
       <NuxtPage />
     </NuxtLayout>
+    <AppToast />
+    <AppFloatingActions />
   </div>
 </template>
 
 <script setup>
+import AppFloatingActions from "~/components/AppFloatingActions.vue";
+
 // La restauration de session est gérée par le plugin auth.ts
 // qui s'exécute AVANT les middlewares de route, éliminant la course SSR/Client.
 </script>

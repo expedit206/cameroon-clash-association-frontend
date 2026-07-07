@@ -7,7 +7,17 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   const { user, token, fetchUser, isLoggedIn } = useAuth();
 
   // 1. Définition des routes publiques
-  const publicRoutes = ['/login', '/register', '/rules', '/'];
+  const publicRoutes = [
+    '/login', 
+    '/register', 
+    '/rules', 
+    '/', 
+    '/leaderboard',
+    '/clans/cameroun',
+    '/players/cameroun',
+    '/tournaments',
+    '/tournaments/bracket'
+  ];
   const isPublicRoute = publicRoutes.includes(to.path);
 
   // 2. Restauration de session si nécessaire

@@ -8,8 +8,7 @@
         Inscriptions & <span class="text-gold">Paiements</span>
       </h1>
       <p class="text-muted">
-        Vérifiez les compositions d'équipe et confirmez les paiements reçus
-        (Phase 3).
+        Vérifiez les compositions d'équipe
       </p>
     </div>
 
@@ -164,7 +163,15 @@ const formatDate = (dateStr) => {
   });
 };
 
-const getProofUrl = (path) => `http://localhost:8000/storage/${path}`;
+const getProofUrl = (path) => {
+  if (process.client) {
+    const hostname = window.location.hostname;
+    if (hostname.includes("clashkamer.com")) {
+      return `https://api.clashkamer.com/storage/${path}`;
+    }
+  }
+  return `http://localhost:8000/storage/${path}`;
+};
 
 onMounted(fetchRegistrations);
 </script>

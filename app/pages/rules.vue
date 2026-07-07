@@ -2,16 +2,11 @@
   <div class="rules-page">
     <!-- ── EN-TÊTE ─────────────────────────────────── -->
     <section class="rules-header">
-      <img
-        src="/imagescoc/DragonEventDeco.webp"
-        alt=""
-        class="header-deco"
-        aria-hidden="true"
-      />
+      <img src="/imagescoc/DragonEventDeco.webp" alt="" class="header-deco" aria-hidden="true" />
       <div class="section-label">DOCUMENT OFFICIEL · CCA NATIONAL LEAGUE</div>
       <h1 class="heading">
-        <span class="text-gradient-purple">Règlement</span>
-        <span class="text-gold"> Officiel</span>
+        <span class="text-gradient-purple text-xl">Règlement</span>
+        <span class="text-gold text-xl"> Officiel</span>
       </h1>
       <p class="header-sub">
         Version 1.0 — Saison 2026 · Dernière mise à jour : Juin 2026<br />
@@ -60,14 +55,12 @@
             </li>
             <li>
               Chaque joueur doit posséder une base
-              <strong>HDV 14 minimum</strong> pour être titulaire (il en est de
-              même pour les remplaçants).
+              <strong>HDV 14 minimum</strong> pour être éligible au processus
+              d'élection et de composition d'équipe.
             </li>
             <li>
               Les
-              <strong
-                >titulaires doivent couvrir les HDV 14, 15, 16, 17 et 18</strong
-              >
+              <strong>titulaires doivent couvrir les HDV 14, 15, 16, 17 et 18</strong>
               (un joueur par niveau).
             </li>
             <li>
@@ -75,9 +68,13 @@
               <strong>un seul clan</strong> par saison.
             </li>
             <li>
-              Le capitaine doit avoir le grade
-              <strong>Chef ou Sous-Chef</strong> dans le clan CoC au moment de
-              la soumission.
+              Le capitaine est désigné par
+              <strong>élection démocratique</strong>
+              au sein de la plateforme par les membres de son clan.
+            </li>
+            <li>
+              Le clan CoC doit être localisé au
+              <strong>Cameroun</strong> (vérifié via API CoC).
             </li>
           </ul>
         </div>
@@ -88,82 +85,83 @@
         <div class="rule-num text-gold">02</div>
         <img src="/imagescoc/badge 2.webp" alt="" class="rule-icon" />
         <div class="rule-content">
-          <h2 class="text-gold">Processus d'Inscription (3 Phases)</h2>
+          <h2 class="text-gold">Processus d'Inscription (4 Étapes)</h2>
 
           <div class="phase-block">
             <p class="phase-title">
-              📌 Phase 1 — Enregistrement du Joueur (Gratuit)
+              <LucidePin :size="18" class="inline mr-1" /> Étape 1 — Éligibilité du Clan (Vérification API)
             </p>
             <ul>
               <li>
-                Le joueur crée un compte via la plateforme CCA avec son
-                <strong>Tag CoC officiel</strong>.
+                Le système vérifie l'origine du clan en temps réel (Cameroun
+                requis).
               </li>
               <li>
-                Le tag est vérifié en temps réel par le ystème mise en place
+                Le joueur initiant l'inscription doit être
+                <strong>HDV 14 minimum</strong>.
               </li>
               <li>
-                Une <strong>capture d'écran du profil CoC</strong> doit être
-                fournie pour prouver la possession du compte.
-              </li>
-              <li>
-                Le compte est créé en état
-                <strong>"En attente de validation"</strong> jusqu'à approbation
-                par les administrateurs.
+                L'éligibilité est confirmée instantanément avant de passer au
+                vote.
               </li>
             </ul>
           </div>
 
           <div class="phase-block">
             <p class="phase-title">
-              📌 Phase 2 — Soumission du Clan (Capitaine)
+              <LucidePin :size="18" class="inline mr-1" /> Étape 2 — Élection du Capitaine (Démocratie)
             </p>
             <ul>
-              <li>Le capitaine soumet le tag de son clan sur la plateforme.</li>
               <li>
-                Il sélectionne
-                <strong>5 titulaires + jusqu'à 5 remplaçants</strong> depuis la
-                liste membres de son clan.
+                Tout joueur pourra être capitaine si ce dernier a été designé
+                par les membre de son clan .
               </li>
               <li>
-                Tous les joueurs sélectionnés doivent appartenir au clan au
-                moment de la soumission.
+                les membres du clan devrons informer l'administrateur(whatsapp)
+                pour le choix de leur capitaine.
               </li>
               <li>
-                Le dossier passe en statut
-                <strong>"En attente de validation administrateur"</strong>.
+                À l'issue de cette decision l'administrateur attribuera le rôle
+                de capitaine au joueur concerné.
               </li>
             </ul>
           </div>
 
           <div class="phase-block">
             <p class="phase-title">
-              📌 Phase 3 — Paiement & Confirmation Officielle
+              <LucidePin :size="18" class="inline mr-1" /> Étape 3 — Roster & Composition (Capitaine)
             </p>
             <ul>
               <li>
-                Frais d'inscription : <strong>5 000 FCFA par clan</strong>,
-                <em>non remboursables</em>.
+                Le Capitaine élu sélectionne les
+                <strong>5 titulaires + 5 remplaçants</strong>.
               </li>
               <li>
-                Paiement accepté via :
-                <strong>Orange Money ou MTN Mobile Money</strong>.
+                Il doit s'assurer que son équipe couvre les paliers HDV requis.
               </li>
               <li>
-                Le capitaine soumet sa référence de transaction sur la
+                Une fois validé, le clan est officiellement inscrit en base de
+                données.
+              </li>
+            </ul>
+          </div>
+
+          <div class="phase-block">
+            <p class="phase-title">
+              <LucidePin :size="18" class="inline mr-1" /> Étape 4 — Validation & Confirmation
+            </p>
+            <ul>
+              <li>
+                Chaque joueur titulaire doit valider sa participation sur la
                 plateforme.
               </li>
               <li>
-                Un administrateur CCA vérifie et confirme le paiement
-                manuellement.
+                Un administrateur CCA vérifie la composition et valide l'équipe
+                sous 24h.
               </li>
               <li>
-                Les <strong>16 premiers clans</strong> à finaliser le paiement
-                participent au tournoi.
-              </li>
-              <li>
-                Au-delà de 16 clans confirmés, les suivants sont placés sur
-                <strong>liste d'attente</strong>.
+                Dès que les 5 titulaires sont validés, l'équipe est
+                <strong>"Confirmée"</strong> pour la compétition.
               </li>
             </ul>
           </div>
@@ -204,11 +202,7 @@
       <!-- 4. FORMAT DU TOURNOI -->
       <article id="format" class="glass-card rule-block featured">
         <div class="rule-num text-gold">04</div>
-        <img
-          src="/imagescoc/machine de combat.webp"
-          alt=""
-          class="rule-icon rule-icon-lg"
-        />
+        <img src="/imagescoc/machine de combat.webp" alt="" class="rule-icon rule-icon-lg" />
         <div class="rule-content">
           <h2 class="text-gold">Format du Tournoi</h2>
           <ul>
@@ -245,11 +239,7 @@
       <!-- 5. DÉROULEMENT D'UN MATCH -->
       <article id="match" class="glass-card rule-block">
         <div class="rule-num text-gradient-purple">05</div>
-        <img
-          src="/imagescoc/grand gardien skin.webp"
-          alt=""
-          class="rule-icon"
-        />
+        <img src="/imagescoc/grand gardien skin.webp" alt="" class="rule-icon" />
         <div class="rule-content">
           <h2 class="text-gold">Déroulement d'un Match</h2>
           <ul>
@@ -394,20 +384,24 @@
           <h2 class="text-gold">Cashprize & Récompenses</h2>
           <div class="rewards-table">
             <div class="reward-row gold">
-              <span class="r-place">🥇 1er — Champion CCA</span>
-              <span class="r-prize">30 000 FCFA</span>
-              <span class="r-bonus"
-                >+ Trophée officiel & Badge Numérique Champion</span
-              >
+              <span class="r-place">
+                <LucideTrophy :size="18" class="inline mr-1 text-yellow-500" /> 1er — Champion CCA
+              </span>
+              <span class="r-prize">50 000 FCFA</span>
+              <span class="r-bonus">+ Trophée officiel & Badge Numérique Champion</span>
             </div>
             <div class="reward-row silver">
-              <span class="r-place">🥈 2ème — Finaliste</span>
+              <span class="r-place">
+                <LucideMedal :size="18" class="inline mr-1 text-gray-300" /> 2ème — Finaliste
+              </span>
               <span class="r-prize">20 000 FCFA</span>
               <span class="r-bonus">+ Badge Numérique Finaliste</span>
             </div>
             <div class="reward-row bronze">
-              <span class="r-place">🥉 3ème — Semi-Finaliste</span>
-              <span class="r-prize">Mention d'Honneur</span>
+              <span class="r-place">
+                <LucideMedal :size="18" class="inline mr-1 text-orange-600" /> 3ème — Semi-Finaliste
+              </span>
+              <span class="r-prize">10 000 FCFA</span>
               <span class="r-bonus">+ Badge Numérique Semi-Finaliste</span>
             </div>
           </div>
@@ -442,9 +436,7 @@
           Saison 1.
         </p>
         <div class="cta-btns">
-          <NuxtLink to="/register" class="btn-premium btn-primary"
-            >⚔️ Inscrire mon Clan</NuxtLink
-          >
+          <NuxtLink to="/register" class="btn-premium btn-primary">⚔️ Inscrire mon Clan</NuxtLink>
           <NuxtLink to="/" class="btn-premium btn-outline">← Accueil</NuxtLink>
         </div>
       </div>
@@ -456,12 +448,30 @@
 definePageMeta({ layout: "default" });
 
 useHead({
-  title: "Règlement Officiel | CCA National League",
+  title: "Règlement Officiel | CCA National League 🇨🇲",
   meta: [
     {
       name: "description",
       content:
-        "Règlement complet et transparent de la CCA National League Saison 1 : éligibilité, inscriptions, format, arbitrage, sanctions et cashprize.",
+        "Règlement complet et transparent de la CCA National League Saison 1 : éligibilité des joueurs, frais d'inscription MTN/Orange Money, format 5v5, arbitrage, sanctions et cashprize de 50.000Fcfa.",
+    },
+    {
+      name: "keywords",
+      content:
+        "règles cca, règlement tournoi coc, clash of clans cameroun, coc cameroun, cgc, tournoi camerounais clash of clan",
+    },
+    {
+      property: "og:title",
+      content: "Règlement Officiel — CCA National League saison 1 📜",
+    },
+    {
+      property: "og:description",
+      content:
+        "Prenez connaissance des règles officielles du tournoi Clash of Clans de la Cameroon Clash Association.",
+    },
+    {
+      property: "og:image",
+      content: "/images/cca-affiche1.png",
     },
   ],
 });
@@ -483,6 +493,7 @@ useHead({
   padding-bottom: 40px;
   border-bottom: 1px solid var(--glass-border);
 }
+
 .header-deco {
   position: absolute;
   top: -20px;
@@ -491,6 +502,7 @@ useHead({
   opacity: 0.5;
   filter: drop-shadow(0 0 10px var(--primary-glow));
 }
+
 .section-label {
   font-size: 0.7rem;
   font-weight: 800;
@@ -499,10 +511,12 @@ useHead({
   text-transform: uppercase;
   margin-bottom: 14px;
 }
+
 .rules-header h1 {
   font-size: 4rem;
   margin-bottom: 18px;
 }
+
 .header-sub {
   color: var(--text-muted);
   max-width: 700px;
@@ -510,6 +524,7 @@ useHead({
   line-height: 1.8;
   font-size: 1rem;
 }
+
 .toc {
   display: flex;
   gap: 10px;
@@ -518,15 +533,18 @@ useHead({
   align-items: center;
   font-size: 0.85rem;
 }
+
 .toc a {
   color: var(--text-muted);
   text-decoration: none;
   font-weight: 500;
   transition: color 0.2s;
 }
+
 .toc a:hover {
   color: var(--secondary);
 }
+
 .toc span {
   color: var(--glass-border);
 }
@@ -547,40 +565,45 @@ useHead({
   padding: 40px;
   position: relative;
 }
+
 .rule-block.featured {
   border-color: var(--primary);
-  background: linear-gradient(
-    135deg,
-    rgba(187, 0, 255, 0.06) 0%,
-    rgba(10, 11, 18, 0.9) 100%
-  );
+  background: linear-gradient(135deg,
+      rgba(187, 0, 255, 0.06) 0%,
+      rgba(10, 11, 18, 0.9) 100%);
 }
+
 .rule-num {
-  font-family: "Outfit", sans-serif;
+  font-family: var(--font-heading);
   font-size: 3.5rem;
-  font-weight: 900;
+  font-weight: 700;
   line-height: 1;
   opacity: 0.25;
   align-self: start;
 }
+
 .rule-icon {
   width: 100%;
   filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.15));
 }
+
 .rule-icon-lg {
   transform: scale(1.2);
   margin-top: -10px;
 }
+
 .rule-content h2 {
   font-size: 1.6rem;
   margin-bottom: 20px;
 }
+
 .rule-content ul {
   list-style: none;
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
+
 .rule-content li {
   position: relative;
   padding-left: 28px;
@@ -588,6 +611,7 @@ useHead({
   line-height: 1.7;
   font-size: 0.98rem;
 }
+
 .rule-content li::before {
   content: "🛡️";
   position: absolute;
@@ -595,9 +619,11 @@ useHead({
   top: 1px;
   font-size: 0.85rem;
 }
+
 .rule-content li strong {
   color: white;
 }
+
 .rule-content li em {
   color: var(--secondary);
   font-style: normal;
@@ -609,8 +635,9 @@ useHead({
   border-left: 3px solid var(--primary);
   padding-left: 20px;
 }
+
 .phase-title {
-  font-family: "Outfit", sans-serif;
+  font-family: var(--font-ui);
   font-weight: 700;
   font-size: 1.1rem;
   color: white;
@@ -636,6 +663,7 @@ useHead({
   gap: 12px;
   margin-bottom: 24px;
 }
+
 .reward-row {
   display: grid;
   grid-template-columns: 2fr 1.2fr 2fr;
@@ -645,34 +673,42 @@ useHead({
   border-radius: var(--radius-sm);
   font-size: 0.95rem;
 }
+
 .reward-row.gold {
   background: rgba(255, 215, 0, 0.1);
   border: 1px solid rgba(255, 215, 0, 0.3);
 }
+
 .reward-row.silver {
   background: rgba(192, 192, 192, 0.1);
   border: 1px solid rgba(192, 192, 192, 0.3);
 }
+
 .reward-row.bronze {
   background: rgba(205, 127, 50, 0.1);
   border: 1px solid rgba(205, 127, 50, 0.3);
 }
+
 .r-place {
   font-weight: 700;
   color: white;
 }
+
 .r-prize {
-  font-family: "Outfit";
-  font-weight: 800;
+  font-family: var(--font-heading);
+  font-weight: 700;
   font-size: 1.1rem;
   color: var(--secondary);
 }
+
 .reward-row.silver .r-prize {
   color: #c0c0c0;
 }
+
 .reward-row.bronze .r-prize {
   color: #cd7f32;
 }
+
 .r-bonus {
   color: var(--text-muted);
   font-size: 0.85rem;
@@ -688,19 +724,23 @@ useHead({
   margin-top: 20px;
   border-color: var(--secondary);
 }
+
 .cta-char {
   width: 100%;
   filter: drop-shadow(0 0 20px var(--primary-glow));
 }
+
 .cta-text h2 {
   font-size: 2.2rem;
   margin-bottom: 14px;
 }
+
 .cta-text p {
   color: var(--text-muted);
   margin-bottom: 28px;
   line-height: 1.7;
 }
+
 .cta-btns {
   display: flex;
   gap: 18px;
@@ -713,32 +753,40 @@ useHead({
     grid-template-columns: 1fr;
     text-align: center;
   }
+
   .rule-num {
     font-size: 2.5rem;
   }
+
   .rule-icon {
     max-width: 100px;
     margin: 0 auto;
   }
+
   .rule-content li {
     text-align: left;
   }
+
   .reward-row {
     grid-template-columns: 1fr;
     text-align: center;
     gap: 6px;
   }
+
   .rules-cta {
     grid-template-columns: 1fr;
     text-align: center;
   }
+
   .cta-char {
     max-width: 150px;
     margin: 0 auto;
   }
+
   .cta-btns {
     justify-content: center;
   }
+
   .header-deco {
     display: none;
   }
