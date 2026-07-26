@@ -2,15 +2,10 @@
   <div class="admin-tournaments-page min-h-screen pb-20">
     <div class="container mx-auto px-4 py-10">
       <!-- Header -->
-      <div
-        class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12"
-      >
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
         <div>
-          <NuxtLink
-            to="/admin/dashboard"
-            class="text-xs uppercase tracking-widest text-white/40 hover:text-gold mb-2 block"
-            >← Dashboard</NuxtLink
-          >
+          <NuxtLink to="/admin/dashboard"
+            class="text-xs uppercase tracking-widest text-white/40 hover:text-gold mb-2 block">← Dashboard</NuxtLink>
           <h1 class="text-4xl font-black italic tracking-tighter uppercase">
             Gestion du <span class="text-gold">Tournoi</span>
           </h1>
@@ -20,31 +15,21 @@
         </div>
 
         <div class="flex gap-4">
-          <button
-            @click="onGenerateBracket"
+          <button @click="onGenerateBracket"
             class="btn-premium !bg-white/5 !text-white border border-white/10 hover:!bg-white/10 px-6 py-3 rounded-xl font-bold uppercase tracking-widest text-[10px]"
-            :disabled="generating"
-          >
+            :disabled="generating">
             {{ generating ? "Génération..." : "⚡ Générer Bracket (T16)" }}
           </button>
         </div>
       </div>
 
       <!-- Rounds Navigation -->
-      <div
-        class="flex items-center gap-2 mb-8 bg-white/5 p-1 rounded-2xl w-fit mx-auto border border-white/5"
-      >
-        <button
-          v-for="r in [1, 2, 3, 4]"
-          :key="r"
-          @click="currentRound = r"
-          class="px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all"
-          :class="
-            currentRound === r
+      <div class="flex items-center gap-2 mb-8 bg-white/5 p-1 rounded-2xl w-fit mx-auto border border-white/5">
+        <button v-for="r in [1, 2, 3, 4]" :key="r" @click="currentRound = r"
+          class="px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all" :class="currentRound === r
               ? 'bg-gold text-black shadow-lg shadow-gold/20'
               : 'text-white/40 hover:text-white'
-          "
-        >
+            ">
           {{ getRoundName(r) }}
         </button>
       </div>
@@ -52,110 +37,73 @@
       <!-- Loader -->
       <div v-if="loading" class="py-20 text-center">
         <div class="spinner-sm mx-auto mb-4"></div>
-        <p
-          class="text-[10px] uppercase font-black tracking-widest text-white/20"
-        >
+        <p class="text-[10px] uppercase font-black tracking-widest text-white/20">
           Chargement des matches...
         </p>
       </div>
 
       <!-- Matches Grid -->
       <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div
-          v-for="match in filteredMatches"
-          :key="match.id"
+        <div v-for="match in filteredMatches" :key="match.id"
           class="match-admin-card glass-card !p-5 border-white/5 hover:border-gold/20 transition-all cursor-pointer"
-          @click="openMatchModal(match)"
-        >
+          @click="openMatchModal(match)">
           <div class="flex items-center justify-between mb-4">
-            <span
-              class="text-[9px] font-black uppercase tracking-widest text-white/20"
-              >Match #{{ match.match_number }}</span
-            >
+            <span class="text-[9px] font-black uppercase tracking-widest text-white/20">Match #{{ match.match_number
+              }}</span>
             <span class="status-badge" :class="`status-${match.status}`">{{
               match.status
             }}</span>
           </div>
 
           <div class="space-y-4">
-            <div
-              class="flex items-center justify-between p-3 rounded-xl bg-white/3 border border-white/5"
-              :class="
-                match.winner_clan_id === match.clan_home_id
-                  ? 'border-gold/30 bg-gold/5'
-                  : ''
-              "
-            >
+            <div class="flex items-center justify-between p-3 rounded-xl bg-white/3 border border-white/5" :class="match.winner_clan_id === match.clan_home_id
+                ? 'border-gold/30 bg-gold/5'
+                : ''
+              ">
               <div class="flex items-center gap-3">
-                <img
-                  :src="match.clan_home?.badge_url"
-                  class="w-8 h-8 object-contain"
-                />
+                <img :src="match.clan_home?.badge_url" class="w-8 h-8 object-contain" />
                 <span class="font-bold text-sm truncate w-32">{{
                   match.clan_home?.name || "TBD"
                 }}</span>
               </div>
-              <div
-                class="text-xl font-black"
-                :class="
-                  match.winner_clan_id === match.clan_home_id
-                    ? 'text-gold'
-                    : 'text-white/40'
-                "
-              >
+              <div class="text-xl font-black" :class="match.winner_clan_id === match.clan_home_id
+                  ? 'text-gold'
+                  : 'text-white/40'
+                ">
                 {{ match.total_stars_home }}
               </div>
             </div>
 
-            <div
-              class="text-center text-[10px] font-black italic opacity-20 py-1"
-            >
+            <div class="text-center text-[10px] font-black italic opacity-20 py-1">
               VS
             </div>
 
-            <div
-              class="flex items-center justify-between p-3 rounded-xl bg-white/3 border border-white/5"
-              :class="
-                match.winner_clan_id === match.clan_away_id
-                  ? 'border-gold/30 bg-gold/5'
-                  : ''
-              "
-            >
+            <div class="flex items-center justify-between p-3 rounded-xl bg-white/3 border border-white/5" :class="match.winner_clan_id === match.clan_away_id
+                ? 'border-gold/30 bg-gold/5'
+                : ''
+              ">
               <div class="flex items-center gap-3">
-                <img
-                  :src="match.clan_away?.badge_url"
-                  class="w-8 h-8 object-contain"
-                />
+                <img :src="match.clan_away?.badge_url" class="w-8 h-8 object-contain" />
                 <span class="font-bold text-sm truncate w-32">{{
                   match.clan_away?.name || "TBD"
                 }}</span>
               </div>
-              <div
-                class="text-xl font-black"
-                :class="
-                  match.winner_clan_id === match.clan_away_id
-                    ? 'text-gold'
-                    : 'text-white/40'
-                "
-              >
+              <div class="text-xl font-black" :class="match.winner_clan_id === match.clan_away_id
+                  ? 'text-gold'
+                  : 'text-white/40'
+                ">
                 {{ match.total_stars_away }}
               </div>
             </div>
           </div>
 
-          <div
-            class="mt-6 pt-4 border-t border-white/5 flex justify-between items-center"
-          >
+          <div class="mt-6 pt-4 border-t border-white/5 flex justify-between items-center">
             <div class="text-[9px] uppercase tracking-widest text-white/20">
               Destruction :
-              <span class="text-white"
-                >{{ match.total_destruction_home }} % vs
-                {{ match.total_destruction_away }} %</span
-              >
+              <span class="text-white">{{ match.total_destruction_home }} % vs
+                {{ match.total_destruction_away }} %</span>
             </div>
-            <button
-              class="text-gold text-[10px] font-black uppercase tracking-widest hover:underline"
-            >
+            <button class="text-gold text-[10px] font-black uppercase tracking-widest hover:underline">
               Modifier
             </button>
           </div>
@@ -163,10 +111,7 @@
       </div>
 
       <!-- No matches -->
-      <div
-        v-if="!loading && filteredMatches.length === 0"
-        class="py-20 text-center opacity-30"
-      >
+      <div v-if="!loading && filteredMatches.length === 0" class="py-20 text-center opacity-30">
         <div class="text-5xl mb-4">😶🌫️</div>
         <p class="uppercase font-black tracking-widest text-sm">
           Aucun match dans ce round
@@ -175,14 +120,10 @@
     </div>
 
     <!-- Match Edit Modal Overlay -->
-    <div
-      v-if="selectedMatch"
-      class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
-    >
-      <div
-        class="glass-card w-full max-w-lg p-8 animate-in shadow-2xl border-white/10"
-      >
-        <div class="flex justify-between items-start mb-8">
+    <div v-if="selectedMatch"
+      class="fixed mt-12 inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm  h-[100vh]">
+      <div class="glass-card w-full max-w-lg p-8 animate-in shadow-2xl border-white/10 overflow-y-scroll h-[90vh]">
+        <div class="flex justify-between items-start mb-8 ">
           <div>
             <h3 class="text-2xl font-black italic uppercase tracking-tighter">
               Saisie <span class="text-gold">Résultats</span>
@@ -192,10 +133,7 @@
               {{ getRoundName(selectedMatch.round) }}
             </p>
           </div>
-          <button
-            @click="selectedMatch = null"
-            class="text-white/40 hover:text-white transition-colors text-xl"
-          >
+          <button @click="selectedMatch = null" class="text-white/40 hover:text-white transition-colors text-xl">
             ✕
           </button>
         </div>
@@ -205,119 +143,67 @@
             <!-- Home -->
             <div class="space-y-4">
               <div class="flex flex-col items-center gap-2 mb-4">
-                <img
-                  :src="selectedMatch.clan_home?.badge_url"
-                  class="w-12 h-12 object-contain"
-                />
-                <span
-                  class="font-black text-xs text-center uppercase truncate w-full tracking-wider"
-                  >{{ selectedMatch.clan_home?.name }}</span
-                >
+                <img :src="selectedMatch.clan_home?.badge_url" class="w-12 h-12 object-contain" />
+                <span class="font-black text-xs text-center uppercase truncate w-full tracking-wider">{{
+                  selectedMatch.clan_home?.name }}</span>
               </div>
               <div>
-                <label
-                  class="text-[9px] font-black uppercase tracking-widest text-white/40 block mb-2"
-                  >Étoiles ⭐️</label
-                >
-                <input
-                  v-model="editForm.total_stars_home"
-                  type="number"
-                  min="0"
-                  max="15"
-                  class="admin-input"
-                />
+                <label class="text-[9px] font-black uppercase tracking-widest text-white/40 block mb-2">Étoiles
+                  ⭐️</label>
+                <input v-model="editForm.total_stars_home" type="number" min="0" max="15" class="admin-input" />
               </div>
               <div>
-                <label
-                  class="text-[9px] font-black uppercase tracking-widest text-white/40 block mb-2"
-                  >Destruction %</label
-                >
-                <input
-                  v-model="editForm.total_destruction_home"
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  max="100"
-                  class="admin-input"
-                />
+                <label class="text-[9px] font-black uppercase tracking-widest text-white/40 block mb-2">Destruction
+                  %</label>
+                <input v-model="editForm.total_destruction_home" type="number" step="0.01" min="0" max="100"
+                  class="admin-input" />
               </div>
             </div>
 
             <!-- Away -->
             <div class="space-y-4">
               <div class="flex flex-col items-center gap-2 mb-4">
-                <img
-                  :src="selectedMatch.clan_away?.badge_url"
-                  class="w-12 h-12 object-contain"
-                />
-                <span
-                  class="font-black text-xs text-center uppercase truncate w-full tracking-wider"
-                  >{{ selectedMatch.clan_away?.name }}</span
-                >
+                <img :src="selectedMatch.clan_away?.badge_url" class="w-12 h-12 object-contain" />
+                <span class="font-black text-xs text-center uppercase truncate w-full tracking-wider">{{
+                  selectedMatch.clan_away?.name }}</span>
               </div>
               <div>
-                <label
-                  class="text-[9px] font-black uppercase tracking-widest text-white/40 block mb-2"
-                  >Étoiles ⭐️</label
-                >
-                <input
-                  v-model="editForm.total_stars_away"
-                  type="number"
-                  min="0"
-                  max="15"
-                  class="admin-input"
-                />
+                <label class="text-[9px] font-black uppercase tracking-widest text-white/40 block mb-2">Étoiles
+                  ⭐️</label>
+                <input v-model="editForm.total_stars_away" type="number" min="0" max="15" class="admin-input" />
               </div>
               <div>
-                <label
-                  class="text-[9px] font-black uppercase tracking-widest text-white/40 block mb-2"
-                  >Destruction %</label
-                >
-                <input
-                  v-model="editForm.total_destruction_away"
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  max="100"
-                  class="admin-input"
-                />
+                <label class="text-[9px] font-black uppercase tracking-widest text-white/40 block mb-2">Destruction
+                  %</label>
+                <input v-model="editForm.total_destruction_away" type="number" step="0.01" min="0" max="100"
+                  class="admin-input" />
               </div>
             </div>
           </div>
 
           <div class="pt-6 border-t border-white/5">
-            <label
-              class="text-[9px] font-black uppercase tracking-widest text-white/40 block mb-3 text-center"
-              >Status du match</label
-            >
+            <label class="text-[9px] font-black uppercase tracking-widest text-white/40 block mb-3 text-center">Status
+              du match</label>
             <div class="flex gap-2">
-              <button
-                v-for="s in [
-                  'scheduled',
-                  'in_progress',
-                  'completed',
-                  'forfeit',
-                ]"
-                :key="s"
-                type="button"
-                @click="editForm.status = s"
+              <button v-for="s in [
+                'scheduled',
+                'in_progress',
+                'completed',
+                'forfeit',
+              ]" :key="s" type="button" @click="editForm.status = s"
                 class="flex-1 py-3 rounded-xl border border-white/5 text-[9px] font-black uppercase tracking-widest transition-all"
-                :class="
-                  editForm.status === s
+                :class="editForm.status === s
                     ? 'bg-gold text-black'
                     : 'bg-white/3 text-white/40'
-                "
-              >
+                  ">
                 {{ s }}
               </button>
             </div>
           </div>
 
-          <button
-            type="submit"
+          <button type="submit"
             class="btn-premium w-full !rounded-2xl py-4 font-black uppercase tracking-widest text-sm flex items-center justify-center gap-2"
-            :disabled="saving"
-          >
+            :disabled="saving">
             <span v-if="saving" class="spinner-xs"></span>
             <span v-else>💾 Enregistrer les Résultats</span>
           </button>
@@ -331,7 +217,7 @@
 const { $api } = useNuxtApp();
 const matches = ref([]);
 const loading = ref(true);
-const currentRound = ref(1);
+const currentRound = ref('r16');
 const generating = ref(false);
 const saving = ref(false);
 
@@ -358,6 +244,8 @@ const fetchMatches = async () => {
   loading.value = true;
   try {
     matches.value = await $api(`/admin/competitions/${COMPETITION_ID}/matches`);
+    console.log(matches.value);
+    
   } catch (e) {
     console.error(e);
   } finally {
@@ -420,11 +308,9 @@ onMounted(fetchMatches);
 
 <style scoped>
 .admin-tournaments-page {
-  background: radial-gradient(
-    circle at 100% 0%,
-    rgba(212, 175, 55, 0.1) 0%,
-    transparent 40%
-  );
+  background: radial-gradient(circle at 100% 0%,
+      rgba(212, 175, 55, 0.1) 0%,
+      transparent 40%);
 }
 
 .admin-input {
@@ -461,10 +347,12 @@ onMounted(fetchMatches);
   background: rgba(74, 222, 128, 0.15);
   color: #4ade80;
 }
+
 .status-in_progress {
   background: rgba(212, 175, 55, 0.15);
   color: #ffd700;
 }
+
 .status-scheduled {
   background: rgba(255, 255, 255, 0.05);
   color: rgba(255, 255, 255, 0.4);
@@ -478,6 +366,7 @@ onMounted(fetchMatches);
   border-radius: 50%;
   animation: spin 0.8s infinite linear;
 }
+
 .spinner-xs {
   width: 16px;
   height: 16px;
@@ -492,11 +381,13 @@ onMounted(fetchMatches);
     transform: rotate(360deg);
   }
 }
+
 @keyframes animateIn {
   from {
     opacity: 0;
     transform: scale(0.95) translateY(10px);
   }
+
   to {
     opacity: 1;
     transform: scale(1) translateY(0);

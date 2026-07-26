@@ -73,8 +73,10 @@
               <div
                 class="matches-list flex flex-col justify-around flex-1 gap-6"
               >
+              <!-- {{ bracket.r16[1] }} -->
+
                 <div
-                  v-for="match in bracket[1]"
+                  v-for="match in bracket.r16"
                   :key="match.id"
                   class="match-card glass-card !p-3 border-white/5 hover:border-gold/30 transition-all duration-300"
                 >
@@ -85,12 +87,12 @@
                     >
                       <img
                         :src="
-                          match.clan1?.badge_url || '/images/default-clan.png'
+                          match.clan_home?.badge_url || '/images/default-clan.png'
                         "
                         class="w-6 h-6 object-contain"
                       />
                       <span class="name flex-1 font-bold text-sm truncate">{{
-                        match.clan1?.name || "TBD"
+                        match.clan_home?.name || "TBD"
                       }}</span>
                       <span
                         v-if="match.status === 'completed'"
@@ -112,12 +114,12 @@
                     >
                       <img
                         :src="
-                          match.clan2?.badge_url || '/images/default-clan.png'
+                          match.clan_away?.badge_url || '/images/default-clan.png'
                         "
                         class="w-6 h-6 object-contain"
                       />
                       <span class="name flex-1 font-bold text-sm truncate">{{
-                        match.clan2?.name || "TBD"
+                        match.clan_away?.name || "TBD"
                       }}</span>
                       <span
                         v-if="match.status === 'completed'"
@@ -141,7 +143,7 @@
                 class="matches-list flex flex-col justify-around flex-1 gap-6"
               >
                 <div
-                  v-for="match in bracket[2]"
+                  v-for="match in bracket.r8"
                   :key="match.id"
                   class="match-card glass-card !p-3 border-white/5 hover:border-gold/30 transition-all duration-300"
                 >
@@ -151,12 +153,12 @@
                       :class="getTeamStatusClass(match, 1)"
                     >
                       <img
-                        v-if="match.clan1"
-                        :src="match.clan1.badge_url"
+                        v-if="match.clan_home"
+                        :src="match.clan_home.badge_url"
                         class="w-6 h-6 object-contain"
                       />
                       <span class="name flex-1 font-bold text-sm truncate">{{
-                        match.clan1?.name || "Vainqueur M" + match.match_number
+                        match.clan_home?.name || "Vainqueur M" + match.match_number
                       }}</span>
                     </div>
                     <div class="vs-divider flex items-center gap-2">
@@ -172,12 +174,12 @@
                       :class="getTeamStatusClass(match, 2)"
                     >
                       <img
-                        v-if="match.clan2"
-                        :src="match.clan2.badge_url"
+                        v-if="match.clan_away"
+                        :src="match.clan_away.badge_url"
                         class="w-6 h-6 object-contain"
                       />
                       <span class="name flex-1 font-bold text-sm truncate">{{
-                        match.clan2?.name ||
+                        match.clan_away?.name ||
                         "Vainqueur M" + (match.match_number + 1)
                       }}</span>
                     </div>
@@ -197,7 +199,7 @@
                 class="matches-list flex flex-col justify-around flex-1 gap-6"
               >
                 <div
-                  v-for="match in bracket[3]"
+                  v-for="match in bracket.r4"
                   :key="match.id"
                   class="match-card glass-card !p-3 border-white/5 hover:border-gold/50 transition-all duration-300 semi-card"
                 >
@@ -208,7 +210,7 @@
                     >
                       <span
                         class="name flex-1 font-black text-sm text-center uppercase italic opacity-70"
-                        >{{ match.clan1?.name || "TOP 4" }}</span
+                        >{{ match.clan_home?.name || "TOP 4" }}</span
                       >
                     </div>
                     <div class="vs-divider flex items-center gap-2">
@@ -225,7 +227,7 @@
                     >
                       <span
                         class="name flex-1 font-black text-sm text-center uppercase italic opacity-70"
-                        >{{ match.clan2?.name || "TOP 4" }}</span
+                        >{{ match.clan_away?.name || "TOP 4" }}</span
                       >
                     </div>
                   </div>
@@ -249,7 +251,7 @@
               </div>
               <div class="matches-list flex flex-col justify-center flex-1">
                 <div
-                  v-for="match in bracket[4]"
+                  v-for="match in bracket.r2"
                   :key="match.id"
                   class="match-card glass-card !p-6 border-gold/30 shadow-[0_0_50px_rgba(212,175,55,0.1)] final-card"
                 >
@@ -259,13 +261,13 @@
                       :class="getTeamStatusClass(match, 1)"
                     >
                       <img
-                        v-if="match.clan1"
-                        :src="match.clan1.badge_url"
+                        v-if="match.clan_home"
+                        :src="match.clan_home.badge_url"
                         class="w-10 h-10 object-contain"
                       />
                       <span
                         class="name flex-1 font-black text-xl italic tracking-tighter truncate"
-                        >{{ match.clan1?.name || "FINALE" }}</span
+                        >{{ match.clan_home?.name || "FINALE" }}</span
                       >
                     </div>
                     <div class="vs-divider flex items-center gap-4">
@@ -281,13 +283,13 @@
                       :class="getTeamStatusClass(match, 2)"
                     >
                       <img
-                        v-if="match.clan2"
-                        :src="match.clan2.badge_url"
+                        v-if="match.clan_away"
+                        :src="match.clan_away.badge_url"
                         class="w-10 h-10 object-contain"
                       />
                       <span
                         class="name flex-1 font-black text-xl italic tracking-tighter truncate"
-                        >{{ match.clan2?.name || "FINALE" }}</span
+                        >{{ match.clan_away?.name || "FINALE" }}</span
                       >
                     </div>
                   </div>
@@ -315,6 +317,8 @@ const fetchData = async () => {
       $api("/admin/stats"),
     ]);
     bracket.value = bracketData;
+    console.log(bracket.value);
+    
     confirmedCount.value = adminStats.confirmed_registrations || 0;
   } catch (e) {
     console.error("Error fetching bracket data:", e);

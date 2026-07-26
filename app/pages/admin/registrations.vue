@@ -1,9 +1,7 @@
 <template>
   <div class="admin-registrations-page">
     <div class="header-action mb-8">
-      <NuxtLink to="/admin/dashboard" class="btn-back"
-        >← Retour au Tableau de Bord</NuxtLink
-      >
+      <NuxtLink to="/admin/dashboard" class="btn-back">← Retour au Tableau de Bord</NuxtLink>
       <h1 class="heading mt-4">
         Inscriptions & <span class="text-gold">Paiements</span>
       </h1>
@@ -22,20 +20,11 @@
     </div>
 
     <div v-else class="registrations-list">
-      <div
-        v-for="reg in registrations"
-        :key="reg.id"
-        class="registration-card glass-card"
-      >
+      <div v-for="reg in registrations" :key="reg.id" class="registration-card glass-card">
         <!-- En-tête du Clan -->
         <div class="reg-header">
           <div class="clan-brand">
-            <img
-              :src="reg.clan?.badge_url"
-              alt=""
-              class="badge-sm"
-              v-if="reg.clan?.badge_url"
-            />
+            <img :src="reg.clan?.badge_url" alt="" class="badge-sm" v-if="reg.clan?.badge_url" />
             <div>
               <h3>{{ reg.clan?.name }}</h3>
               <p class="text-xs text-gold">{{ reg.clan?.tag_coc }}</p>
@@ -61,10 +50,7 @@
         </div>
 
         <!-- Infos Paiement -->
-        <div
-          v-if="reg.payment"
-          class="reg-payment mt-6 p-4 bg-glass-dark rounded-lg border-l-4 border-gold"
-        >
+        <div v-if="reg.payment" class="reg-payment mt-6 p-4 bg-glass-dark rounded-lg border-l-4 border-gold">
           <p class="text-gold font-bold mb-2">💰 Détails du Paiement :</p>
           <div class="payment-details">
             <p>
@@ -83,30 +69,15 @@
             </p>
           </div>
         </div>
-        <div
-          v-else
-          class="reg-payment mt-6 p-4 bg-glass-dark rounded-lg border-l-4 border-orange"
-        >
-          <p class="text-orange font-bold">
-            Paiement non encore soumis par le capitaine.
-          </p>
-        </div>
+       
 
-        <!-- Actions -->
         <div class="reg-actions mt-6">
-          <button
-            class="btn-premium btn-primary w-full"
-            @click="confirmRegistration(reg)"
-            :disabled="
-              reg.status === 'confirmed' ||
-              processing === reg.id ||
-              !reg.payment
-            "
-          >
+          <button class="btn-premium btn-primary w-full" @click="confirmRegistration(reg)" :disabled="reg.status === 'confirmed' ||
+            processing === reg.id
+            ">
             <span v-if="reg.status === 'confirmed'">✅ Déjà Confirmé</span>
             <span v-else-if="processing === reg.id">⌛ Vérification...</span>
-            <span v-else-if="!reg.payment">⚠️ En attente de paiement</span>
-            <span v-else>Confirmé & Valider le Paiement</span>
+            <span v-else>✅ Confirmer le Clan</span>
           </button>
         </div>
       </div>
@@ -146,7 +117,7 @@ const confirmRegistration = async (reg) => {
 
 const formatStatus = (status) => {
   const map = {
-    pending_payment: "En attente de paiement",
+    pending_payment: "En attente admin",
     pending_confirmation: "Paiement à vérifier",
     confirmed: "Confirmé ✅",
     rejected: "Refusé ❌",
@@ -182,6 +153,7 @@ onMounted(fetchRegistrations);
   padding: 24px;
   border-left: 2px solid var(--glass-border);
 }
+
 .reg-header {
   display: flex;
   justify-content: space-between;
@@ -189,11 +161,13 @@ onMounted(fetchRegistrations);
   border-bottom: 1px solid var(--glass-border);
   padding-bottom: 15px;
 }
+
 .clan-brand {
   display: flex;
   gap: 15px;
   align-items: center;
 }
+
 .badge-sm {
   width: 40px;
 }
@@ -203,6 +177,7 @@ onMounted(fetchRegistrations);
   flex-wrap: wrap;
   gap: 8px;
 }
+
 .player-pill {
   font-size: 0.75rem;
   background: rgba(255, 255, 255, 0.05);
@@ -210,6 +185,7 @@ onMounted(fetchRegistrations);
   border-radius: 10px;
   border: 1px solid var(--glass-border);
 }
+
 .player-pill .hdv {
   font-weight: bold;
   color: var(--primary);
@@ -227,14 +203,17 @@ onMounted(fetchRegistrations);
   font-weight: 800;
   text-transform: uppercase;
 }
+
 .badge-status.confirmed {
   background: var(--primary);
   color: white;
 }
+
 .badge-status.pending_payment {
   background: #f59e0b;
   color: white;
 }
+
 .badge-status.pending_confirmation {
   background: #6366f1;
   color: white;
@@ -250,6 +229,7 @@ onMounted(fetchRegistrations);
 .border-gold {
   border-left-color: var(--primary) !important;
 }
+
 .border-orange {
   border-left-color: #f59e0b !important;
 }

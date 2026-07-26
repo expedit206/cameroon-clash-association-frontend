@@ -28,13 +28,19 @@
 
         <div class="form-group" style="margin-top: 20px">
           <label for="password">Mot de passe</label>
-          <input
-            v-model="form.password"
-            type="password"
-            id="password"
-            placeholder="••••••••"
-            required
-          />
+          <div class="input-with-icon">
+            <input
+              v-model="form.password"
+              :type="showPassword ? 'text' : 'password'"
+              id="password"
+              placeholder="••••••••"
+              required
+            />
+            <button type="button" class="eye-toggle" @click="showPassword = !showPassword" tabindex="-1">
+              <span v-if="showPassword">👁️</span>
+              <span v-else>🙈</span>
+            </button>
+          </div>
         </div>
 
         <!-- Toast system will handle errors -->
@@ -74,6 +80,7 @@ const form = reactive({
 const loading = ref(false);
 const error = ref(null);
 const registered = computed(() => route.query.registered === "1");
+const showPassword = ref(false);
 
 const handleLogin = async () => {
   loading.value = true;
@@ -85,11 +92,8 @@ const handleLogin = async () => {
     // Redirection basée sur le rôle
     if (user.value.role === "admin") {
       router.push("/admin/dashboard");
-    } else if (user.value.capitained_clan) {
-      router.push("/dashboard");
     } else {
-      // Simple joueur : vers l'accueil ou profil
-      router.push("/");
+      router.push("/tournaments/register");
     }
   } catch (e) {
     $toast.error(
@@ -182,20 +186,28 @@ input:focus {
 .input-with-icon {
   position: relative;
   display: flex;
-}
-
-.input-with-icon .icon {
-  position: absolute;
-  left: 15px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: var(--primary);
-  font-weight: 800;
+  align-items: center;
 }
 
 .input-with-icon input {
   padding-left: 35px;
   width: 100%;
+}
+
+.eye-toggle {
+  position: absolute;
+  right: 12px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+  line-height: 1;
+}
+
+.eye-toggle:hover {
+  opacity: 1;
 }
 
 .auth-footer {

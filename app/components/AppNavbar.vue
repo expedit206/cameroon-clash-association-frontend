@@ -100,7 +100,7 @@
                 <span class="avatar-chevron">▾</span>
               </button>
               <Transition name="dropdown">
-                <div v-if="dropdownOpen" class="avatar-dropdown">
+                <div v-if="dropdownOpen" class="avatar-dropdown flex flex-col ">
                   <NuxtLink
                     to="/profile"
                     class="dropdown-item"
@@ -128,8 +128,8 @@
                     @click="dropdownOpen = false"
                     ><LucideHome :size="18" class="inline mr-1" /> Dashboard</NuxtLink
                   >
-                  <div class="dropdown-divider"></div>
-                  <button class="dropdown-item danger" @click="handleLogout">
+                  <!-- <div class="dropdown-divider"></div> -->
+                  <button class="dropdown-item text-red-300" @click="handleLogout">
                     <LucideLogOut :size="18" class="inline mr-1" /> Déconnexion
                   </button>
                 </div>
@@ -324,7 +324,7 @@ const dashboardPath = computed(() =>
   user.value?.role === "admin"
     ? "/admin/dashboard"
     : ["captain", "referee"].includes(user.value?.role)
-      ? "/dashboard"
+      ? "/tournaments/register"
       : null,
 );
 const dashboardLabel = computed(() =>

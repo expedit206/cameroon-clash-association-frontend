@@ -35,13 +35,13 @@
         </p>
 
         <div class="flex flex-wrap justify-center gap-3">
-          <button
+          <NuxtLink
             v-if="competition.status === 'open'"
-            @click="showLaunchModal = true"
+            :to="`/tournaments/register`"
             class="btn-tournament primary cursor-pointer"
           >
             ⚔️ Inscrire mon Clan
-          </button>
+          </NuxtLink>
           <NuxtLink
             v-else
             :to="`/tournaments/bracket`"
@@ -511,7 +511,7 @@ const fetchData = async () => {
 onMounted(async () => {
   await fetchData();
   if (route.query.showLaunchModal === "true") {
-    showLaunchModal.value = true;
+    showLaunchModal.value = false;
   }
 });
 </script>

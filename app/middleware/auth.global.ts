@@ -37,12 +37,12 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
 
   // Cas B: Utilisateur déjà connecté essayant d'aller sur login/register
   if (isLoggedIn.value && (to.path === '/login' || to.path === '/register')) {
-    return navigateTo('/dashboard');
+    return navigateTo('/tournaments/register');
   }
 
   // Cas C: Protection spécifique des routes Admin
   if (to.path.startsWith('/admin') && user.value?.role !== 'admin') {
     console.error('[Auth Middleware] Admin access denied for', user.value?.tag_coc);
-    return navigateTo('/dashboard');
+    return navigateTo('/tournaments/register');
   }
 });

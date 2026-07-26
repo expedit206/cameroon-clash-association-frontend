@@ -55,10 +55,7 @@
                 >
                 <span class="value text-gold" v-else>En Attente</span>
               </div>
-              <div class="stat-pill">
-                <span class="label">Paiements</span>
-                <span class="value">{{ confirmedPaymentsCount }} / 5</span>
-              </div>
+
             </div>
           </div>
           <div class="hidden lg:block text-right">
@@ -189,15 +186,7 @@
                         class="text-[7px] px-1.5 py-0.5 bg-white/5 text-white/40 font-black rounded uppercase"
                         >Sub</span
                       >
-                      <div
-                        v-if="!p.is_substitute"
-                        class="payment-dot"
-                        :class="
-                          isPaid(p.player_id)
-                            ? 'bg-green-500 shadow-green-500/50'
-                            : 'bg-red-500 shadow-red-500/20'
-                        "
-                      ></div>
+
                     </div>
                   </div>
                 </div>
@@ -206,13 +195,14 @@
 
             <!-- Actions -->
             <div class="space-y-3">
-              <button
-                v-if="!amIPaid && amIStarter"
-                @click="navigateToRegister"
-                class="btn-premium btn-primary w-full text-[10px]"
+
+              <NuxtLink
+                v-if="isClanCaptain && !registration?.brackets_generated"
+                to="/tournaments/register?edit=true"
+                class="btn-premium btn-primary w-full text-[10px] text-center !py-2.5 flex items-center justify-center"
+                >Modifier mon Roster</NuxtLink
               >
-                Régler ma Participation (1,000 FCFA)
-              </button>
+
               <NuxtLink
                 to="/tournaments/bracket"
                 class="btn-tournament secondary w-full text-[10px]"
@@ -255,21 +245,13 @@ const payments = ref([]);
 
 const captain = computed(
   () =>
-    registration.value?.players.find((p) => p.user?.role === "captain")?.user,
+    // Le capitaine est défini par captain_id sur le clan, pas nécessairement dans le roster
+    registration.value?.clan?.captain ||
+    registration.value?.players?.find((p) => p.user?.role === "admin" || p.user?.role === "captain")?.user,
 );
-const confirmedPaymentsCount = computed(
-  () => payments.value.filter((p) => p.status === "confirmed").length,
-);
-const amIStarter = computed(() =>
-  registration.value?.players.find(
-    (p) => p.player_id === user.value?.id && !p.is_substitute,
-  ),
-);
-const amIPaid = computed(() =>
-  payments.value.some(
-    (p) => p.user_id === user.value?.id && p.status === "confirmed",
-  ),
-);
+
+const isClanCaptain = computed(() => !!user.value?.capitained_clan);
+
 
 const fetchData = async () => {
   loading.value = true;
@@ -281,9 +263,10 @@ const fetchData = async () => {
 
     if (res) {
       // Fetch matches related to this clan
-      const allMatches = await $api(`/tournament/bracket`); // Simplified, assume we filter frontend for now
-      matches.value = allMatches.filter(
-        (m) => m.clan1_id === res.clan_id || m.clan2_id === res.clan_id,
+      const allMatches = await $api(`/tournament/bracket`);
+      const flatMatches = Object.values(allMatches).flat();
+      matches.value = flatMatches.filter(
+        (m) => m.clan_home_id === res.clan_id || m.clan_away_id === res.clan_id,
       );
 
       // Fetch payments for this registration
@@ -298,10 +281,9 @@ const fetchData = async () => {
   }
 };
 
-const isPaid = (userId) =>
-  payments.value.some((p) => p.user_id === userId && p.status === "confirmed");
+const isPaid = () => true; // Inscription gratuite - tous les joueurs sont validés
 
-const navigateToRegister = () => router.push(`/tournaments/register?step=3`);
+
 
 onMounted(fetchData);
 </script>

@@ -49,8 +49,8 @@
               <LucideCalendar class="w-7 h-7 text-white/70" />
             </span>
             <div class="stat-info">
-              <p class="stat-val">1 — 15 Juillet</p>
-              <p class="stat-lbl">Inscriptions</p>
+              <p class="stat-val">15 Juillet</p>
+              <p class="stat-lbl">Inscriptions des clans</p>
             </div>
           </div>
           <!-- <div class="stat-divider"></div>
@@ -65,7 +65,7 @@
 
         <!-- Boutons d'action -->
         <div class="hero-actions">
-          <NuxtLink to="/tournaments" class="btn-premium btn-primary btn-hero flex items-center gap-2">
+          <NuxtLink :to="ctaTo" class="btn-premium btn-primary btn-hero flex items-center gap-2">
             <LucideSwords class="w-4 h-4" /> Je veux participer au tournoi
           </NuxtLink>
         </div>
@@ -741,13 +741,7 @@ useHead({
   filter: drop-shadow(0 0 20px black);
 }
 
-. text-xl p-4 h2 {
-  /* font-size: 2.5rem;
-  margin-bottom: 14px;
-  line-height: 1.2; */
-}
-
-. text-xl p-4 p {
+.text-xl p-4 p {
   color: var(--text-muted);
   font-size: 1.1rem;
   margin-bottom: 30px;

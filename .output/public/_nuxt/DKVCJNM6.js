@@ -1,1 +1,0 @@
-import{O as a,u as s,P as u,Q as r,R as o}from"./MrkoXeGv.js";function d(t){const e=t||s();return e.ssrContext?.head||e.runWithContext(()=>{if(u()){const n=r(o);if(!n)throw new Error("[nuxt] [unhead] Missing Unhead instance.");return n}})}function i(t,e={}){const n=e.head||d(e.nuxt);return a(t,{head:n,...e})}export{i as u};

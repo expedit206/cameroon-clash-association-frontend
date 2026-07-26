@@ -38,13 +38,19 @@
 
           <div class="form-group full-width">
             <label for="password">Mot de passe</label>
-            <input
-              v-model="form.password"
-              type="password"
-              id="password"
-              placeholder="••••••••"
-              required
-            />
+            <div class="input-with-icon">
+              <input
+                v-model="form.password"
+                :type="showPassword ? 'text' : 'password'"
+                id="password"
+                placeholder="••••••••"
+                required
+              />
+              <button type="button" class="eye-toggle" @click="showPassword = !showPassword" tabindex="-1">
+                <span v-if="showPassword">👁️</span>
+                <span v-else>🙈</span>
+              </button>
+            </div>
           </div>
 
           <div class="form-group full-width">
@@ -98,6 +104,7 @@ const { fetchApi } = useApi();
 const { $toast } = useNuxtApp();
 const router = useRouter();
 
+const showPassword = ref(false);
 const form = reactive({
   tag_coc: "",
   phone_whatsapp: "",
@@ -234,13 +241,12 @@ input:focus {
 .input-with-icon {
   position: relative;
   display: flex;
+  align-items: center;
 }
 
 .input-with-icon .icon {
   position: absolute;
   left: 15px;
-  top: 50%;
-  transform: translateY(-50%);
   color: var(--primary);
   font-weight: 800;
 }
@@ -248,6 +254,22 @@ input:focus {
 .input-with-icon input {
   padding-left: 35px;
   width: 100%;
+}
+
+.eye-toggle {
+  position: absolute;
+  right: 12px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+  line-height: 1;
+}
+
+.eye-toggle:hover {
+  opacity: 1;
 }
 
 .file-upload {

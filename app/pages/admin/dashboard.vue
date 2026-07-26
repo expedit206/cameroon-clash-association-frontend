@@ -68,7 +68,7 @@
             }}</span>
           </NuxtLink>
 
-          <NuxtLink to="/admin/clans" class="admin-action-btn">
+          <!-- <NuxtLink to="/admin/clans" class="admin-action-btn">
             <span class="btn-icon">🏷️</span>
             <div class="btn-text">
               <p>Valider les Clans</p>
@@ -77,12 +77,12 @@
             <span v-if="stats.pending_clans > 0" class="badge-count">{{
               stats.pending_clans
             }}</span>
-          </NuxtLink>
+          </NuxtLink> -->
 
           <NuxtLink to="/admin/registrations" class="admin-action-btn">
             <span class="btn-icon">💳</span>
             <div class="btn-text">
-              <p>Vérifier les Paiements</p>
+              <p>Valider les Clans</p>
               <small>Confirmer les frais d'inscription (5k FCFA)</small>
             </div>
           </NuxtLink>

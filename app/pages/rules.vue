@@ -47,16 +47,15 @@
             <li>
               Le tournoi est ouvert à
               <strong>tout clan Clash of Clans</strong> dont les membres
-              résident au Cameroun.
+              sont Camerounais.
             </li>
             <li>
-              Le clan doit être au <strong>niveau minimum 5</strong> dans le jeu
+              Le clan doit être au <strong>d'origine camerounaise</strong> dans le jeu
               au moment de l'inscription.
             </li>
             <li>
               Chaque joueur doit posséder une base
-              <strong>HDV 14 minimum</strong> pour être éligible au processus
-              d'élection et de composition d'équipe.
+              <strong>HDV 14 minimum</strong> pour être éligible à participer au tournoi.
             </li>
             <li>
               Les
@@ -68,14 +67,11 @@
               <strong>un seul clan</strong> par saison.
             </li>
             <li>
-              Le capitaine est désigné par
-              <strong>élection démocratique</strong>
-              au sein de la plateforme par les membres de son clan.
+              Le rôle de capitaine est attribué au joueurs par
+              <strong>l'administrateur de la plateforme</strong>
+               
             </li>
-            <li>
-              Le clan CoC doit être localisé au
-              <strong>Cameroun</strong> (vérifié via API CoC).
-            </li>
+        
           </ul>
         </div>
       </article>
@@ -109,7 +105,7 @@
 
           <div class="phase-block">
             <p class="phase-title">
-              <LucidePin :size="18" class="inline mr-1" /> Étape 2 — Élection du Capitaine (Démocratie)
+              <LucidePin :size="18" class="inline mr-1" /> Étape 2 — Élection du Capitaine 
             </p>
             <ul>
               <li>
@@ -140,8 +136,7 @@
                 Il doit s'assurer que son équipe couvre les paliers HDV requis.
               </li>
               <li>
-                Une fois validé, le clan est officiellement inscrit en base de
-                données.
+                Une fois validé, le clan est officiellement inscrit et envoyé aux administrateurs pour validation
               </li>
             </ul>
           </div>
@@ -230,7 +225,7 @@
               <strong>dommages infligés</strong>.
             </li>
             <li>
-              Si toujours égalité : match retour de <strong>30 minutes</strong>.
+              Si toujours égalité : l'équipe gagnante est celle qui a fait le  <strong>moins de temps en attaque</strong>.
             </li>
           </ul>
         </div>
@@ -248,12 +243,12 @@
               sur la plateforme.
             </li>
             <li>
-              Le capitaine hôte dispose de <strong>30 minutes</strong> après
-              l'heure prévue pour envoyer l'invitation.
+              Le capitaine hôte dispose de <strong>10 minutes</strong> après
+              l'heure prévue pour lancer la guerre amicale.
             </li>
             <li>
-              Le capitaine adverse dispose de <strong>15 minutes</strong> pour
-              accepter l'invitation.
+              Le capitaine adverse dispose de <strong>10 minutes</strong> pour
+              accepter la guerre.
             </li>
             <li>
               Tout dépassement non justifié entraîne un
@@ -261,7 +256,7 @@
             </li>
             <li>
               Les joueurs doivent utiliser
-              <strong>leurs bases CoC enregistrées</strong>. Toute substitution
+              <strong>leurs bases CoC enregistrées enregistré dans la plateforme</strong>. Toute substitution
               non déclarée est sanctionnée.
             </li>
             <li>
@@ -272,36 +267,11 @@
         </div>
       </article>
 
-      <!-- 6. RÉSULTATS -->
-      <article id="resultats" class="glass-card rule-block">
-        <div class="rule-num text-gradient-purple">06</div>
-        <img src="/imagescoc/DragonEventDeco.webp" alt="" class="rule-icon" />
-        <div class="rule-content">
-          <h2 class="text-gold">Soumission des Résultats</h2>
-          <ul>
-            <li>
-              À la fin du match, les deux capitaines doivent soumettre leurs
-              résultats sur la plateforme <strong>dans les 30 minutes</strong>.
-            </li>
-            <li>
-              La soumission inclut :
-              <strong>score final + capture d'écran de la guerre</strong>.
-            </li>
-            <li>
-              En cas de divergence des scores soumis, l'arbitre est
-              automatiquement notifié.
-            </li>
-            <li>
-              Tout capitaine ne soumettant pas de résultat dans les délais peut
-              être pénalisé.
-            </li>
-          </ul>
-        </div>
-      </article>
+  
 
       <!-- 7. ARBITRAGE & LITIGES -->
       <article id="arbitrage" class="glass-card rule-block featured">
-        <div class="rule-num text-gold">07</div>
+        <div class="rule-num text-gold">06</div>
         <img src="/imagescoc/badge 1.webp" alt="" class="rule-icon" />
         <div class="rule-content">
           <h2 class="text-gold">Arbitrage & Gestion des Litiges</h2>
@@ -337,7 +307,7 @@
 
       <!-- 8. FAIR-PLAY & SANCTIONS -->
       <article id="sanctions" class="glass-card rule-block">
-        <div class="rule-num text-gradient-purple">08</div>
+        <div class="rule-num text-gradient-purple">07</div>
         <img src="/imagescoc/skin barbarian.webp" alt="" class="rule-icon" />
         <div class="rule-content">
           <h2 class="text-gold">Fair-play & Sanctions</h2>
@@ -436,7 +406,7 @@
           Saison 1.
         </p>
         <div class="cta-btns">
-          <NuxtLink to="/register" class="btn-premium btn-primary">⚔️ Inscrire mon Clan</NuxtLink>
+          <NuxtLink :to="ctaTo" class="btn-premium btn-primary">⚔️ {{ ctaLabel }}</NuxtLink>
           <NuxtLink to="/" class="btn-premium btn-outline">← Accueil</NuxtLink>
         </div>
       </div>
@@ -446,6 +416,8 @@
 
 <script setup>
 definePageMeta({ layout: "default" });
+
+const { ctaLabel, ctaTo } = useTournamentCta();
 
 useHead({
   title: "Règlement Officiel | CCA National League 🇨🇲",
@@ -562,7 +534,7 @@ useHead({
   grid-template-columns: 60px 120px 1fr;
   align-items: start;
   gap: 30px;
-  padding: 40px;
+  padding: 24px;
   position: relative;
 }
 
@@ -606,7 +578,7 @@ useHead({
 
 .rule-content li {
   position: relative;
-  padding-left: 28px;
+  padding-left: 16px;
   color: var(--text-muted);
   line-height: 1.7;
   font-size: 0.98rem;
@@ -633,7 +605,7 @@ useHead({
 .phase-block {
   margin-bottom: 24px;
   border-left: 3px solid var(--primary);
-  padding-left: 20px;
+  padding-left: 8px;
 }
 
 .phase-title {

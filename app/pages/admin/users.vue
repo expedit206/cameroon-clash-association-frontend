@@ -77,21 +77,21 @@
         <!-- ── CLAN INFO ────────────────────────── -->
         <div class="clan-info-section">
           <p class="section-part-title font-ui">Clan Associé</p>
-          <div v-if="user.current_clan" class="clan-details-box mt-2">
+          <div v-if="user.current_clan_info" class="clan-details-box mt-2">
             <div class="clan-meta">
-              <img v-if="user.current_clan.badge_url" :src="user.current_clan.badge_url" alt="Badge"
+              <img v-if="user.current_clan_info.badge_url" :src="user.current_clan_info.badge_url" alt="Badge"
                 class="clan-badge-img" />
               <div class="clan-texts">
-                <span class="clan-name font-heading text-white">{{ user.current_clan.name }}</span>
-                <span class="clan-tag text-xs text-muted block">{{ user.current_clan.tag_coc }}</span>
+                <span class="clan-name font-heading text-white">{{ user.current_clan_info.name }}</span>
+                <span class="clan-tag text-xs text-muted block">{{ user.current_clan_info.tag_coc }}</span>
               </div>
             </div>
             <div class="clan-actions mt-3">
               <button class="btn-clan-members font-ui"
-                @click="viewClanMembers(user.current_clan.tag_coc, user.current_clan.name)">
+                @click="viewClanMembers(user.current_clan_info.tag_coc, user.current_clan_info.name)">
                 <LucideUsers :size="14" class="inline mr-1" /> Membres
               </button>
-              <a :href="getClanCoCLink(user.current_clan.tag_coc)" target="_blank" class="btn-clan-link font-ui"
+              <a :href="getClanCoCLink(user.current_clan_info.tag_coc)" target="_blank" class="btn-clan-link font-ui"
                 title="Voir le clan in-game">
                 <LucideExternalLink :size="14" />
               </a>
