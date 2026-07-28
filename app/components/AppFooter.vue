@@ -25,7 +25,7 @@
       <!-- Colonne 3 : Participer -->
       <div class="footer-col">
         <p class="footer-col-title">Participer</p>
-        <NuxtLink to="/register" class="footer-link">Inscrire mon Clan</NuxtLink>
+        <NuxtLink to="/register" class="footer-link">créer un compte</NuxtLink>
         <NuxtLink to="/login" class="footer-link">Se connecter</NuxtLink>
         <a href="#" class="footer-link">Paiement (Orange/MTN)</a>
       </div>

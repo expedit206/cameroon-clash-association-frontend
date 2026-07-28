@@ -69,9 +69,9 @@
             <li>
               Le rôle de capitaine est attribué au joueurs par
               <strong>l'administrateur de la plateforme</strong>
-               
+
             </li>
-        
+
           </ul>
         </div>
       </article>
@@ -105,7 +105,7 @@
 
           <div class="phase-block">
             <p class="phase-title">
-              <LucidePin :size="18" class="inline mr-1" /> Étape 2 — Élection du Capitaine 
+              <LucidePin :size="18" class="inline mr-1" /> Étape 2 — Élection du Capitaine
             </p>
             <ul>
               <li>
@@ -199,33 +199,40 @@
         <div class="rule-num text-gold">04</div>
         <img src="/imagescoc/machine de combat.webp" alt="" class="rule-icon rule-icon-lg" />
         <div class="rule-content">
-          <h2 class="text-gold">Format du Tournoi</h2>
+          <h2 class="text-gold">Format du Tournoi & Phase de Poules</h2>
           <ul>
             <li>
-              <strong>16 clans</strong> en phase de groupes → Élimination
-              directe (bracket).
+              <strong>11 clans engagés</strong> répartis en 2 poules :
+              <strong>Groupe A (6 clans)</strong> et <strong>Groupe B (5 clans)</strong>.
             </li>
             <li>
-              Structure :
-              <strong>8e de finale → Quarts → Demi-finales → Finale</strong>.
+              <strong>Garantie de 4 matchs par clan :</strong> Chaque clan dispute exactement 4 rencontres lors de la
+              phase de groupes.
             </li>
             <li>
-              Chaque rencontre = <strong>1 Guerre Amicale 5v5</strong> sur Clash
-              of Clans.
+              <strong>Qualification :</strong> Les <strong>2 premiers clans de chaque groupe (Top 2)</strong> se
+              qualifient pour le Carré Final (Demi-finales).
             </li>
             <li>
-              Le clan désigné "Hôte" par le système envoie l'invitation de
-              guerre amicale.
+              <strong>Phase Finale :</strong> Demi-finales croisées (1er Groupe A vs 2e Groupe B, 1er Groupe B vs 2e
+              Groupe A) puis Grande Finale & Petite Finale.
+            </li>
+            <li>
+              Chaque rencontre = <strong>1 Guerre Amicale 5v5</strong> sur Clash of Clans.
+            </li>
+            <li>
+              Le clan désigné "Hôte" par le système envoie l'invitation de guerre amicale.
             </li>
             <li>Durée de préparation : <strong>15 minutes</strong>.</li>
             <li>Durée de la guerre : <strong>1 heure</strong>.</li>
             <li>
               En cas d'égalité de score :
               <strong>nombre d'étoiles</strong> total, puis
-              <strong>dommages infligés</strong>.
+              <strong>pourcentage de destruction (dommages)</strong>.
             </li>
             <li>
-              Si toujours égalité : l'équipe gagnante est celle qui a fait le  <strong>moins de temps en attaque</strong>.
+              Si l'égalité persiste : l'équipe gagnante est celle ayant cumulé le <strong>moins de temps cumulé en
+                attaque</strong>.
             </li>
           </ul>
         </div>
@@ -267,7 +274,7 @@
         </div>
       </article>
 
-  
+
 
       <!-- 7. ARBITRAGE & LITIGES -->
       <article id="arbitrage" class="glass-card rule-block featured">
@@ -402,7 +409,7 @@
           Vous avez tout lu. Vous êtes <span class="text-gold">prêts</span>.
         </h2>
         <p>
-          Engagez votre clan et rejoignez les 16 élus de la CCA National League
+          Engagez votre clan et rejoignez les 11 clans de la CCA National League
           Saison 1.
         </p>
         <div class="cta-btns">
@@ -425,7 +432,7 @@ useHead({
     {
       name: "description",
       content:
-        "Règlement complet et transparent de la CCA National League Saison 1 : éligibilité des joueurs, frais d'inscription MTN/Orange Money, format 5v5, arbitrage, sanctions et cashprize de 50.000Fcfa.",
+        "Règlement complet de la CCA National League Saison 1 : format 11 clans (Groupe A & B), 4 matchs garantis, qualifications Top 2 pour les demi-finales, arbitrage et cashprize de 50.000 FCFA.",
     },
     {
       name: "keywords",

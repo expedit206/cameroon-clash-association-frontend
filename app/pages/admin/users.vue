@@ -135,6 +135,11 @@
               <LucideCrown :size="14" class="inline mr-1" /> Promouvoir Capitaine
             </button>
 
+            <button class="py-2 px-3 rounded-md font-ui font-bold text-xs uppercase tracking-wide bg-orange-600/20 text-orange-500 border border-orange-600/40 hover:bg-orange-600/40 transition-all text-left" 
+              @click="openResetPasswordModal(user)" :disabled="processing === user.id">
+              <LucideKey :size="14" class="inline mr-1 -mt-0.5" /> Réinitialiser Mot de passe
+            </button>
+
             <button class="btn-delete font-ui" @click="deleteUserAccount(user.id, user.name)"
               :disabled="processing === user.id">
               <LucideTrash2 :size="14" class="inline mr-1" /> Supprimer Joueur
@@ -235,6 +240,29 @@
         </div>
       </div>
     </Transition>
+
+    <!-- ── MODAL RESET PASSWORD ───────────────── -->
+    <Transition name="fade">
+      <div v-if="showResetPasswordModal" class="modal-overlay" @click="showResetPasswordModal = false">
+        <div class="modal-content glass-card" @click.stop>
+          <div class="modal-header">
+            <h3 class="text-xl">Modifier Mot de Passe - {{ selectedUserToReset?.name }}</h3>
+            <button class="btn-close" @click="showResetPasswordModal = false">
+              &times;
+            </button>
+          </div>
+          <div class="modal-body space-y-4 mt-4">
+            <p class="text-sm text-muted mb-2">Veuillez saisir le nouveau mot de passe pour cet utilisateur.</p>
+            <input v-model="newPassword" type="text" class="w-full bg-black/40 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-orange-500 transition-colors" placeholder="Nouveau mot de passe (min 8 caractères)..." />
+            <button @click="submitResetPassword" :disabled="newPassword.length < 8 || resettingPassword"
+              class="w-full py-3 bg-orange-600 hover:bg-orange-500 text-white font-bold uppercase tracking-widest text-xs rounded-lg disabled:opacity-50 mt-4 transition-colors">
+              <span v-if="resettingPassword">Validation...</span>
+              <span v-else>Confirmer la modification</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </Transition>
   </div>
 </template>
 
@@ -264,6 +292,35 @@ const loadingMembers = ref(false);
 const showMembersModal = ref(false);
 const activeClanTag = ref("");
 const activeClanName = ref("");
+
+// Reset Password
+const showResetPasswordModal = ref(false);
+const selectedUserToReset = ref(null);
+const newPassword = ref('');
+const resettingPassword = ref(false);
+
+const openResetPasswordModal = (user) => {
+  selectedUserToReset.value = user;
+  newPassword.value = '';
+  showResetPasswordModal.value = true;
+};
+
+const submitResetPassword = async () => {
+  if (!selectedUserToReset.value || newPassword.value.length < 8) return;
+  resettingPassword.value = true;
+  try {
+    const res = await $api(`/admin/users/${selectedUserToReset.value.id}/reset-password`, { 
+      method: "PUT",
+      body: { new_password: newPassword.value }
+    });
+    alert(res.message || "Mot de passe réinitialisé avec succès.");
+    showResetPasswordModal.value = false;
+  } catch (e) {
+    alert("Erreur lors de la réinitialisation du mot de passe.");
+  } finally {
+    resettingPassword.value = false;
+  }
+};
 
 const fetchUsers = async () => {
   loading.value = true;

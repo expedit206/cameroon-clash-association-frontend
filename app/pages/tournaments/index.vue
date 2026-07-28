@@ -37,10 +37,9 @@
         <div class="flex flex-wrap justify-center gap-3">
           <NuxtLink
             v-if="competition.status === 'open'"
-            :to="`/tournaments/register`"
             class="btn-tournament primary cursor-pointer"
           >
-            ⚔️ Inscrire mon Clan
+            ⚔️ Inscriptions terminées
           </NuxtLink>
           <NuxtLink
             v-else

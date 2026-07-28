@@ -1,341 +1,528 @@
 <template>
-  <div class="bracket-page min-h-screen pb-20">
-    <div class="container mx-auto px-4 py-10">
-      <!-- Header -->
-      <header class="page-header text-center mb-16 animate-float">
-        <h1
-          class="heading text-5xl md:text-6xl font-black italic tracking-tighter"
-        >
-          TABLEAU DE <span class="text-gold">TOURNOI</span>
+  <div class="bracket-page min-h-screen pb-20 text-white">
+    <div class="container mx-auto px-3 sm:px-6 py-4 sm:py-8 max-w-7xl">
+
+      <!-- Responsive Header -->
+      <header class="page-header text-center mb-6 sm:mb-10">
+        <h1 class="heading text-2xl sm:text-4xl md:text-5xl font-black italic tracking-tighter uppercase leading-tight">
+          TABLEAU DU <span class="text-gold">TOURNOI</span>
         </h1>
-        <p
-          class="subtitle mt-2 text-xl opacity-60 uppercase tracking-[0.3em] font-light"
-        >
-          Le chemin vers la consécration ultime
+        <p class="subtitle mt-1 text-[11px] sm:text-sm text-white/50 uppercase tracking-widest font-semibold px-2">
+          Phase de Poules (11 Clans) & Arbre de Combat Knockout
         </p>
       </header>
 
-      <!-- Loader -->
-      <div
-        v-if="loading"
-        class="loader-container py-32 text-center bg-black/20 rounded-3xl"
-      >
-        <div class="spinner mx-auto mb-6"></div>
-        <p
-          class="text-gold font-bold tracking-[0.5em] animate-pulse uppercase text-xs"
-        >
-          Génération de l'arène...
+      <!-- Mobile-Optimized Tab Switcher -->
+      <div class="flex justify-center mb-6 sm:mb-8">
+        <div
+          class="inline-flex p-1 bg-black/80 backdrop-blur-md rounded-xl border border-white/10 w-full sm:w-auto max-w-md">
+          <button @click="activeTab = 'groups'"
+            class="flex-1 py-2.5 px-3 sm:px-6 font-black text-xs sm:text-sm uppercase tracking-wider rounded-lg transition-all flex items-center justify-center gap-1.5"
+            :class="activeTab === 'groups' ? 'bg-gold text-black shadow-lg shadow-gold/20' : 'text-white/60 hover:text-white'">
+            <span>🛡️</span>
+            <span>Poules</span>
+          </button>
+
+          <button @click="activeTab = 'knockout'"
+            class="flex-1 py-2.5 px-3 sm:px-6 font-black text-xs sm:text-sm uppercase tracking-wider rounded-lg transition-all flex items-center justify-center gap-1.5"
+            :class="activeTab === 'knockout' ? 'bg-gold text-black shadow-lg shadow-gold/20' : 'text-white/60 hover:text-white'">
+            <span>🏆</span>
+            <span>Phase Finale</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Loading State -->
+      <div v-if="loading" class="py-16 text-center bg-black/20 rounded-2xl border border-white/5">
+        <div class="spinner mx-auto mb-3"></div>
+        <p class="text-gold font-bold tracking-widest animate-pulse uppercase text-xs">
+          Chargement du Tableau...
         </p>
       </div>
 
-      <!-- Empty State -->
-      <div
-        v-else-if="Object.keys(bracket).length === 0"
-        class="empty-bracket glass-card text-center p-10 md:p-20"
-      >
-        <div class="text-7xl mb-6">🏟️</div>
-        <p class="text-xl font-bold text-white mb-6 uppercase tracking-wider">
-          Le tournoi n'a pas encore été généré.
-        </p>
-        <p class="opacity-50 text-sm max-w-md mx-auto mb-10">
-          Dès que 16 clans d'élite seront confirmés et validés par
-          l'administration, l'arbre de combat apparaîtra ici.
-        </p>
+      <div v-else>
 
-        <div class="registration-status max-w-sm mx-auto">
-          <div
-            class="relative h-3 bg-white/5 rounded-full overflow-hidden mb-3"
-          >
+        <!-- ================= TAB 1: PHASE DE GROUPES ================= -->
+        <div v-if="activeTab === 'groups'" class="space-y-6 sm:space-y-10">
+
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 sm:gap-8">
+
+            <!-- GROUPE A -->
+            <div class="glass-card p-3.5 sm:p-6 border-blue-500/30">
+              <div class="flex justify-between items-center mb-3 sm:mb-5 border-b border-blue-500/20 pb-3">
+                <h3 class="text-lg sm:text-2xl font-black italic text-blue-400 uppercase flex items-center gap-2">
+                  <span>🛡️</span> GROUPE A
+                </h3>
+                <span
+                  class="text-[9px] sm:text-xs text-blue-300/90 bg-blue-500/20 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full font-bold uppercase">
+                  Top 2 Qualifiés
+                </span>
+              </div>
+
+              <!-- Mobile Standings Cards (< 640px) -->
+              <div class="block sm:hidden space-y-2.5 mb-4">
+                <div v-for="row in standings.A" :key="'mob-a-' + row.clan_id"
+                  class="p-3 rounded-xl border transition-all"
+                  :class="row.rank <= 2 ? 'bg-blue-950/40 border-blue-500/50' : 'bg-white/5 border-white/10'">
+                  <div class="flex items-center justify-between mb-2">
+                    <div class="flex items-center gap-2 truncate">
+                      <span
+                        class="w-5 h-5 rounded-full flex items-center justify-center font-black text-[10px] flex-shrink-0"
+                        :class="row.rank <= 2 ? 'bg-blue-500 text-black' : 'bg-white/10 text-white/60'">
+                        #{{ row.rank }}
+                      </span>
+                      <img :src="row.badge_url || '/images/default-clan.png'"
+                        class="w-6 h-6 object-contain flex-shrink-0" />
+                      <div class="truncate">
+                        <p class="font-bold text-xs text-white leading-tight truncate max-w-[130px]">{{ row.clan_name }}
+                        </p>
+                        <p class="text-[9px] text-white/40">#{{ row.clan_tag }}</p>
+                      </div>
+                    </div>
+                    <div class="text-right flex-shrink-0">
+                      <span class="text-sm font-black text-gold block leading-none">{{ row.points }} Pts</span>
+                      <span class="text-[9px] text-white/50 font-semibold">{{ row.played }} Matchs</span>
+                    </div>
+                  </div>
+
+                  <div class="grid grid-cols-3 gap-1.5 pt-2 border-t border-white/5 text-[10px] text-center">
+                    <div class="bg-black/30 p-1.5 rounded">
+                      <span class="text-white/40 block text-[8px] uppercase">Bilan V-N-D</span>
+                      <span class="font-bold text-white">{{ row.won }}V • {{ row.drawn }}N • {{ row.lost }}D</span>
+                    </div>
+                    <div class="bg-black/30 p-1.5 rounded">
+                      <span class="text-white/40 block text-[8px] uppercase">Étoiles</span>
+                      <span class="font-bold text-gold">{{ row.total_stars }} ⭐️</span>
+                    </div>
+                    <div class="bg-black/30 p-1.5 rounded">
+                      <span class="text-white/40 block text-[8px] uppercase">Destruction</span>
+                      <span class="font-bold text-white">{{ row.total_destruction }}%</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div v-if="!standings.A || standings.A.length === 0"
+                  class="text-center py-6 text-white/30 text-xs uppercase font-bold">
+                  Aucun clan dans le Groupe A
+                </div>
+              </div>
+
+              <!-- Desktop Table (>= 640px) -->
+              <div class="hidden sm:block overflow-x-auto mb-4">
+                <table class="w-full text-left text-xs">
+                  <thead>
+                    <tr class="border-b border-white/10 text-white/40 uppercase">
+                      <th class="py-2" title="Rang au classement">Rang</th>
+                      <th class="py-2">Clan</th>
+                      <th class="py-2 text-center" title="Matchs Joués">J (Joués)</th>
+                      <th class="py-2 text-center text-green-400" title="Victoires">V (Victoires)</th>
+                      <th class="py-2 text-center text-yellow-400" title="Matchs Nuls">N (Nuls)</th>
+                      <th class="py-2 text-center text-red-400" title="Défaites">D (Défaites)</th>
+                      <th class="py-2 text-center text-gold" title="Total Étoiles CoC">⭐️ (Étoiles)</th>
+                      <th class="py-2 text-center" title="Pourcentage de destruction cumulé">% (Destr.)</th>
+                      <th class="py-2 text-right text-gold" title="Points au classement (Victoire = 3, Nul = 1)">Pts
+                        (Points)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="row in standings.A" :key="row.clan_id" class="border-b border-white/5"
+                      :class="row.rank <= 2 ? 'bg-blue-500/10 font-bold' : ''">
+                      <td class="py-2.5 font-black" :class="row.rank <= 2 ? 'text-blue-400' : 'text-white/40'">
+                        #{{ row.rank }}
+                      </td>
+                      <td class="py-2.5 flex items-center gap-2">
+                        <img :src="row.badge_url" class="w-5 h-5 object-contain" />
+                        <span class="truncate max-w-[120px]">{{ row.clan_name }}</span>
+                      </td>
+                      <td class="text-center font-semibold">{{ row.played }}</td>
+                      <td class="text-center text-green-400 font-bold">{{ row.won }}</td>
+                      <td class="text-center text-yellow-400 font-bold">{{ row.drawn }}</td>
+                      <td class="text-center text-red-400 font-bold">{{ row.lost }}</td>
+                      <td class="text-center text-gold font-bold">{{ row.total_stars }}</td>
+                      <td class="text-center">{{ row.total_destruction }}%</td>
+                      <td class="text-right font-black text-sm text-gold">{{ row.points }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <!-- Légende des abréviations -->
+              <div
+                class="p-2 sm:p-2.5 rounded-lg bg-black/40 border border-white/5 text-[9px] sm:text-[10px] text-white/50 flex flex-wrap gap-x-3 gap-y-1">
+                <span><b>J</b>: Matchs Joués</span>
+                <span><b class="text-green-400">V</b>: Victoires</span>
+                <span><b class="text-yellow-400">N</b>: Nuls</span>
+                <span><b class="text-red-400">D</b>: Défaites</span>
+                <span><b class="text-gold">⭐️</b>: Étoiles</span>
+                <span><b>%</b>: % Destruction</span>
+                <span><b class="text-gold">Pts</b>: Points (V=3, N=1)</span>
+              </div>
+
+              <!-- Étoiles Performance Bar Chart -->
+              <div class="space-y-2 pt-3 border-t border-white/10 mt-3">
+                <p class="text-[9px] uppercase tracking-widest text-white/40 font-bold">Accumulation Étoiles (Groupe A)
+                </p>
+                <div v-for="row in standings.A" :key="'chart-pub-a-' + row.clan_id" class="space-y-1">
+                  <div class="flex justify-between text-[10px]">
+                    <span class="font-bold text-white/80 truncate max-w-[150px]">{{ row.clan_name }}</span>
+                    <span class="text-gold font-black">{{ row.total_stars }} ⭐️ ({{ row.points }} pts)</span>
+                  </div>
+                  <div class="h-2 bg-white/5 rounded-full overflow-hidden flex">
+                    <div class="h-full bg-gradient-to-r from-blue-500 to-gold rounded-full transition-all duration-700"
+                      :style="{ width: Math.min(100, (row.total_stars / 60) * 100) + '%' }"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- GROUPE B -->
+            <div class="glass-card p-3.5 sm:p-6 border-purple-500/30">
+              <div class="flex justify-between items-center mb-3 sm:mb-5 border-b border-purple-500/20 pb-3">
+                <h3 class="text-lg sm:text-2xl font-black italic text-purple-400 uppercase flex items-center gap-2">
+                  <span>🛡️</span> GROUPE B
+                </h3>
+                <span
+                  class="text-[9px] sm:text-xs text-purple-300/90 bg-purple-500/20 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full font-bold uppercase">
+                  Top 2 Qualifiés
+                </span>
+              </div>
+
+              <!-- Mobile Standings Cards (< 640px) -->
+              <div class="block sm:hidden space-y-2.5 mb-4">
+                <div v-for="row in standings.B" :key="'mob-b-' + row.clan_id"
+                  class="p-3 rounded-xl border transition-all"
+                  :class="row.rank <= 2 ? 'bg-purple-950/40 border-purple-500/50' : 'bg-white/5 border-white/10'">
+                  <div class="flex items-center justify-between mb-2">
+                    <div class="flex items-center gap-2 truncate">
+                      <span
+                        class="w-5 h-5 rounded-full flex items-center justify-center font-black text-[10px] flex-shrink-0"
+                        :class="row.rank <= 2 ? 'bg-purple-500 text-black' : 'bg-white/10 text-white/60'">
+                        #{{ row.rank }}
+                      </span>
+                      <img :src="row.badge_url || '/images/default-clan.png'"
+                        class="w-6 h-6 object-contain flex-shrink-0" />
+                      <div class="truncate">
+                        <p class="font-bold text-xs text-white leading-tight truncate max-w-[130px]">{{ row.clan_name }}
+                        </p>
+                        <p class="text-[9px] text-white/40">#{{ row.clan_tag }}</p>
+                      </div>
+                    </div>
+                    <div class="text-right flex-shrink-0">
+                      <span class="text-sm font-black text-gold block leading-none">{{ row.points }} Pts</span>
+                      <span class="text-[9px] text-white/50 font-semibold">{{ row.played }} Matchs</span>
+                    </div>
+                  </div>
+
+                  <div class="grid grid-cols-3 gap-1.5 pt-2 border-t border-white/5 text-[10px] text-center">
+                    <div class="bg-black/30 p-1.5 rounded">
+                      <span class="text-white/40 block text-[8px] uppercase">Bilan V-N-D</span>
+                      <span class="font-bold text-white">{{ row.won }}V • {{ row.drawn }}N • {{ row.lost }}D</span>
+                    </div>
+                    <div class="bg-black/30 p-1.5 rounded">
+                      <span class="text-white/40 block text-[8px] uppercase">Étoiles</span>
+                      <span class="font-bold text-gold">{{ row.total_stars }} ⭐️</span>
+                    </div>
+                    <div class="bg-black/30 p-1.5 rounded">
+                      <span class="text-white/40 block text-[8px] uppercase">Destruction</span>
+                      <span class="font-bold text-white">{{ row.total_destruction }}%</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div v-if="!standings.B || standings.B.length === 0"
+                  class="text-center py-6 text-white/30 text-xs uppercase font-bold">
+                  Aucun clan dans le Groupe B
+                </div>
+              </div>
+
+              <!-- Desktop Table (>= 640px) -->
+              <div class="hidden sm:block overflow-x-auto mb-4">
+                <table class="w-full text-left text-xs">
+                  <thead>
+                    <tr class="border-b border-white/10 text-white/40 uppercase">
+                      <th class="py-2" title="Rang au classement">Rang</th>
+                      <th class="py-2">Clan</th>
+                      <th class="py-2 text-center" title="Matchs Joués">J (Joués)</th>
+                      <th class="py-2 text-center text-green-400" title="Victoires">V (Victoires)</th>
+                      <th class="py-2 text-center text-yellow-400" title="Matchs Nuls">N (Nuls)</th>
+                      <th class="py-2 text-center text-red-400" title="Défaites">D (Défaites)</th>
+                      <th class="py-2 text-center text-gold" title="Total Étoiles CoC">⭐️ (Étoiles)</th>
+                      <th class="py-2 text-center" title="Pourcentage de destruction cumulé">% (Destr.)</th>
+                      <th class="py-2 text-right text-gold" title="Points au classement (Victoire = 3, Nul = 1)">Pts
+                        (Points)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="row in standings.B" :key="row.clan_id" class="border-b border-white/5"
+                      :class="row.rank <= 2 ? 'bg-purple-500/10 font-bold' : ''">
+                      <td class="py-2.5 font-black" :class="row.rank <= 2 ? 'text-purple-400' : 'text-white/40'">
+                        #{{ row.rank }}
+                      </td>
+                      <td class="py-2.5 flex items-center gap-2">
+                        <img :src="row.badge_url" class="w-5 h-5 object-contain" />
+                        <span class="truncate max-w-[120px]">{{ row.clan_name }}</span>
+                      </td>
+                      <td class="text-center font-semibold">{{ row.played }}</td>
+                      <td class="text-center text-green-400 font-bold">{{ row.won }}</td>
+                      <td class="text-center text-yellow-400 font-bold">{{ row.drawn }}</td>
+                      <td class="text-center text-red-400 font-bold">{{ row.lost }}</td>
+                      <td class="text-center text-gold font-bold">{{ row.total_stars }}</td>
+                      <td class="text-center">{{ row.total_destruction }}%</td>
+                      <td class="text-right font-black text-sm text-gold">{{ row.points }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <!-- Légende des abréviations -->
+              <div
+                class="p-2 sm:p-2.5 rounded-lg bg-black/40 border border-white/5 text-[9px] sm:text-[10px] text-white/50 flex flex-wrap gap-x-3 gap-y-1">
+                <span><b>J</b>: Matchs Joués</span>
+                <span><b class="text-green-400">V</b>: Victoires</span>
+                <span><b class="text-yellow-400">N</b>: Nuls</span>
+                <span><b class="text-red-400">D</b>: Défaites</span>
+                <span><b class="text-gold">⭐️</b>: Étoiles</span>
+                <span><b>%</b>: % Destruction</span>
+                <span><b class="text-gold">Pts</b>: Points (V=3, N=1)</span>
+              </div>
+
+              <!-- Étoiles Performance Bar Chart -->
+              <div class="space-y-2 pt-3 border-t border-white/10 mt-3">
+                <p class="text-[9px] uppercase tracking-widest text-white/40 font-bold">Accumulation Étoiles (Groupe B)
+                </p>
+                <div v-for="row in standings.B" :key="'chart-pub-b-' + row.clan_id" class="space-y-1">
+                  <div class="flex justify-between text-[10px]">
+                    <span class="font-bold text-white/80 truncate max-w-[150px]">{{ row.clan_name }}</span>
+                    <span class="text-gold font-black">{{ row.total_stars }} ⭐️ ({{ row.points }} pts)</span>
+                  </div>
+                  <div class="h-2 bg-white/5 rounded-full overflow-hidden flex">
+                    <div
+                      class="h-full bg-gradient-to-r from-purple-500 to-gold rounded-full transition-all duration-700"
+                      :style="{ width: Math.min(100, (row.total_stars / 60) * 100) + '%' }">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Group Matches Results -->
+          <div v-if="groupMatches.length > 0" class="space-y-4">
+            <h3 class="text-base sm:text-xl font-black italic uppercase text-white tracking-tight">
+              RÉSULTATS DE PHASE DE POULES ({{ groupMatches.length }})
+            </h3>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-5">
+              <div v-for="m in groupMatches" :key="m.id"
+                class="glass-card p-3.5 sm:p-4 border-white/5 hover:border-gold/30 transition-all">
+                <div class="flex justify-between items-center mb-2.5 text-[9px] sm:text-[10px]">
+                  <span class="font-black uppercase text-gold">Groupe {{ m.group || 'A' }}</span>
+                  <span class="status-badge" :class="`status-${m.status}`">{{ m.status }}</span>
+                </div>
+
+                <div class="space-y-2">
+                  <div class="flex justify-between items-center p-2 rounded-lg bg-white/5 text-xs"
+                    :class="m.winner_clan_id === m.clan_home_id ? 'border-l-4 border-gold font-bold bg-gold/5' : ''">
+                    <div class="flex items-center gap-2 truncate">
+                      <img :src="m.clan_home?.badge_url || '/images/default-clan.png'"
+                        class="w-5 h-5 object-contain flex-shrink-0" />
+                      <span class="truncate max-w-[120px]">{{ m.clan_home?.name || 'TBD' }}</span>
+                    </div>
+                    <span class="font-black"
+                      :class="m.winner_clan_id === m.clan_home_id ? 'text-gold' : 'text-white/50'">
+                      {{ m.total_stars_home ?? '-' }} ⭐️
+                    </span>
+                  </div>
+
+                  <div class="flex justify-between items-center p-2 rounded-lg bg-white/5 text-xs"
+                    :class="m.winner_clan_id === m.clan_away_id ? 'border-l-4 border-gold font-bold bg-gold/5' : ''">
+                    <div class="flex items-center gap-2 truncate">
+                      <img :src="m.clan_away?.badge_url || '/images/default-clan.png'"
+                        class="w-5 h-5 object-contain flex-shrink-0" />
+                      <span class="truncate max-w-[120px]">{{ m.clan_away?.name || 'TBD' }}</span>
+                    </div>
+                    <span class="font-black"
+                      :class="m.winner_clan_id === m.clan_away_id ? 'text-gold' : 'text-white/50'">
+                      {{ m.total_stars_away ?? '-' }} ⭐️
+                    </span>
+                  </div>
+                </div>
+
+                <div
+                  class="mt-2.5 pt-2 border-t border-white/5 text-[9px] text-white/40 text-center uppercase tracking-wider font-semibold">
+                  Destruction : {{ m.total_destruction_home ?? 0 }}% vs {{ m.total_destruction_away ?? 0 }}%
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- ================= TAB 2: PHASE FINALE (KNOCKOUT) ================= -->
+        <div v-if="activeTab === 'knockout'" class="space-y-6 sm:space-y-10">
+
+          <div class="text-center max-w-xl mx-auto">
+            <h2 class="text-xl sm:text-3xl font-black italic uppercase text-gold tracking-tight mb-1">
+              ARBRE DE LA PHASE FINALE
+            </h2>
+            <p class="text-[10px] sm:text-xs text-white/40 uppercase tracking-widest">
+              Demi-finales (Croisées) & Grande Finale Nationale
+            </p>
+          </div>
+
+          <!-- Mobile Responsive Vertical Bracket -->
+          <div class="space-y-6 lg:space-y-0 lg:grid lg:grid-cols-3 lg:gap-6 lg:items-center">
+
+            <!-- Demi-Finale 1 -->
+            <div class="glass-card p-4 sm:p-5 border-gold/20 relative">
+              <div class="text-center mb-3">
+                <span
+                  class="text-[9px] uppercase font-black tracking-widest text-gold bg-gold/10 px-2.5 py-0.5 rounded-full border border-gold/20 inline-block mb-1">
+                  DEMI-FINALE 1
+                </span>
+                <p class="text-[9px] text-white/40">1er Groupe A vs 2ème Groupe B</p>
+              </div>
+
+              <div class="space-y-2">
+                <div class="flex justify-between items-center p-2.5 rounded-xl bg-white/5 text-xs"
+                  :class="semiFinal1?.winner_clan_id === semiFinal1?.clan_home_id ? 'border border-gold text-gold font-bold bg-gold/10' : ''">
+                  <div class="flex items-center gap-2 truncate">
+                    <img :src="semiFinal1?.clan_home?.badge_url || '/images/default-clan.png'"
+                      class="w-6 h-6 object-contain flex-shrink-0" />
+                    <span class="font-bold truncate max-w-[120px]">{{ semiFinal1?.clan_home?.name || '1er Groupe A'
+                    }}</span>
+                  </div>
+                  <span class="font-black text-base text-gold">{{ semiFinal1?.total_stars_home ?? '-' }}</span>
+                </div>
+
+                <div class="text-center text-[9px] font-black text-white/20 italic">VS</div>
+
+                <div class="flex justify-between items-center p-2.5 rounded-xl bg-white/5 text-xs"
+                  :class="semiFinal1?.winner_clan_id === semiFinal1?.clan_away_id ? 'border border-gold text-gold font-bold bg-gold/10' : ''">
+                  <div class="flex items-center gap-2 truncate">
+                    <img :src="semiFinal1?.clan_away?.badge_url || '/images/default-clan.png'"
+                      class="w-6 h-6 object-contain flex-shrink-0" />
+                    <span class="font-bold truncate max-w-[120px]">{{ semiFinal1?.clan_away?.name || '2ème Groupe B'
+                    }}</span>
+                  </div>
+                  <span class="font-black text-base text-gold">{{ semiFinal1?.total_stars_away ?? '-' }}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- GRANDE FINALE (Centerpiece) -->
             <div
-              class="h-full bg-gradient-to-r from-gold to-orange-500 rounded-full transition-all duration-1000"
-              :style="{ width: (confirmedCount / 16) * 100 + '%' }"
-            ></div>
+              class="glass-card p-5 sm:p-7 border-gold shadow-[0_0_30px_rgba(212,175,55,0.2)] text-center relative lg:scale-105">
+              <div class="trophy-icon text-4xl sm:text-5xl mb-2">🏆</div>
+              <h3 class="text-lg sm:text-2xl font-black italic uppercase text-gold tracking-tight mb-3 sm:mb-4">
+                GRANDE FINALE
+              </h3>
+
+              <div class="space-y-2.5">
+                <div class="flex justify-between items-center p-3 rounded-xl bg-gold/10 border border-gold/30 text-xs"
+                  :class="grandFinal?.winner_clan_id === grandFinal?.clan_home_id ? 'winner-glow' : ''">
+                  <div class="flex items-center gap-2.5 truncate">
+                    <img :src="grandFinal?.clan_home?.badge_url || '/images/default-clan.png'"
+                      class="w-7 h-7 object-contain flex-shrink-0" />
+                    <span class="font-black text-white truncate max-w-[130px]">{{ grandFinal?.clan_home?.name ||
+                      'Vainqueur Demi 1' }}</span>
+                  </div>
+                  <span class="font-black text-lg text-gold">{{ grandFinal?.total_stars_home ?? '-' }}</span>
+                </div>
+
+                <div class="text-[9px] font-black text-gold italic uppercase tracking-widest">FINAL SHOWDOWN</div>
+
+                <div class="flex justify-between items-center p-3 rounded-xl bg-gold/10 border border-gold/30 text-xs"
+                  :class="grandFinal?.winner_clan_id === grandFinal?.clan_away_id ? 'winner-glow' : ''">
+                  <div class="flex items-center gap-2.5 truncate">
+                    <img :src="grandFinal?.clan_away?.badge_url || '/images/default-clan.png'"
+                      class="w-7 h-7 object-contain flex-shrink-0" />
+                    <span class="font-black text-white truncate max-w-[130px]">{{ grandFinal?.clan_away?.name ||
+                      'Vainqueur Demi 2' }}</span>
+                  </div>
+                  <span class="font-black text-lg text-gold">{{ grandFinal?.total_stars_away ?? '-' }}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Demi-Finale 2 -->
+            <div class="glass-card p-4 sm:p-5 border-gold/20 relative">
+              <div class="text-center mb-3">
+                <span
+                  class="text-[9px] uppercase font-black tracking-widest text-gold bg-gold/10 px-2.5 py-0.5 rounded-full border border-gold/20 inline-block mb-1">
+                  DEMI-FINALE 2
+                </span>
+                <p class="text-[9px] text-white/40">1er Groupe B vs 2ème Groupe A</p>
+              </div>
+
+              <div class="space-y-2">
+                <div class="flex justify-between items-center p-2.5 rounded-xl bg-white/5 text-xs"
+                  :class="semiFinal2?.winner_clan_id === semiFinal2?.clan_home_id ? 'border border-gold text-gold font-bold bg-gold/10' : ''">
+                  <div class="flex items-center gap-2 truncate">
+                    <img :src="semiFinal2?.clan_home?.badge_url || '/images/default-clan.png'"
+                      class="w-6 h-6 object-contain flex-shrink-0" />
+                    <span class="font-bold truncate max-w-[120px]">{{ semiFinal2?.clan_home?.name || '1er Groupe B'
+                    }}</span>
+                  </div>
+                  <span class="font-black text-base text-gold">{{ semiFinal2?.total_stars_home ?? '-' }}</span>
+                </div>
+
+                <div class="text-center text-[9px] font-black text-white/20 italic">VS</div>
+
+                <div class="flex justify-between items-center p-2.5 rounded-xl bg-white/5 text-xs"
+                  :class="semiFinal2?.winner_clan_id === semiFinal2?.clan_away_id ? 'border border-gold text-gold font-bold bg-gold/10' : ''">
+                  <div class="flex items-center gap-2 truncate">
+                    <img :src="semiFinal2?.clan_away?.badge_url || '/images/default-clan.png'"
+                      class="w-6 h-6 object-contain flex-shrink-0" />
+                    <span class="font-bold truncate max-w-[120px]">{{ semiFinal2?.clan_away?.name || '2ème Groupe A'
+                    }}</span>
+                  </div>
+                  <span class="font-black text-base text-gold">{{ semiFinal2?.total_stars_away ?? '-' }}</span>
+                </div>
+              </div>
+            </div>
+
           </div>
-          <p class="text-xs font-black text-gold uppercase tracking-widest">
-            {{ confirmedCount }} / 16 clans confirmés
-          </p>
+
         </div>
+
       </div>
 
-      <!-- Tournament Tree -->
-      <div v-else class="bracket-wrapper">
-        <div class="bracket-scroll-container overflow-x-auto pb-10">
-          <div
-            class="bracket-container flex gap-12 md:gap-20 min-w-[1200px] justify-center px-4"
-          >
-            <!-- Round 1: 8èmes -->
-            <div class="bracket-round flex flex-col w-64">
-              <h4
-                class="round-title text-[10px] uppercase font-black tracking-[0.3em] text-white/30 mb-8 text-center italic"
-              >
-                8èmes de Finale
-              </h4>
-              <div
-                class="matches-list flex flex-col justify-around flex-1 gap-6"
-              >
-              <!-- {{ bracket.r16[1] }} -->
-
-                <div
-                  v-for="match in bracket.r16"
-                  :key="match.id"
-                  class="match-card glass-card !p-3 border-white/5 hover:border-gold/30 transition-all duration-300"
-                >
-                  <div class="match-teams space-y-2">
-                    <div
-                      class="team-row flex items-center gap-3 p-2 rounded-lg"
-                      :class="getTeamStatusClass(match, 1)"
-                    >
-                      <img
-                        :src="
-                          match.clan_home?.badge_url || '/images/default-clan.png'
-                        "
-                        class="w-6 h-6 object-contain"
-                      />
-                      <span class="name flex-1 font-bold text-sm truncate">{{
-                        match.clan_home?.name || "TBD"
-                      }}</span>
-                      <span
-                        v-if="match.status === 'completed'"
-                        class="score font-black text-gold"
-                        >{{ match.total_stars_home }}</span
-                      >
-                    </div>
-                    <div class="vs-divider flex items-center gap-2">
-                      <div class="h-px flex-1 bg-white/5"></div>
-                      <span
-                        class="text-[8px] font-black italic opacity-20 uppercase"
-                        >VS</span
-                      >
-                      <div class="h-px flex-1 bg-white/5"></div>
-                    </div>
-                    <div
-                      class="team-row flex items-center gap-3 p-2 rounded-lg"
-                      :class="getTeamStatusClass(match, 2)"
-                    >
-                      <img
-                        :src="
-                          match.clan_away?.badge_url || '/images/default-clan.png'
-                        "
-                        class="w-6 h-6 object-contain"
-                      />
-                      <span class="name flex-1 font-bold text-sm truncate">{{
-                        match.clan_away?.name || "TBD"
-                      }}</span>
-                      <span
-                        v-if="match.status === 'completed'"
-                        class="score font-black text-gold"
-                        >{{ match.total_stars_away }}</span
-                      >
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Round 2: Quarts -->
-            <div class="bracket-round flex flex-col w-64">
-              <h4
-                class="round-title text-[10px] uppercase font-black tracking-[0.3em] text-white/30 mb-8 text-center italic"
-              >
-                Quarts de Finale
-              </h4>
-              <div
-                class="matches-list flex flex-col justify-around flex-1 gap-6"
-              >
-                <div
-                  v-for="match in bracket.r8"
-                  :key="match.id"
-                  class="match-card glass-card !p-3 border-white/5 hover:border-gold/30 transition-all duration-300"
-                >
-                  <div class="match-teams space-y-2">
-                    <div
-                      class="team-row flex items-center gap-3 p-2 rounded-lg"
-                      :class="getTeamStatusClass(match, 1)"
-                    >
-                      <img
-                        v-if="match.clan_home"
-                        :src="match.clan_home.badge_url"
-                        class="w-6 h-6 object-contain"
-                      />
-                      <span class="name flex-1 font-bold text-sm truncate">{{
-                        match.clan_home?.name || "Vainqueur M" + match.match_number
-                      }}</span>
-                    </div>
-                    <div class="vs-divider flex items-center gap-2">
-                      <div class="h-px flex-1 bg-white/5"></div>
-                      <span
-                        class="text-[8px] font-black italic opacity-20 uppercase"
-                        >VS</span
-                      >
-                      <div class="h-px flex-1 bg-white/5"></div>
-                    </div>
-                    <div
-                      class="team-row flex items-center gap-3 p-2 rounded-lg"
-                      :class="getTeamStatusClass(match, 2)"
-                    >
-                      <img
-                        v-if="match.clan_away"
-                        :src="match.clan_away.badge_url"
-                        class="w-6 h-6 object-contain"
-                      />
-                      <span class="name flex-1 font-bold text-sm truncate">{{
-                        match.clan_away?.name ||
-                        "Vainqueur M" + (match.match_number + 1)
-                      }}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Round 3: Semis -->
-            <div class="bracket-round flex flex-col w-64">
-              <h4
-                class="round-title text-[10px] uppercase font-black tracking-[0.3em] text-white/30 mb-8 text-center italic text-gold"
-              >
-                Demi-Finales
-              </h4>
-              <div
-                class="matches-list flex flex-col justify-around flex-1 gap-6"
-              >
-                <div
-                  v-for="match in bracket.r4"
-                  :key="match.id"
-                  class="match-card glass-card !p-3 border-white/5 hover:border-gold/50 transition-all duration-300 semi-card"
-                >
-                  <div class="match-teams space-y-2">
-                    <div
-                      class="team-row flex items-center gap-3 p-2 rounded-lg"
-                      :class="getTeamStatusClass(match, 1)"
-                    >
-                      <span
-                        class="name flex-1 font-black text-sm text-center uppercase italic opacity-70"
-                        >{{ match.clan_home?.name || "TOP 4" }}</span
-                      >
-                    </div>
-                    <div class="vs-divider flex items-center gap-2">
-                      <div class="h-px flex-1 bg-white/5"></div>
-                      <span
-                        class="text-[8px] font-black italic opacity-20 uppercase"
-                        >VS</span
-                      >
-                      <div class="h-px flex-1 bg-white/5"></div>
-                    </div>
-                    <div
-                      class="team-row flex items-center gap-3 p-2 rounded-lg"
-                      :class="getTeamStatusClass(match, 2)"
-                    >
-                      <span
-                        class="name flex-1 font-black text-sm text-center uppercase italic opacity-70"
-                        >{{ match.clan_away?.name || "TOP 4" }}</span
-                      >
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Round 4: Final + Trophy -->
-            <div class="bracket-round flex flex-col w-72 pt-10">
-              <div class="grand-finale-header text-center mb-10">
-                <div
-                  class="trophy-icon text-7xl mb-4 drop-shadow-2xl animate-bounce-slow"
-                >
-                  🏆
-                </div>
-                <h4
-                  class="round-title text-[12px] uppercase font-black tracking-[0.5em] text-gold italic"
-                >
-                  GRANDE FINALE
-                </h4>
-              </div>
-              <div class="matches-list flex flex-col justify-center flex-1">
-                <div
-                  v-for="match in bracket.r2"
-                  :key="match.id"
-                  class="match-card glass-card !p-6 border-gold/30 shadow-[0_0_50px_rgba(212,175,55,0.1)] final-card"
-                >
-                  <div class="match-teams space-y-4">
-                    <div
-                      class="team-row flex items-center gap-4 p-4 rounded-xl scale-110"
-                      :class="getTeamStatusClass(match, 1)"
-                    >
-                      <img
-                        v-if="match.clan_home"
-                        :src="match.clan_home.badge_url"
-                        class="w-10 h-10 object-contain"
-                      />
-                      <span
-                        class="name flex-1 font-black text-xl italic tracking-tighter truncate"
-                        >{{ match.clan_home?.name || "FINALE" }}</span
-                      >
-                    </div>
-                    <div class="vs-divider flex items-center gap-4">
-                      <div class="h-px flex-1 bg-gold/20"></div>
-                      <span
-                        class="text-xs font-black italic text-gold uppercase tracking-widest"
-                        >OU</span
-                      >
-                      <div class="h-px flex-1 bg-gold/20"></div>
-                    </div>
-                    <div
-                      class="team-row flex items-center gap-4 p-4 rounded-xl scale-110"
-                      :class="getTeamStatusClass(match, 2)"
-                    >
-                      <img
-                        v-if="match.clan_away"
-                        :src="match.clan_away.badge_url"
-                        class="w-10 h-10 object-contain"
-                      />
-                      <span
-                        class="name flex-1 font-black text-xl italic tracking-tighter truncate"
-                        >{{ match.clan_away?.name || "FINALE" }}</span
-                      >
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
   </div>
 </template>
 
 <script setup>
 const { $api } = useNuxtApp();
-const bracket = ref({});
-const confirmedCount = ref(0);
+
+const activeTab = ref('groups');
 const loading = ref(true);
+
+const standings = ref({ A: [], B: [] });
+const allMatches = ref([]);
+
+const groupMatches = computed(() => allMatches.value.filter(m => m.phase === 'group_stage' || m.group));
+const semiFinals = computed(() => allMatches.value.filter(m => m.phase === 'semi_final'));
+const semiFinal1 = computed(() => semiFinals.value[0] || null);
+const semiFinal2 = computed(() => semiFinals.value[1] || null);
+const grandFinal = computed(() => allMatches.value.find(m => m.phase === 'final') || null);
 
 const fetchData = async () => {
   loading.value = true;
   try {
-    const [bracketData, adminStats] = await Promise.all([
-      $api("/tournament/bracket"),
-      $api("/admin/stats"),
+    const [groupData, matchesData] = await Promise.all([
+      $api('/tournament/groups'),
+      $api('/admin/competitions/1/matches').catch(() => []),
     ]);
-    bracket.value = bracketData;
-    console.log(bracket.value);
-    
-    confirmedCount.value = adminStats.confirmed_registrations || 0;
+
+    standings.value = groupData || { A: [], B: [] };
+    allMatches.value = matchesData || [];
   } catch (e) {
-    console.error("Error fetching bracket data:", e);
+    console.error('Error loading tournament data:', e);
   } finally {
     loading.value = false;
   }
-};
-
-const getTeamStatusClass = (match, teamNum) => {
-  if (match.status !== "completed") return "";
-  const isWinner =
-    teamNum === 1
-      ? match.winner_clan_id === match.clan_home_id
-      : match.winner_clan_id === match.clan_away_id;
-  return isWinner
-    ? "winner-glow bg-gold/10 text-gold scale-[1.02]"
-    : "opacity-30 grayscale";
 };
 
 onMounted(fetchData);
@@ -344,44 +531,23 @@ onMounted(fetchData);
 <style scoped>
 .bracket-page {
   background:
-    radial-gradient(
-      circle at 50% 0%,
-      rgba(212, 175, 55, 0.15) 0%,
-      transparent 60%
-    ),
+    radial-gradient(circle at 50% 0%, rgba(212, 175, 55, 0.12) 0%, transparent 60%),
     linear-gradient(to bottom, #06070a, #0a1122);
 }
 
-.bracket-wrapper {
-  background: rgba(255, 255, 255, 0.02);
-  border-radius: 40px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  padding: 40px 0;
-  backdrop-filter: blur(10px);
-}
-
-.match-card {
-  transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
-  position: relative;
-}
-
-.match-card:hover {
-  transform: scale(1.05);
-  z-index: 10;
-  background: rgba(255, 255, 255, 0.07);
-}
-
-.winner-glow {
-  box-shadow: inset 0 0 20px rgba(212, 175, 55, 0.1);
+.glass-card {
+  background: rgba(10, 11, 18, 0.85);
+  backdrop-filter: blur(12px);
+  border-radius: 16px;
 }
 
 .spinner {
-  width: 60px;
-  height: 60px;
-  border: 4px solid rgba(255, 255, 255, 0.03);
-  border-top-color: var(--primary);
+  width: 36px;
+  height: 36px;
+  border: 3px solid rgba(255, 255, 255, 0.05);
+  border-top-color: #ffd700;
   border-radius: 50%;
-  animation: spin 0.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  animation: spin 0.8s linear infinite;
 }
 
 @keyframes spin {
@@ -390,44 +556,30 @@ onMounted(fetchData);
   }
 }
 
-@keyframes bounceSlow {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
+.winner-glow {
+  box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
 }
 
-.animate-bounce-slow {
-  animation: bounceSlow 3s ease-in-out infinite;
+.status-badge {
+  padding: 2px 7px;
+  border-radius: 4px;
+  font-size: 9px;
+  font-weight: 900;
+  text-transform: uppercase;
 }
 
-/* Custom Scrollbar for the horizontal bracket */
-.bracket-scroll-container::-webkit-scrollbar {
-  height: 8px;
-}
-.bracket-scroll-container::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.02);
-  border-radius: 10px;
-}
-.bracket-scroll-container::-webkit-scrollbar-thumb {
-  background: rgba(212, 175, 55, 0.2);
-  border-radius: 10px;
-}
-.bracket-scroll-container::-webkit-scrollbar-thumb:hover {
-  background: rgba(212, 175, 55, 0.4);
+.status-completed {
+  background: rgba(74, 222, 128, 0.2);
+  color: #4ade80;
 }
 
-@media (max-width: 640px) {
-  .heading {
-    font-size: 2.2rem;
-    line-height: 1.1;
-  }
-  .bracket-wrapper {
-    border-radius: 20px;
-    padding: 20px 0;
-  }
+.status-in_progress {
+  background: rgba(234, 179, 8, 0.2);
+  color: #eab308;
+}
+
+.status-scheduled {
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.4);
 }
 </style>

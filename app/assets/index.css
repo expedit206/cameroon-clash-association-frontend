@@ -262,3 +262,22 @@ h4,
 .btn-tournament.secondary:hover {
   background: rgba(255, 255, 255, 0.1);
 }
+
+/* Global Select & Option Dropdown Dark Contrast */
+select {
+  color-scheme: dark;
+}
+
+select option {
+  background-color: #0e1017 !important;
+  color: #ffffff !important;
+  padding: 10px;
+}
+
+select option:hover,
+select option:focus,
+select option:active,
+select option:checked {
+  background-color: #1a1d28 !important;
+  color: #ffd700 !important;
+}

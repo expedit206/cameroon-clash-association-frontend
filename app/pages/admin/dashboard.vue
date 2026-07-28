@@ -68,16 +68,16 @@
             }}</span>
           </NuxtLink>
 
-          <!-- <NuxtLink to="/admin/clans" class="admin-action-btn">
-            <span class="btn-icon">🏷️</span>
+          <NuxtLink to="/admin/clans" class="admin-action-btn">
+            <span class="btn-icon">🛡️</span>
             <div class="btn-text">
-              <p>Valider les Clans</p>
-              <small>Approuver les candidatures des capitaines</small>
+              <p>Gestion & Validation Clans</p>
+              <small>Consulter, supprimer et gérer toutes les équipes</small>
             </div>
             <span v-if="stats.pending_clans > 0" class="badge-count">{{
               stats.pending_clans
             }}</span>
-          </NuxtLink> -->
+          </NuxtLink>
 
           <NuxtLink to="/admin/registrations" class="admin-action-btn">
             <span class="btn-icon">💳</span>
@@ -87,11 +87,19 @@
             </div>
           </NuxtLink>
 
-          <NuxtLink to="/admin/tournaments" class="admin-action-btn border-gold/30 bg-gold/5">
+          <NuxtLink to="/admin/live" class="admin-action-btn border-gold/50 bg-gold/10">
+            <span class="btn-icon">🎰</span>
+            <div class="btn-text">
+              <p class="text-gold font-black">Live Arena & Tirage (5v5)</p>
+              <small>Tirage au sort en live, Poules A/B, Standings & Knockout</small>
+            </div>
+          </NuxtLink>
+
+          <NuxtLink to="/admin/tournaments" class="admin-action-btn">
             <span class="btn-icon">🏆</span>
             <div class="btn-text">
-              <p class="text-gold">Gestion Tournoi</p>
-              <small>Saisie des scores & Bracket</small>
+              <p>Gestion Matches Classique</p>
+              <small>Liste complète des matches du tournoi</small>
             </div>
           </NuxtLink>
         </div>

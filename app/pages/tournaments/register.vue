@@ -123,9 +123,9 @@
                   </p>
                 </div>
 
-                <button class="btn-next w-full" @click="goToRoster" :disabled="!isEligible || preRegistering">
+                <button class="btn-next w-full" @click="" :disabled="!isEligible || preRegistering">
                   <span v-if="preRegistering">Enregistrement...</span>
-                  <span v-else-if="isEligible">Enregistrer le Clan et Continuer</span>
+                  <span v-else-if="isEligible">Inscription des clans achevée</span>
                   <span v-else>Inéligible au Tournoi</span>
                 </button>
               </div>
