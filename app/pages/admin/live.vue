@@ -299,6 +299,18 @@
                 <span class="status-badge" :class="`status-${m.status}`">{{ m.status }}</span>
               </div>
 
+              <!-- Date & Heure du match -->
+              <div
+                class="mb-2 flex items-center justify-between p-1.5 rounded bg-black/40 border border-white/5 text-[10px]">
+                <span class="text-white/70 font-mono truncate">
+                  📅 {{ formatScheduledDate(m.scheduled_at) }}
+                </span>
+                <button @click="openScheduleModal(m)"
+                  class="ml-2 px-2 py-0.5 bg-gold/20 hover:bg-gold/40 text-gold font-bold text-[9px] rounded uppercase transition-colors flex-shrink-0">
+                  {{ m.scheduled_at ? '✏️ Modifier Date' : '➕ Horaire' }}
+                </button>
+              </div>
+
               <div class="space-y-2 mb-3">
                 <div class="flex justify-between items-center p-2 rounded-lg bg-white/5 text-xs"
                   :class="m.winner_clan_id === m.clan_home_id ? 'border-l-4 border-gold font-bold bg-gold/5' : ''">
@@ -482,7 +494,7 @@
             <!-- Grille Groupe B -->
             <div v-if="groupB.length >= 2" class="overflow-x-auto">
               <p class="text-[9px] text-purple-400 font-black uppercase mb-1.5">Groupe B — {{ groupMatrixCount(groupB)
-              }} matchs</p>
+                }} matchs</p>
               <table class="text-[9px] border-collapse">
                 <thead>
                   <tr>
@@ -663,6 +675,46 @@
         </div>
       </div>
 
+      <!-- MODAL: PROGRAMMER PROGRAMMATION (HEURE ET DATE DU MATCH) -->
+      <div v-if="showScheduleModal && selectedMatchForScheduling"
+        class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-3">
+        <div class="glass-card w-full max-w-md p-4 sm:p-6 border-gold/30">
+          <div class="flex justify-between items-center mb-4 border-b border-white/10 pb-3">
+            <h2 class="text-lg font-black italic uppercase text-gold">
+              📅 HORAIRE DU MATCH #{{ selectedMatchForScheduling.match_number || selectedMatchForScheduling.id }}
+            </h2>
+            <button @click="showScheduleModal = false" class="text-white/40 hover:text-white text-xl">✖</button>
+          </div>
+
+          <div class="mb-4 text-xs text-white/70">
+            <p class="font-bold text-white mb-1">
+              {{ selectedMatchForScheduling.clan_home?.name }} <span class="text-gold">VS</span> {{
+                selectedMatchForScheduling.clan_away?.name }}
+            </p>
+            <p class="text-[10px] text-white/40">Définissez la date et l'heure prévues pour le coup d'envoi du match.</p>
+          </div>
+
+          <form @submit.prevent="saveSchedule" class="space-y-4">
+            <div>
+              <label class="block text-[10px] uppercase font-bold text-white/50 mb-1">Date et Heure du Match</label>
+              <input type="datetime-local" v-model="scheduledAtInput" required
+                class="w-full p-2.5 rounded-xl bg-black border border-white/20 text-white font-bold text-xs focus:border-gold outline-none" />
+            </div>
+
+            <div class="flex gap-2 pt-3 border-t border-white/10">
+              <button type="button" @click="showScheduleModal = false"
+                class="flex-1 py-2.5 bg-white/10 text-white font-bold text-xs rounded-xl hover:bg-white/20">
+                Annuler
+              </button>
+              <button type="submit" :disabled="savingSchedule"
+                class="flex-1 py-2.5 bg-gold text-black font-bold text-xs rounded-xl hover:bg-yellow-400 disabled:opacity-50">
+                {{ savingSchedule ? 'Enregistrement...' : '💾 Enregistrer la Date' }}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
     </div>
   </div>
 </template>
@@ -674,8 +726,54 @@ const activeTab = ref('standings');
 const showDrawModal = ref(false);
 const showCreateMatchModal = ref(false);
 const showScoreModal = ref(false);
+const showScheduleModal = ref(false);
 const generating = ref(false);
 const generateSuccess = ref('');
+const selectedMatchForScheduling = ref(null);
+const scheduledAtInput = ref('');
+const savingSchedule = ref(false);
+
+const openScheduleModal = (match) => {
+  selectedMatchForScheduling.value = match;
+  if (match.scheduled_at) {
+    const d = new Date(match.scheduled_at);
+    // Format YYYY-MM-DDTHH:mm for datetime-local
+    const pad = (n) => String(n).padStart(2, '0');
+    scheduledAtInput.value = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  } else {
+    scheduledAtInput.value = '';
+  }
+  showScheduleModal.value = true;
+};
+
+const saveSchedule = async () => {
+  if (!selectedMatchForScheduling.value || !scheduledAtInput.value) return;
+  savingSchedule.value = true;
+  try {
+    await $api(`/admin/matches/${selectedMatchForScheduling.value.id}`, {
+      method: 'PUT',
+      body: { scheduled_at: scheduledAtInput.value },
+    });
+    showScheduleModal.value = false;
+    await fetchData();
+  } catch (e) {
+    alert('Erreur lors de la programmation de la date du match.');
+  } finally {
+    savingSchedule.value = false;
+  }
+};
+
+const formatScheduledDate = (dateStr) => {
+  if (!dateStr) return 'Non programmé';
+  const d = new Date(dateStr);
+  return d.toLocaleString('fr-FR', {
+    timeZone: 'Africa/Douala',
+    day: '2-digit',
+    month: 'short',
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+};
 
 const confirmedRegistrations = ref([]);
 const standings = ref({ A: [], B: [] });

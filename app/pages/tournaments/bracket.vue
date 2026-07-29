@@ -309,16 +309,50 @@
 
           <!-- Group Matches Results -->
           <div v-if="groupMatches.length > 0" class="space-y-4">
-            <h3 class="text-base sm:text-xl font-black italic uppercase text-white tracking-tight">
+            <h3 class="text-base sm:text-xl font-black italic uppercase text-white tracking-tight flex items-center gap-3">
               RÉSULTATS DE PHASE DE POULES ({{ groupMatches.length }})
+              <!-- Légende priorité -->
+              <span class="flex items-center gap-3 text-[9px] font-normal not-italic normal-case tracking-normal">
+                <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-red-500 animate-pulse inline-block"></span>Aujourd'hui / Demain</span>
+                <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-orange-400 animate-pulse inline-block"></span>Dans 3 jours</span>
+              </span>
             </h3>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-5">
               <div v-for="m in groupMatches" :key="m.id"
-                class="glass-card p-3.5 sm:p-4 border-white/5 hover:border-gold/30 transition-all">
+                class="glass-card p-3.5 sm:p-4 border-white/5 hover:border-gold/30 transition-all relative"
+                :class="{
+                  'border-red-500/40 shadow-[0_0_12px_rgba(239,68,68,0.15)]': matchPriority(m) === 'urgent',
+                  'border-orange-400/30 shadow-[0_0_10px_rgba(251,146,60,0.1)]': matchPriority(m) === 'soon',
+                }">
+
+                <!-- Priority blink indicator -->
+                <span v-if="matchPriority(m) === 'urgent'"
+                  class="absolute top-2.5 right-2.5 w-2.5 h-2.5 rounded-full bg-red-500 animate-ping inline-block"
+                  title="Match imminent (< 24h)"></span>
+                <span v-else-if="matchPriority(m) === 'soon'"
+                  class="absolute top-2.5 right-2.5 w-2.5 h-2.5 rounded-full bg-orange-400 animate-pulse inline-block"
+                  title="Match proche (< 3 jours)"></span>
+
                 <div class="flex justify-between items-center mb-2.5 text-[9px] sm:text-[10px]">
                   <span class="font-black uppercase text-gold">Groupe {{ m.group || 'A' }}</span>
-                  <span class="status-badge" :class="`status-${m.status}`">{{ m.status }}</span>
+                  <span class="status-badge" :class="`status-${m.status}`">
+                    {{ m.status === 'completed' ? 'Terminé' : (m.status === 'in_progress' ? 'En Cours' : 'Programmé') }}
+                  </span>
+                </div>
+
+                <!-- Scheduled Date/Time -->
+                <div class="mb-2.5 text-center">
+                  <span v-if="m.scheduled_at"
+                    class="inline-flex items-center gap-1.5 text-[10px] font-mono font-bold px-2 py-0.5 rounded-full"
+                    :class="{
+                      'bg-red-500/20 text-red-400': matchPriority(m) === 'urgent',
+                      'bg-orange-400/20 text-orange-300': matchPriority(m) === 'soon',
+                      'bg-white/5 text-white/50': matchPriority(m) === 'none',
+                    }">
+                    📅 {{ formatDate(m.scheduled_at) }}
+                  </span>
+                  <span v-else class="text-[9px] text-white/20 italic font-mono">Non programmé</span>
                 </div>
 
                 <div class="space-y-2">
@@ -331,7 +365,7 @@
                     </div>
                     <span class="font-black"
                       :class="m.winner_clan_id === m.clan_home_id ? 'text-gold' : 'text-white/50'">
-                      {{ m.total_stars_home ?? '-' }} ⭐️
+                      {{ m.status === 'completed' ? (m.total_stars_home ?? 0) + ' ⭐️' : '-' }}
                     </span>
                   </div>
 
@@ -344,12 +378,12 @@
                     </div>
                     <span class="font-black"
                       :class="m.winner_clan_id === m.clan_away_id ? 'text-gold' : 'text-white/50'">
-                      {{ m.total_stars_away ?? '-' }} ⭐️
+                      {{ m.status === 'completed' ? (m.total_stars_away ?? 0) + ' ⭐️' : '-' }}
                     </span>
                   </div>
                 </div>
 
-                <div
+                <div v-if="m.status === 'completed'"
                   class="mt-2.5 pt-2 border-t border-white/5 text-[9px] text-white/40 text-center uppercase tracking-wider font-semibold">
                   Destruction : {{ m.total_destruction_home ?? 0 }}% vs {{ m.total_destruction_away ?? 0 }}%
                 </div>
@@ -367,7 +401,7 @@
               ARBRE DE LA PHASE FINALE
             </h2>
             <p class="text-[10px] sm:text-xs text-white/40 uppercase tracking-widest">
-              Demi-finales (Croisées) & Grande Finale Nationale
+              Demi-finales (Croisées) &amp; Grande Finale Nationale
             </p>
           </div>
 
@@ -382,6 +416,9 @@
                   DEMI-FINALE 1
                 </span>
                 <p class="text-[9px] text-white/40">1er Groupe A vs 2ème Groupe B</p>
+                <p v-if="semiFinal1?.scheduled_at" class="text-[10px] font-mono text-white/60 mt-1">
+                  📅 {{ formatDate(semiFinal1.scheduled_at) }}
+                </p>
               </div>
 
               <div class="space-y-2">
@@ -390,8 +427,7 @@
                   <div class="flex items-center gap-2 truncate">
                     <img :src="semiFinal1?.clan_home?.badge_url || '/images/default-clan.png'"
                       class="w-6 h-6 object-contain flex-shrink-0" />
-                    <span class="font-bold truncate max-w-[120px]">{{ semiFinal1?.clan_home?.name || '1er Groupe A'
-                    }}</span>
+                    <span class="font-bold truncate max-w-[120px]">{{ semiFinal1?.clan_home?.name || '1er Groupe A' }}</span>
                   </div>
                   <span class="font-black text-base text-gold">{{ semiFinal1?.total_stars_home ?? '-' }}</span>
                 </div>
@@ -403,8 +439,7 @@
                   <div class="flex items-center gap-2 truncate">
                     <img :src="semiFinal1?.clan_away?.badge_url || '/images/default-clan.png'"
                       class="w-6 h-6 object-contain flex-shrink-0" />
-                    <span class="font-bold truncate max-w-[120px]">{{ semiFinal1?.clan_away?.name || '2ème Groupe B'
-                    }}</span>
+                    <span class="font-bold truncate max-w-[120px]">{{ semiFinal1?.clan_away?.name || '2ème Groupe B' }}</span>
                   </div>
                   <span class="font-black text-base text-gold">{{ semiFinal1?.total_stars_away ?? '-' }}</span>
                 </div>
@@ -415,9 +450,12 @@
             <div
               class="glass-card p-5 sm:p-7 border-gold shadow-[0_0_30px_rgba(212,175,55,0.2)] text-center relative lg:scale-105">
               <div class="trophy-icon text-4xl sm:text-5xl mb-2">🏆</div>
-              <h3 class="text-lg sm:text-2xl font-black italic uppercase text-gold tracking-tight mb-3 sm:mb-4">
+              <h3 class="text-lg sm:text-2xl font-black italic uppercase text-gold tracking-tight mb-1 sm:mb-2">
                 GRANDE FINALE
               </h3>
+              <p v-if="grandFinal?.scheduled_at" class="text-[10px] font-mono text-white/60 mb-3">
+                📅 {{ formatDate(grandFinal.scheduled_at) }}
+              </p>
 
               <div class="space-y-2.5">
                 <div class="flex justify-between items-center p-3 rounded-xl bg-gold/10 border border-gold/30 text-xs"
@@ -425,8 +463,7 @@
                   <div class="flex items-center gap-2.5 truncate">
                     <img :src="grandFinal?.clan_home?.badge_url || '/images/default-clan.png'"
                       class="w-7 h-7 object-contain flex-shrink-0" />
-                    <span class="font-black text-white truncate max-w-[130px]">{{ grandFinal?.clan_home?.name ||
-                      'Vainqueur Demi 1' }}</span>
+                    <span class="font-black text-white truncate max-w-[130px]">{{ grandFinal?.clan_home?.name || 'Vainqueur Demi 1' }}</span>
                   </div>
                   <span class="font-black text-lg text-gold">{{ grandFinal?.total_stars_home ?? '-' }}</span>
                 </div>
@@ -438,8 +475,7 @@
                   <div class="flex items-center gap-2.5 truncate">
                     <img :src="grandFinal?.clan_away?.badge_url || '/images/default-clan.png'"
                       class="w-7 h-7 object-contain flex-shrink-0" />
-                    <span class="font-black text-white truncate max-w-[130px]">{{ grandFinal?.clan_away?.name ||
-                      'Vainqueur Demi 2' }}</span>
+                    <span class="font-black text-white truncate max-w-[130px]">{{ grandFinal?.clan_away?.name || 'Vainqueur Demi 2' }}</span>
                   </div>
                   <span class="font-black text-lg text-gold">{{ grandFinal?.total_stars_away ?? '-' }}</span>
                 </div>
@@ -454,6 +490,9 @@
                   DEMI-FINALE 2
                 </span>
                 <p class="text-[9px] text-white/40">1er Groupe B vs 2ème Groupe A</p>
+                <p v-if="semiFinal2?.scheduled_at" class="text-[10px] font-mono text-white/60 mt-1">
+                  📅 {{ formatDate(semiFinal2.scheduled_at) }}
+                </p>
               </div>
 
               <div class="space-y-2">
@@ -462,8 +501,7 @@
                   <div class="flex items-center gap-2 truncate">
                     <img :src="semiFinal2?.clan_home?.badge_url || '/images/default-clan.png'"
                       class="w-6 h-6 object-contain flex-shrink-0" />
-                    <span class="font-bold truncate max-w-[120px]">{{ semiFinal2?.clan_home?.name || '1er Groupe B'
-                    }}</span>
+                    <span class="font-bold truncate max-w-[120px]">{{ semiFinal2?.clan_home?.name || '1er Groupe B' }}</span>
                   </div>
                   <span class="font-black text-base text-gold">{{ semiFinal2?.total_stars_home ?? '-' }}</span>
                 </div>
@@ -475,8 +513,7 @@
                   <div class="flex items-center gap-2 truncate">
                     <img :src="semiFinal2?.clan_away?.badge_url || '/images/default-clan.png'"
                       class="w-6 h-6 object-contain flex-shrink-0" />
-                    <span class="font-bold truncate max-w-[120px]">{{ semiFinal2?.clan_away?.name || '2ème Groupe A'
-                    }}</span>
+                    <span class="font-bold truncate max-w-[120px]">{{ semiFinal2?.clan_away?.name || '2ème Groupe A' }}</span>
                   </div>
                   <span class="font-black text-base text-gold">{{ semiFinal2?.total_stars_away ?? '-' }}</span>
                 </div>
@@ -508,16 +545,46 @@ const semiFinal1 = computed(() => semiFinals.value[0] || null);
 const semiFinal2 = computed(() => semiFinals.value[1] || null);
 const grandFinal = computed(() => allMatches.value.find(m => m.phase === 'final') || null);
 
+/**
+ * Retourne la priorité d'un match selon la date programmée :
+ * - 'urgent' : dans moins de 24h
+ * - 'soon'   : dans moins de 3 jours
+ * - 'none'   : plus de 3 jours ou non programmé
+ */
+const matchPriority = (match) => {
+  if (!match.scheduled_at || match.status === 'completed') return 'none';
+  const now = new Date();
+  const scheduled = new Date(match.scheduled_at);
+  const diffHours = (scheduled - now) / (1000 * 60 * 60);
+  if (diffHours < 0) return 'none'; // match passé non terminé
+  if (diffHours <= 24) return 'urgent';
+  if (diffHours <= 72) return 'soon';
+  return 'none';
+};
+
+const formatDate = (dateStr) => {
+  if (!dateStr) return '';
+  const d = new Date(dateStr);
+  return d.toLocaleString('fr-FR', {
+    timeZone: 'Africa/Douala',
+    weekday: 'short',
+    day: '2-digit',
+    month: 'short',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+};
+
 const fetchData = async () => {
   loading.value = true;
   try {
     const [groupData, matchesData] = await Promise.all([
       $api('/tournament/groups'),
-      $api('/admin/competitions/1/matches').catch(() => []),
+      $api('/tournament/matches').catch(() => $api('/admin/competitions/1/matches').catch(() => [])),
     ]);
 
     standings.value = groupData || { A: [], B: [] };
-    allMatches.value = matchesData || [];
+    allMatches.value = Array.isArray(matchesData) ? matchesData : Object.values(matchesData).flat();
   } catch (e) {
     console.error('Error loading tournament data:', e);
   } finally {

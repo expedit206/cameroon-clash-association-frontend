@@ -172,7 +172,8 @@
               <div
                 class="text-lg font-black text-white ml-8 italic tracking-tighter"
               >
-                {{ formatDate(competition?.starts_at) }}
+                <!-- {{ formatDate(competition?.starts_at) }} -->
+                  29 juillet
               </div>
             </div>
           </div>
