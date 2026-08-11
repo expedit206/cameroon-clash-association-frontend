@@ -33,8 +33,10 @@
       <!-- Colonne 4 : Communauté -->
       <div class="footer-col">
         <p class="footer-col-title">Communauté</p>
-        <a href="#" class="footer-link">📱 Groupe WhatsApp</a>
-        <a href="#" class="footer-link">📲 Canal Telegram</a>
+        <a href="https://chat.whatsapp.com/GBHLhcO0JyLDJuYT8xJgSl?s=cl&p=a&ilr=1" target="_blank"
+          rel="noopener noreferrer" class="footer-link">📱 Groupe WhatsApp Officiel</a>
+        <a href="https://www.facebook.com/61558048971580/videos/1363948652603656/" target="_blank"
+          rel="noopener noreferrer" class="footer-link">📘 Page Facebook</a>
         <a href="/rules" class="footer-link">📜 Règlement</a>
         <a href="mailto:cca@tournoi.cm" class="footer-link">✉️ Contact Admin</a>
       </div>

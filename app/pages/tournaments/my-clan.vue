@@ -276,13 +276,26 @@ const matchPriority = (match) => {
 
 const formatScheduledDate = (dateStr) => {
   if (!dateStr) return 'Non programmé';
+  const TZ = 'Africa/Douala';
   const d = new Date(dateStr);
+  const time = d.toLocaleString('fr-FR', { timeZone: TZ, hour: '2-digit', minute: '2-digit' });
+
+  const now = new Date();
+  const toDay = (dt) => dt.toLocaleDateString('fr-FR', { timeZone: TZ });
+
+  if (toDay(d) === toDay(now)) return `Aujourd'hui à ${time}`;
+
+  const tomorrow = new Date(now);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  if (toDay(d) === toDay(tomorrow)) return `Demain à ${time}`;
+
   return d.toLocaleString('fr-FR', {
-    timeZone: 'Africa/Douala',
+    timeZone: TZ,
+    weekday: 'short',
     day: '2-digit',
     month: 'short',
     hour: '2-digit',
-    minute: '2-digit'
+    minute: '2-digit',
   });
 };
 

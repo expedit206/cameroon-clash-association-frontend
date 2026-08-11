@@ -136,7 +136,7 @@
                 <span class="text-lg">{{ player.is_substitute ? '🔄' : '⭐' }}</span>
                 <div class="min-w-0">
                   <p class="font-bold text-white text-sm truncate">{{ player.user?.name || 'Joueur #' + player.player_id
-                    }}
+                  }}
                   </p>
                   <p class="text-[10px] text-white/40 font-mono">{{ player.user?.tag_coc }}</p>
                 </div>
@@ -182,7 +182,7 @@
               </button>
             </div>
             <p v-if="availablePlayersList.length === 0" class="text-[10px] text-white/30 italic">
-              Aucun autre joueur disponible sans clan ou déjà dans le roster.
+              Aucun autre membre du clan (inscrit sur la plateforme) n'est disponible hors du roster.
             </p>
           </div>
 

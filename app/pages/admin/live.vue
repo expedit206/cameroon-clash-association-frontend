@@ -34,6 +34,12 @@
             <span>Programmer un Match</span>
           </button>
 
+          <button @click="generateSemiFinals" :disabled="generating"
+            class="flex-1 md:flex-none py-2.5 px-3.5 bg-gradient-to-r from-purple-600 to-amber-500 hover:from-purple-500 hover:to-amber-400 text-white font-black text-xs rounded-xl shadow-lg shadow-purple-600/20 transition-all flex items-center justify-center gap-1.5">
+            <span>🏆</span>
+            <span>{{ generating ? 'Génération...' : '⚡ Générer Demi-Finales' }}</span>
+          </button>
+
           <button @click="fetchData"
             class="py-2.5 px-3 bg-white/10 hover:bg-white/20 text-white font-bold text-xs rounded-xl transition-all flex items-center justify-center"
             title="Actualiser les données">
@@ -107,7 +113,8 @@
                   </div>
                   <div>
                     <span class="text-white/40 block text-[8px]">DESTRUCTION</span>
-                    <span class="font-bold text-white">{{ row.total_destruction }}%</span>
+                    <span class="font-bold text-white">{{ Number(row.avg_destruction ?? row.total_destruction ??
+                      0).toFixed(2) }}%</span>
                   </div>
                 </div>
               </div>
@@ -149,7 +156,8 @@
                     <td class="text-center text-yellow-400 font-bold">{{ row.drawn }}</td>
                     <td class="text-center text-red-400 font-bold">{{ row.lost }}</td>
                     <td class="text-center text-gold font-bold">{{ row.total_stars }}</td>
-                    <td class="text-center">{{ row.total_destruction }}%</td>
+                    <td class="text-center">{{ Number(row.avg_destruction ?? row.total_destruction ?? 0).toFixed(2) }}%
+                    </td>
                     <td class="text-right font-black text-sm text-gold">{{ row.points }}</td>
                   </tr>
                 </tbody>
@@ -209,7 +217,8 @@
                   </div>
                   <div>
                     <span class="text-white/40 block text-[8px]">DESTRUCTION</span>
-                    <span class="font-bold text-white">{{ row.total_destruction }}%</span>
+                    <span class="font-bold text-white">{{ Number(row.avg_destruction ?? row.total_destruction ??
+                      0).toFixed(2) }}%</span>
                   </div>
                 </div>
               </div>
@@ -251,7 +260,8 @@
                     <td class="text-center text-yellow-400 font-bold">{{ row.drawn }}</td>
                     <td class="text-center text-red-400 font-bold">{{ row.lost }}</td>
                     <td class="text-center text-gold font-bold">{{ row.total_stars }}</td>
-                    <td class="text-center">{{ row.total_destruction }}%</td>
+                    <td class="text-center">{{ Number(row.avg_destruction ?? row.total_destruction ?? 0).toFixed(2) }}%
+                    </td>
                     <td class="text-right font-black text-sm text-gold">{{ row.points }}</td>
                   </tr>
                 </tbody>
@@ -494,7 +504,7 @@
             <!-- Grille Groupe B -->
             <div v-if="groupB.length >= 2" class="overflow-x-auto">
               <p class="text-[9px] text-purple-400 font-black uppercase mb-1.5">Groupe B — {{ groupMatrixCount(groupB)
-                }} matchs</p>
+              }} matchs</p>
               <table class="text-[9px] border-collapse">
                 <thead>
                   <tr>
@@ -691,7 +701,8 @@
               {{ selectedMatchForScheduling.clan_home?.name }} <span class="text-gold">VS</span> {{
                 selectedMatchForScheduling.clan_away?.name }}
             </p>
-            <p class="text-[10px] text-white/40">Définissez la date et l'heure prévues pour le coup d'envoi du match.</p>
+            <p class="text-[10px] text-white/40">Définissez la date et l'heure prévues pour le coup d'envoi du match.
+            </p>
           </div>
 
           <form @submit.prevent="saveSchedule" class="space-y-4">
@@ -946,6 +957,24 @@ const generateAllGroupMatches = async () => {
     await fetchData();
   } catch (e) {
     alert(e?.data?.message || 'Erreur lors de la génération des matchs de poule.');
+  } finally {
+    generating.value = false;
+  }
+};
+
+const generateSemiFinals = async () => {
+  if (!confirm("Confirmer la qualification du Top 2 des Poules (A & B) et la génération des Demi-Finales (Carré d'As) ?")) return;
+
+  generating.value = true;
+  try {
+    const res = await $api('/admin/competitions/1/generate-semi-finals', {
+      method: 'POST',
+    });
+    alert(res.message || 'Demi-Finales générées avec succès !');
+    activeTab.value = 'matches';
+    await fetchData();
+  } catch (e) {
+    alert(e?.data?.message || 'Erreur lors de la génération des demi-finales.');
   } finally {
     generating.value = false;
   }

@@ -42,6 +42,105 @@
 
       <div v-else>
 
+        <!-- Bilan & MVP de la Phase de Poules (Carré d'As & Trophées) -->
+        <div v-if="groupSummary" class="glass-card p-4 sm:p-6 border-gold/30 mb-8 space-y-6">
+          <div
+            class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b border-white/10 pb-4">
+            <div>
+              <span
+                class="text-[9px] uppercase font-black tracking-widest text-gold bg-gold/10 px-2.5 py-0.5 rounded-full border border-gold/20 inline-block mb-1">BILAN
+                DE PHASE</span>
+              <h2 class="text-xl sm:text-2xl font-black italic uppercase tracking-tight text-white">
+                RÉCAPITULATIF & <span class="text-gold">MVP DE POULES</span>
+              </h2>
+            </div>
+            <span v-if="groupSummary.is_completed"
+              class="text-xs font-bold text-green-400 bg-green-500/10 border border-green-500/30 px-3 py-1 rounded-full uppercase tracking-wider">
+              ✅ Phase de Poules Terminée ({{ groupSummary.completed_group_matches }}/{{ groupSummary.total_group_matches
+              }} matchs)
+            </span>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <!-- Top Attaque -->
+            <div v-if="groupSummary.top_attack"
+              class="p-3.5 rounded-2xl bg-black/40 border border-gold/20 flex flex-col justify-between">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xl">👑</span>
+                <span
+                  class="text-[9px] font-black uppercase tracking-widest text-gold bg-gold/10 px-2 py-0.5 rounded">MEILLEURE
+                  ATTAQUE</span>
+              </div>
+              <div class="flex items-center gap-2.5 my-1">
+                <img :src="groupSummary.top_attack.badge_url" class="w-8 h-8 object-contain" />
+                <div>
+                  <p class="font-black text-sm text-white truncate max-w-[120px]">{{ groupSummary.top_attack.clan_name
+                    }}</p>
+                  <p class="text-xs font-bold text-gold">{{ groupSummary.top_attack.total_stars }} ⭐️ Étoiles</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Top Destruction -->
+            <div v-if="groupSummary.top_destruction"
+              class="p-3.5 rounded-2xl bg-black/40 border border-blue-500/20 flex flex-col justify-between">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xl">💥</span>
+                <span
+                  class="text-[9px] font-black uppercase tracking-widest text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded">MAX
+                  DESTRUCTION</span>
+              </div>
+              <div class="flex items-center gap-2.5 my-1">
+                <img :src="groupSummary.top_destruction.badge_url" class="w-8 h-8 object-contain" />
+                <div>
+                  <p class="font-black text-sm text-white truncate max-w-[120px]">{{
+                    groupSummary.top_destruction.clan_name }}</p>
+                  <p class="text-xs font-bold text-blue-400">{{
+                    Number(groupSummary.top_destruction.avg_destruction).toFixed(2) }}% Moyen</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Invaincus -->
+            <div class="p-3.5 rounded-2xl bg-black/40 border border-purple-500/20 flex flex-col justify-between">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xl">🛡️</span>
+                <span
+                  class="text-[9px] font-black uppercase tracking-widest text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded">CLANS
+                  INVAINCUS</span>
+              </div>
+              <div v-if="groupSummary.undefeated_clans && groupSummary.undefeated_clans.length > 0"
+                class="space-y-1 my-1">
+                <div v-for="c in groupSummary.undefeated_clans" :key="'undef-' + c.clan_id"
+                  class="flex items-center gap-2 truncate">
+                  <img :src="c.badge_url" class="w-5 h-5 object-contain flex-shrink-0" />
+                  <span class="font-bold text-xs text-white truncate max-w-[120px]">{{ c.clan_name }}</span>
+                </div>
+              </div>
+              <p v-else class="text-xs text-white/40 italic">Aucun clan invaincu</p>
+            </div>
+
+            <!-- Carré d'As / Qualifiés -->
+            <div v-if="groupSummary.qualified_clans"
+              class="p-3.5 rounded-2xl bg-gradient-to-br from-gold/10 to-amber-500/5 border border-gold/40 flex flex-col justify-between">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xl">🏆</span>
+                <span
+                  class="text-[9px] font-black uppercase tracking-widest text-gold bg-gold/20 px-2 py-0.5 rounded">CARRÉ
+                  D'AS (TOP 4)</span>
+              </div>
+              <div class="grid grid-cols-2 gap-1 text-[10px]">
+                <div
+                  v-for="c in [...(groupSummary.qualified_clans.group_A || []), ...(groupSummary.qualified_clans.group_B || [])]"
+                  :key="'qas-' + c.clan_id" class="flex items-center gap-1 p-1 rounded bg-black/40 truncate">
+                  <img :src="c.badge_url" class="w-4 h-4 object-contain flex-shrink-0" />
+                  <span class="font-bold text-white truncate">{{ c.clan_name }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <!-- ================= TAB 1: PHASE DE GROUPES ================= -->
         <div v-if="activeTab === 'groups'" class="space-y-6 sm:space-y-10">
 
@@ -96,7 +195,8 @@
                     </div>
                     <div class="bg-black/30 p-1.5 rounded">
                       <span class="text-white/40 block text-[8px] uppercase">Destruction</span>
-                      <span class="font-bold text-white">{{ row.total_destruction }}%</span>
+                      <span class="font-bold text-white">{{ Number(row.avg_destruction ?? row.total_destruction ??
+                        0).toFixed(2) }}%</span>
                     </div>
                   </div>
                 </div>
@@ -119,7 +219,7 @@
                       <th class="py-2 text-center text-yellow-400" title="Matchs Nuls">N (Nuls)</th>
                       <th class="py-2 text-center text-red-400" title="Défaites">D (Défaites)</th>
                       <th class="py-2 text-center text-gold" title="Total Étoiles CoC">⭐️ (Étoiles)</th>
-                      <th class="py-2 text-center" title="Pourcentage de destruction cumulé">% (Destr.)</th>
+                      <th class="py-2 text-center" title="Pourcentage de destruction moyen par match">% (Destr.)</th>
                       <th class="py-2 text-right text-gold" title="Points au classement (Victoire = 3, Nul = 1)">Pts
                         (Points)</th>
                     </tr>
@@ -133,13 +233,17 @@
                       <td class="py-2.5 flex items-center gap-2">
                         <img :src="row.badge_url" class="w-5 h-5 object-contain" />
                         <span class="truncate max-w-[120px]">{{ row.clan_name }}</span>
+                        <span v-if="row.rank <= 2"
+                          class="text-[8px] bg-green-500/20 text-green-400 border border-green-500/40 px-1.5 py-0.5 rounded font-black uppercase flex-shrink-0">QUALIFIÉ
+                          🚀</span>
                       </td>
                       <td class="text-center font-semibold">{{ row.played }}</td>
                       <td class="text-center text-green-400 font-bold">{{ row.won }}</td>
                       <td class="text-center text-yellow-400 font-bold">{{ row.drawn }}</td>
                       <td class="text-center text-red-400 font-bold">{{ row.lost }}</td>
                       <td class="text-center text-gold font-bold">{{ row.total_stars }}</td>
-                      <td class="text-center">{{ row.total_destruction }}%</td>
+                      <td class="text-center">{{ Number(row.avg_destruction ?? row.total_destruction ?? 0).toFixed(2)
+                      }}%</td>
                       <td class="text-right font-black text-sm text-gold">{{ row.points }}</td>
                     </tr>
                   </tbody>
@@ -224,7 +328,8 @@
                     </div>
                     <div class="bg-black/30 p-1.5 rounded">
                       <span class="text-white/40 block text-[8px] uppercase">Destruction</span>
-                      <span class="font-bold text-white">{{ row.total_destruction }}%</span>
+                      <span class="font-bold text-white">{{ Number(row.avg_destruction ?? row.total_destruction ??
+                        0).toFixed(2) }}%</span>
                     </div>
                   </div>
                 </div>
@@ -247,7 +352,7 @@
                       <th class="py-2 text-center text-yellow-400" title="Matchs Nuls">N (Nuls)</th>
                       <th class="py-2 text-center text-red-400" title="Défaites">D (Défaites)</th>
                       <th class="py-2 text-center text-gold" title="Total Étoiles CoC">⭐️ (Étoiles)</th>
-                      <th class="py-2 text-center" title="Pourcentage de destruction cumulé">% (Destr.)</th>
+                      <th class="py-2 text-center" title="Pourcentage de destruction moyen par match">% (Destr.)</th>
                       <th class="py-2 text-right text-gold" title="Points au classement (Victoire = 3, Nul = 1)">Pts
                         (Points)</th>
                     </tr>
@@ -261,13 +366,17 @@
                       <td class="py-2.5 flex items-center gap-2">
                         <img :src="row.badge_url" class="w-5 h-5 object-contain" />
                         <span class="truncate max-w-[120px]">{{ row.clan_name }}</span>
+                        <span v-if="row.rank <= 2"
+                          class="text-[8px] bg-green-500/20 text-green-400 border border-green-500/40 px-1.5 py-0.5 rounded font-black uppercase flex-shrink-0">QUALIFIÉ
+                          🚀</span>
                       </td>
                       <td class="text-center font-semibold">{{ row.played }}</td>
                       <td class="text-center text-green-400 font-bold">{{ row.won }}</td>
                       <td class="text-center text-yellow-400 font-bold">{{ row.drawn }}</td>
                       <td class="text-center text-red-400 font-bold">{{ row.lost }}</td>
                       <td class="text-center text-gold font-bold">{{ row.total_stars }}</td>
-                      <td class="text-center">{{ row.total_destruction }}%</td>
+                      <td class="text-center">{{ Number(row.avg_destruction ?? row.total_destruction ?? 0).toFixed(2)
+                        }}%</td>
                       <td class="text-right font-black text-sm text-gold">{{ row.points }}</td>
                     </tr>
                   </tbody>
@@ -309,19 +418,22 @@
 
           <!-- Group Matches Results -->
           <div v-if="groupMatches.length > 0" class="space-y-4">
-            <h3 class="text-base sm:text-xl font-black italic uppercase text-white tracking-tight flex items-center gap-3">
+            <h3
+              class="text-base sm:text-xl font-black italic uppercase text-white tracking-tight flex items-center gap-3">
               RÉSULTATS DE PHASE DE POULES ({{ groupMatches.length }})
               <!-- Légende priorité -->
               <span class="flex items-center gap-3 text-[9px] font-normal not-italic normal-case tracking-normal">
-                <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-red-500 animate-pulse inline-block"></span>Aujourd'hui / Demain</span>
-                <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-orange-400 animate-pulse inline-block"></span>Dans 3 jours</span>
+                <span class="flex items-center gap-1"><span
+                    class="w-2 h-2 rounded-full bg-red-500 animate-pulse inline-block"></span>Aujourd'hui /
+                  Demain</span>
+                <span class="flex items-center gap-1"><span
+                    class="w-2 h-2 rounded-full bg-orange-400 animate-pulse inline-block"></span>Dans 3 jours</span>
               </span>
             </h3>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-5">
               <div v-for="m in groupMatches" :key="m.id"
-                class="glass-card p-3.5 sm:p-4 border-white/5 hover:border-gold/30 transition-all relative"
-                :class="{
+                class="glass-card p-3.5 sm:p-4 border-white/5 hover:border-gold/30 transition-all relative" :class="{
                   'border-red-500/40 shadow-[0_0_12px_rgba(239,68,68,0.15)]': matchPriority(m) === 'urgent',
                   'border-orange-400/30 shadow-[0_0_10px_rgba(251,146,60,0.1)]': matchPriority(m) === 'soon',
                 }">
@@ -427,7 +539,8 @@
                   <div class="flex items-center gap-2 truncate">
                     <img :src="semiFinal1?.clan_home?.badge_url || '/images/default-clan.png'"
                       class="w-6 h-6 object-contain flex-shrink-0" />
-                    <span class="font-bold truncate max-w-[120px]">{{ semiFinal1?.clan_home?.name || '1er Groupe A' }}</span>
+                    <span class="font-bold truncate max-w-[120px]">{{ semiFinal1?.clan_home?.name || '1er Groupe A'
+                      }}</span>
                   </div>
                   <span class="font-black text-base text-gold">{{ semiFinal1?.total_stars_home ?? '-' }}</span>
                 </div>
@@ -439,7 +552,8 @@
                   <div class="flex items-center gap-2 truncate">
                     <img :src="semiFinal1?.clan_away?.badge_url || '/images/default-clan.png'"
                       class="w-6 h-6 object-contain flex-shrink-0" />
-                    <span class="font-bold truncate max-w-[120px]">{{ semiFinal1?.clan_away?.name || '2ème Groupe B' }}</span>
+                    <span class="font-bold truncate max-w-[120px]">{{ semiFinal1?.clan_away?.name || '2ème Groupe B'
+                      }}</span>
                   </div>
                   <span class="font-black text-base text-gold">{{ semiFinal1?.total_stars_away ?? '-' }}</span>
                 </div>
@@ -463,7 +577,8 @@
                   <div class="flex items-center gap-2.5 truncate">
                     <img :src="grandFinal?.clan_home?.badge_url || '/images/default-clan.png'"
                       class="w-7 h-7 object-contain flex-shrink-0" />
-                    <span class="font-black text-white truncate max-w-[130px]">{{ grandFinal?.clan_home?.name || 'Vainqueur Demi 1' }}</span>
+                    <span class="font-black text-white truncate max-w-[130px]">{{ grandFinal?.clan_home?.name ||
+                      'Vainqueur Demi 1' }}</span>
                   </div>
                   <span class="font-black text-lg text-gold">{{ grandFinal?.total_stars_home ?? '-' }}</span>
                 </div>
@@ -475,7 +590,8 @@
                   <div class="flex items-center gap-2.5 truncate">
                     <img :src="grandFinal?.clan_away?.badge_url || '/images/default-clan.png'"
                       class="w-7 h-7 object-contain flex-shrink-0" />
-                    <span class="font-black text-white truncate max-w-[130px]">{{ grandFinal?.clan_away?.name || 'Vainqueur Demi 2' }}</span>
+                    <span class="font-black text-white truncate max-w-[130px]">{{ grandFinal?.clan_away?.name ||
+                      'Vainqueur Demi 2' }}</span>
                   </div>
                   <span class="font-black text-lg text-gold">{{ grandFinal?.total_stars_away ?? '-' }}</span>
                 </div>
@@ -501,7 +617,8 @@
                   <div class="flex items-center gap-2 truncate">
                     <img :src="semiFinal2?.clan_home?.badge_url || '/images/default-clan.png'"
                       class="w-6 h-6 object-contain flex-shrink-0" />
-                    <span class="font-bold truncate max-w-[120px]">{{ semiFinal2?.clan_home?.name || '1er Groupe B' }}</span>
+                    <span class="font-bold truncate max-w-[120px]">{{ semiFinal2?.clan_home?.name || '1er Groupe B'
+                      }}</span>
                   </div>
                   <span class="font-black text-base text-gold">{{ semiFinal2?.total_stars_home ?? '-' }}</span>
                 </div>
@@ -513,7 +630,8 @@
                   <div class="flex items-center gap-2 truncate">
                     <img :src="semiFinal2?.clan_away?.badge_url || '/images/default-clan.png'"
                       class="w-6 h-6 object-contain flex-shrink-0" />
-                    <span class="font-bold truncate max-w-[120px]">{{ semiFinal2?.clan_away?.name || '2ème Groupe A' }}</span>
+                    <span class="font-bold truncate max-w-[120px]">{{ semiFinal2?.clan_away?.name || '2ème Groupe A'
+                      }}</span>
                   </div>
                   <span class="font-black text-base text-gold">{{ semiFinal2?.total_stars_away ?? '-' }}</span>
                 </div>
@@ -564,27 +682,39 @@ const matchPriority = (match) => {
 
 const formatDate = (dateStr) => {
   if (!dateStr) return '';
+  const TZ = 'Africa/Douala';
   const d = new Date(dateStr);
+  const time = d.toLocaleString('fr-FR', { timeZone: TZ, hour: '2-digit', minute: '2-digit' });
+  const now = new Date();
+  const toDay = (dt) => dt.toLocaleDateString('fr-FR', { timeZone: TZ });
+  if (toDay(d) === toDay(now)) return `Aujourd'hui à ${time}`;
+  const tomorrow = new Date(now);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  if (toDay(d) === toDay(tomorrow)) return `Demain à ${time}`;
   return d.toLocaleString('fr-FR', {
-    timeZone: 'Africa/Douala',
-    weekday: 'short',
-    day: '2-digit',
-    month: 'short',
-    hour: '2-digit',
-    minute: '2-digit',
+    timeZone: TZ, weekday: 'short', day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit',
   });
 };
+
+const groupSummary = ref(null);
 
 const fetchData = async () => {
   loading.value = true;
   try {
-    const [groupData, matchesData] = await Promise.all([
+    const [groupData, matchesData, summaryData] = await Promise.all([
       $api('/tournament/groups'),
       $api('/tournament/matches').catch(() => $api('/admin/competitions/1/matches').catch(() => [])),
+      $api('/tournament/group-stage-summary').catch(() => null),
     ]);
 
     standings.value = groupData || { A: [], B: [] };
     allMatches.value = Array.isArray(matchesData) ? matchesData : Object.values(matchesData).flat();
+    groupSummary.value = summaryData;
+
+    // Basculer automatiquement sur la Phase Finale si les Demi-Finales sont prêtes
+    if (semiFinals.value.length > 0 || (summaryData && summaryData.is_completed)) {
+      activeTab.value = 'knockout';
+    }
   } catch (e) {
     console.error('Error loading tournament data:', e);
   } finally {

@@ -31,6 +31,9 @@
         <NuxtLink to="/tournaments" class="nav-link" active-class="active"
           >Tournois</NuxtLink
         >
+        <!-- <NuxtLink to="/clash-bet" class="nav-link text-gold font-bold flex items-center gap-1" active-class="active"
+          >🔥 Clash Bet</NuxtLink
+        > -->
         <NuxtLink to="/rules" class="nav-link" active-class="active"
           >Règlement</NuxtLink
         >
@@ -121,6 +124,25 @@
                     @click="dropdownOpen = false"
                     ><LucideSwords :size="18" class="inline mr-1" /> Compétition</NuxtLink
                   >
+                  <!-- <NuxtLink
+                    to="/clash-bet/wallet"
+                    class="dropdown-item text-gold font-semibold"
+                    @click="dropdownOpen = false"
+                    ><LucideWallet :size="18" class="inline mr-1" /> CCA Wallet</NuxtLink
+                  >
+                  <NuxtLink
+                    to="/clash-bet/mes-paris"
+                    class="dropdown-item"
+                    @click="dropdownOpen = false"
+                    ><LucideTicket :size="18" class="inline mr-1" /> Mes Paris</NuxtLink
+                  >
+                  <NuxtLink
+                    v-if="user?.role === 'admin'"
+                    to="/admin/clash-bet"
+                    class="dropdown-item text-gold font-semibold"
+                    @click="dropdownOpen = false"
+                    ><LucideDices :size="18" class="inline mr-1" /> Admin Bet</NuxtLink
+                  > -->
                   <NuxtLink
                     v-if="dashboardPath"
                     :to="dashboardPath"
