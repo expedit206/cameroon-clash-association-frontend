@@ -2,16 +2,14 @@
   <!-- ══════════════════════════════════════════════
        NAVBAR — Refonte v4 (Single Row Mobile Accès)
   ══════════════════════════════════════════════ -->
-  <nav
-    :class="[
-      'app-navbar',
-      {
-        'is-overlay': overlay,
-        'is-open': menuOpen,
-        'has-subnav': showSubNav && !isMobile,
-      },
-    ]"
-  >
+  <nav :class="[
+    'app-navbar',
+    {
+      'is-overlay': overlay,
+      'is-open': menuOpen,
+      'has-subnav': showSubNav && !isMobile,
+    },
+  ]">
     <div class="nav-inner">
       <!-- Zone Logo -->
       <img src="/images/logo cca.png" alt="Logo" class="!h-[3rem] !w-[3rem]" />
@@ -19,24 +17,13 @@
 
       <!-- Liens Desktop -->
       <div class="nav-links-desktop">
-        <NuxtLink to="/" class="nav-link" exact-active-class="active"
-          >Accueil</NuxtLink
-        >
-        <NuxtLink to="/clans/cameroun" class="nav-link" active-class="active"
-          >Clans</NuxtLink
-        >
-        <NuxtLink to="/players/cameroun" class="nav-link" active-class="active"
-          >Joueurs</NuxtLink
-        >
-        <NuxtLink to="/tournaments" class="nav-link" active-class="active"
-          >Tournois</NuxtLink
-        >
-        <!-- <NuxtLink to="/clash-bet" class="nav-link text-gold font-bold flex items-center gap-1" active-class="active"
-          >🔥 Clash Bet</NuxtLink
-        > -->
-        <NuxtLink to="/rules" class="nav-link" active-class="active"
-          >Règlement</NuxtLink
-        >
+        <NuxtLink to="/" class="nav-link" exact-active-class="active">Accueil</NuxtLink>
+        <NuxtLink to="/clans/cameroun" class="nav-link" active-class="active">Clans</NuxtLink>
+        <NuxtLink to="/players/cameroun" class="nav-link" active-class="active">Joueurs</NuxtLink>
+        <NuxtLink to="/tournaments" class="nav-link" active-class="active">Tournois</NuxtLink>
+        <NuxtLink v-if="user?.role === 'admin'" to="/clash-bet"
+          class="nav-link text-gold font-bold flex items-center gap-1" active-class="active">🔥 Clash Bet</NuxtLink>
+        <NuxtLink to="/rules" class="nav-link" active-class="active">Règlement</NuxtLink>
       </div>
 
       <!-- Liens Mobiles (En ligne à côté du logo) -->
@@ -46,26 +33,14 @@
           <span class="label-text">Acceuil</span>
         </NuxtLink>
 
-        <button
-          class="mobile-inline-link"
-          :class="{ active: rankingsOpen }"
-          @click="toggleRankings"
-        >
+        <button class="mobile-inline-link" :class="{ active: rankingsOpen }" @click="toggleRankings">
           <LucideBarChart3 :size="20" class="inline icon" />
-          <span class="label-text"
-            >Rang national <span class="tiny-chevron">▾</span></span
-          >
+          <span class="label-text">Rang national <span class="tiny-chevron">▾</span></span>
         </button>
 
-        <button
-          class="mobile-inline-link"
-          :class="{ active: tournamentsMenuOpen }"
-          @click="toggleTournamentsMenu"
-        >
+        <button class="mobile-inline-link" :class="{ active: tournamentsMenuOpen }" @click="toggleTournamentsMenu">
           <LucideSwords :size="20" class="inline icon" />
-          <span class="label-text"
-            >Tournoi <span class="tiny-chevron">▾</span></span
-          >
+          <span class="label-text">Tournoi <span class="tiny-chevron">▾</span></span>
         </button>
       </div>
 
@@ -73,26 +48,14 @@
       <div class="nav-actions">
         <div class="nav-actions-desktop" v-if="!isMobile">
           <template v-if="!isLoggedIn">
-            <NuxtLink to="/login" class="nav-link mr-2" >Connexion</NuxtLink>
-            <NuxtLink to="/register" class="btn-premium btn-primary btn-sm"
-              >S'inscrire</NuxtLink
-            >
+            <NuxtLink to="/login" class="nav-link mr-2">Connexion</NuxtLink>
+            <NuxtLink to="/register" class="btn-premium btn-primary btn-sm">S'inscrire</NuxtLink>
           </template>
           <template v-else>
-            <div
-              class="user-avatar-wrapper"
-              :class="{ 'dropdown-open': dropdownOpen }"
-            >
-              <button
-                class="user-avatar-btn"
-                @click="dropdownOpen = !dropdownOpen"
-              >
-              
-                <img
-                  v-if="user?.league_icon"
-                  :src="user.league_icon"
-                  class="league-icon-nav"
-                />
+            <div class="user-avatar-wrapper" :class="{ 'dropdown-open': dropdownOpen }">
+              <button class="user-avatar-btn" @click="dropdownOpen = !dropdownOpen">
+
+                <img v-if="user?.league_icon" :src="user.league_icon" class="league-icon-nav" />
                 <div v-else class="avatar-initials" :class="roleBadgeClass">
                   {{ user?.name?.charAt(0) }}
                 </div>
@@ -104,26 +67,16 @@
               </button>
               <Transition name="dropdown">
                 <div v-if="dropdownOpen" class="avatar-dropdown flex flex-col ">
-                  <NuxtLink
-                    to="/profile"
-                    class="dropdown-item"
-                    @click="dropdownOpen = false"
-                    ><LucideUser :size="18" class="inline mr-1" /> Profil</NuxtLink
-                  >
-                  <NuxtLink
-                    v-if="showMyClan"
-                    to="/my-clan"
-                    class="dropdown-item"
-                    @click="dropdownOpen = false"
-                    ><LucideCastle :size="18" class="inline mr-1" /> Clan</NuxtLink
-                  >
-                  <NuxtLink
-                    v-if="showMyClan"
-                    to="/tournaments/my-clan"
-                    class="dropdown-item"
-                    @click="dropdownOpen = false"
-                    ><LucideSwords :size="18" class="inline mr-1" /> Compétition</NuxtLink
-                  >
+                  <NuxtLink to="/profile" class="dropdown-item" @click="dropdownOpen = false">
+                    <LucideUser :size="18" class="inline mr-1" /> Profil
+                  </NuxtLink>
+                  <NuxtLink v-if="showMyClan" to="/my-clan" class="dropdown-item" @click="dropdownOpen = false">
+                    <LucideCastle :size="18" class="inline mr-1" /> Clan
+                  </NuxtLink>
+                  <NuxtLink v-if="showMyClan" to="/tournaments/my-clan" class="dropdown-item"
+                    @click="dropdownOpen = false">
+                    <LucideSwords :size="18" class="inline mr-1" /> Compétition
+                  </NuxtLink>
                   <!-- <NuxtLink
                     to="/clash-bet/wallet"
                     class="dropdown-item text-gold font-semibold"
@@ -135,21 +88,18 @@
                     class="dropdown-item"
                     @click="dropdownOpen = false"
                     ><LucideTicket :size="18" class="inline mr-1" /> Mes Paris</NuxtLink
-                  >
+                  >-->
                   <NuxtLink
                     v-if="user?.role === 'admin'"
                     to="/admin/clash-bet"
                     class="dropdown-item text-gold font-semibold"
                     @click="dropdownOpen = false"
                     ><LucideDices :size="18" class="inline mr-1" /> Admin Bet</NuxtLink
-                  > -->
-                  <NuxtLink
-                    v-if="dashboardPath"
-                    :to="dashboardPath"
-                    class="dropdown-item text-gold"
-                    @click="dropdownOpen = false"
-                    ><LucideHome :size="18" class="inline mr-1" /> Dashboard</NuxtLink
-                  >
+                  > 
+                  <NuxtLink v-if="dashboardPath" :to="dashboardPath" class="dropdown-item text-gold"
+                    @click="dropdownOpen = false">
+                    <LucideHome :size="18" class="inline mr-1" /> Dashboard
+                  </NuxtLink>
                   <!-- <div class="dropdown-divider"></div> -->
                   <button class="dropdown-item text-red-300" @click="handleLogout">
                     <LucideLogOut :size="18" class="inline mr-1" /> Déconnexion
@@ -160,12 +110,7 @@
           </template>
         </div>
 
-        <button
-          v-if="isMobile"
-          class="hamburger"
-          :class="{ open: menuOpen }"
-          @click="toggleMenu"
-        >
+        <button v-if="isMobile" class="hamburger" :class="{ open: menuOpen }" @click="toggleMenu">
           <span></span><span></span><span></span>
         </button>
       </div>
@@ -173,39 +118,18 @@
 
     <!-- Modals / Dropdowns Flottants Mobile -->
     <Transition name="quick-dropdown">
-      <div
-        v-if="(rankingsOpen || tournamentsMenuOpen) && isMobile"
-        class="mobile-floating-menu"
-      >
+      <div v-if="(rankingsOpen || tournamentsMenuOpen) && isMobile" class="mobile-floating-menu">
         <template v-if="rankingsOpen">
           <div class="menu-header">Classements</div>
-          <NuxtLink to="/clans/cameroun" class="menu-item" @click="closeAll"
-            >🇨🇲 Clans Cameroun</NuxtLink
-          >
-          <NuxtLink to="/players/cameroun" class="menu-item" @click="closeAll"
-            >🏆 Joueurs Cameroun</NuxtLink
-          >
+          <NuxtLink to="/clans/cameroun" class="menu-item" @click="closeAll">🇨🇲 Clans Cameroun</NuxtLink>
+          <NuxtLink to="/players/cameroun" class="menu-item" @click="closeAll">🏆 Joueurs Cameroun</NuxtLink>
         </template>
         <template v-else-if="tournamentsMenuOpen">
           <div class="menu-header">Tournois</div>
-          <NuxtLink to="/tournaments" class="menu-item" @click="closeAll"
-            >Vue d'ensemble</NuxtLink
-          >
-          <NuxtLink :to="ctaTo" class="menu-item" @click="closeAll"
-            >{{ ctaIcon }} {{ ctaLabel }}</NuxtLink
-          >
-          <NuxtLink
-            to="/tournaments/my-clan"
-            class="menu-item"
-            @click="closeAll"
-            >Mon Clan (Tournoi)</NuxtLink
-          >
-          <NuxtLink
-            to="/tournaments/bracket"
-            class="menu-item"
-            @click="closeAll"
-            >Bracket & Scores</NuxtLink
-          >
+          <NuxtLink to="/tournaments" class="menu-item" @click="closeAll">Vue d'ensemble</NuxtLink>
+          <NuxtLink :to="ctaTo" class="menu-item" @click="closeAll">{{ ctaIcon }} {{ ctaLabel }}</NuxtLink>
+          <NuxtLink to="/tournaments/my-clan" class="menu-item" @click="closeAll">Mon Clan (Tournoi)</NuxtLink>
+          <NuxtLink to="/tournaments/bracket" class="menu-item" @click="closeAll">Bracket & Scores</NuxtLink>
         </template>
       </div>
     </Transition>
@@ -213,20 +137,15 @@
     <!-- Drawer Mobile (Reste) -->
     <Transition name="menu">
       <div v-if="menuOpen && isMobile" class="nav-mobile-drawer">
-        <NuxtLink to="/rules" class="mobile-link" @click="closeAll"
-          ><LucideFileText :size="18" class="inline mr-1" /> Règlement</NuxtLink
-        >
+        <NuxtLink to="/rules" class="mobile-link" @click="closeAll">
+          <LucideFileText :size="18" class="inline mr-1" /> Règlement
+        </NuxtLink>
         <div class="mobile-divider"></div>
         <template v-if="!isLoggedIn">
-          <NuxtLink to="/login" class="mobile-link" @click="closeAll"
-            ><LucideKey :size="18" class="inline mr-1" /> Connexion</NuxtLink
-          >
-          <NuxtLink
-            to="/register"
-            class="btn-premium btn-primary mobile-cta"
-            @click="closeAll"
-            >S'inscrire</NuxtLink
-          >
+          <NuxtLink to="/login" class="mobile-link" @click="closeAll">
+            <LucideKey :size="18" class="inline mr-1" /> Connexion
+          </NuxtLink>
+          <NuxtLink to="/register" class="btn-premium btn-primary mobile-cta" @click="closeAll">S'inscrire</NuxtLink>
         </template>
         <template v-else>
           <div class="mobile-identity">
@@ -235,23 +154,18 @@
             }}</span>
             <span class="user-tag">{{ user?.tag_coc }}</span>
           </div>
-          <NuxtLink to="/profile" class="mobile-link" @click="closeAll"
-            ><LucideUser :size="18" class="inline mr-1" /> Profil</NuxtLink
-          >
-          <NuxtLink
-            v-if="showMyClan"
-            to="/my-clan"
-            class="mobile-link"
-            @click="closeAll"
-            ><LucideCastle :size="18" class="inline mr-1" /> Mon Clan</NuxtLink
-          >
-          <NuxtLink
-            v-if="dashboardPath"
-            :to="dashboardPath"
-            class="mobile-link text-gold"
-            @click="closeAll"
-            ><LucideHome :size="18" class="inline mr-1" /> {{ dashboardLabel }}</NuxtLink
-          >
+          <NuxtLink to="/profile" class="mobile-link" @click="closeAll">
+            <LucideUser :size="18" class="inline mr-1" /> Profil
+          </NuxtLink>
+          <NuxtLink v-if="showMyClan" to="/my-clan" class="mobile-link" @click="closeAll">
+            <LucideCastle :size="18" class="inline mr-1" /> Mon Clan
+          </NuxtLink>
+          <NuxtLink v-if="user?.role === 'admin'" to="/admin/clash-bet" class="mobile-link text-gold font-bold" @click="closeAll">
+            <LucideDices :size="18" class="inline mr-1" /> Admin Bet
+          </NuxtLink>
+          <NuxtLink v-if="dashboardPath" :to="dashboardPath" class="mobile-link text-gold" @click="closeAll">
+            <LucideHome :size="18" class="inline mr-1" /> {{ dashboardLabel }}
+          </NuxtLink>
           <button @click="handleLogout" class="mobile-link text-red">
             <LucideLogOut :size="18" class="inline mr-1" /> Déconnexion
           </button>
@@ -263,27 +177,10 @@
     <Transition name="subnav">
       <div v-if="showSubNav && !isMobile" class="subnav-container">
         <div class="subnav-inner">
-          <NuxtLink
-            to="/tournaments"
-            class="sub-link"
-            exact-active-class="active"
-            >Vue d'ensemble</NuxtLink
-          >
-          <NuxtLink :to="ctaTo" class="sub-link" active-class="active"
-            >{{ ctaIcon }} {{ ctaLabel }}</NuxtLink
-          >
-          <NuxtLink
-            to="/tournaments/my-clan"
-            class="sub-link"
-            active-class="active"
-            >Mon Clan (Tournoi)</NuxtLink
-          >
-          <NuxtLink
-            to="/tournaments/bracket"
-            class="sub-link"
-            active-class="active"
-            >Bracket & Scores</NuxtLink
-          >
+          <NuxtLink to="/tournaments" class="sub-link" exact-active-class="active">Vue d'ensemble</NuxtLink>
+          <NuxtLink :to="ctaTo" class="sub-link" active-class="active">{{ ctaIcon }} {{ ctaLabel }}</NuxtLink>
+          <NuxtLink to="/tournaments/my-clan" class="sub-link" active-class="active">Mon Clan (Tournoi)</NuxtLink>
+          <NuxtLink to="/tournaments/bracket" class="sub-link" active-class="active">Bracket & Scores</NuxtLink>
         </div>
       </div>
     </Transition>

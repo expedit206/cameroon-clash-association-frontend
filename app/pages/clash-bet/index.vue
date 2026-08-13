@@ -1,87 +1,84 @@
 <template>
   <div class="min-h-screen bg-[#06070a] text-white pb-20">
 
-    <!-- ═══ HERO BANNER ═══ -->
-    <section class="relative overflow-hidden min-h-[50vh] flex flex-col items-center justify-center px-4 pt-24 pb-16 text-center">
-      <!-- animated glows -->
+    <!-- ═══ HERO COMPACT ═══ -->
+    <section
+      class="relative overflow-hidden flex flex-col items-center justify-center px-3 pt-6 pb-4 text-center">
       <div class="absolute inset-0 pointer-events-none">
-        <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-gold/10 rounded-full blur-[120px]"></div>
-        <div class="absolute top-1/3 left-1/4 w-[200px] h-[200px] bg-purple-700/10 rounded-full blur-[80px]"></div>
-        <div class="absolute bottom-0 right-1/4 w-[200px] h-[200px] bg-yellow-500/5 rounded-full blur-[80px]"></div>
-        <div class="absolute inset-0 bg-[url('/images/tournaments/hero-bg.png')] bg-cover bg-center opacity-[0.06]"></div>
-        <!-- grid lines -->
-        <div class="absolute inset-0" style="background-image: linear-gradient(rgba(212,175,55,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(212,175,55,0.04) 1px, transparent 1px); background-size: 40px 40px;"></div>
+        <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[400px] h-[180px] bg-gold/10 rounded-full blur-[100px]">
+        </div>
       </div>
 
-      <div class="relative z-10 max-w-2xl mx-auto">
-        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-green-500/10 border border-green-500/30 text-green-400 text-[10px] font-black uppercase tracking-widest mb-5">
-          <span class="w-1.5 h-1.5 rounded-full bg-green-400 animate-ping inline-block"></span>
-          Marchés P2P en Direct
-        </span>
+      <div class="relative z-10 max-w-xl mx-auto">
+        <div class="flex items-center justify-center gap-2 mb-2">
+          <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-gold/10 border border-gold/30 text-gold text-[9px] font-black uppercase tracking-wider">
+            🎫 P2P BETTING EXCHANGE
+          </span>
+        </div>
 
-        <h1 class="text-5xl sm:text-6xl md:text-7xl font-black italic tracking-tighter uppercase leading-none mb-3">
+        <h1 class="text-2xl sm:text-4xl font-black italic tracking-tighter uppercase leading-none mb-1.5">
           CCA <span class="text-transparent bg-clip-text bg-gradient-to-r from-gold via-yellow-300 to-gold">CLASH BET</span>
         </h1>
 
-        <p class="text-white/50 text-sm sm:text-base max-w-lg mx-auto mb-8 leading-relaxed">
-          Prédit l'issue des matchs de la <strong class="text-white/80">CCA National League</strong>. Les cotes évoluent en temps réel selon la communauté.
+        <p class="text-white/50 text-xs max-w-md mx-auto mb-3 leading-snug">
+          Tu paries contre <strong class="text-white/80">d'autres joueurs</strong> — Cote fixe 2.00
         </p>
 
-        <div class="flex flex-wrap justify-center gap-3">
-          <NuxtLink to="/clash-bet/wallet" class="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-gold to-yellow-600 text-black font-black text-sm rounded-xl hover:shadow-[0_0_30px_rgba(212,175,55,0.4)] transition-all duration-300 hover:-translate-y-0.5">
+        <div class="flex flex-wrap justify-center gap-2">
+          <NuxtLink to="/clash-bet/wallet"
+            class="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-gradient-to-r from-gold to-yellow-600 text-black font-black text-xs rounded-lg hover:brightness-110 transition-all">
             <span>💰</span>
-            <span>{{ isLoggedIn ? formatFcfa(wallet?.balance || 0) : 'Mon Wallet' }}</span>
+            <span>{{ isLoggedIn ? formatFcfa(wallet?.balance || 0) : 'Mon wallet' }}</span>
           </NuxtLink>
-          <NuxtLink to="/clash-bet/mes-paris" class="inline-flex items-center gap-2 px-5 py-2.5 bg-white/5 border border-white/15 text-white font-bold text-sm rounded-xl hover:bg-white/10 hover:border-white/30 transition-all duration-200">
-            <span>🎫</span> Mes Paris
+          <NuxtLink to="/clash-bet/mes-tickets"
+            class="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-white/5 border border-white/15 text-white font-bold text-xs rounded-lg hover:bg-white/10 transition-all">
+            🎫 Mes Tickets
           </NuxtLink>
         </div>
       </div>
     </section>
 
-    <!-- ═══ WALLET QUICK INFO (connecté) ═══ -->
-    <div v-if="isLoggedIn && wallet" class="container mx-auto px-4 max-w-5xl mb-6">
-      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <div class="stat-pill">
-          <span class="stat-label">Disposible</span>
-          <span class="stat-value text-gold">{{ formatFcfa(wallet.balance) }}</span>
+    <!-- ═══ WALLET MINI COMPACT ═══ -->
+    <div v-if="isLoggedIn && wallet" class="container mx-auto px-2 max-w-5xl mb-4">
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+        <div class="bg-[#0b0c12] border border-white/10 p-2 rounded-xl text-center">
+          <span class="text-[9px] text-white/40 uppercase font-semibold block">Disponible</span>
+          <span class="text-xs sm:text-sm font-black text-gold tabular-nums">{{ formatFcfa(wallet.balance) }}</span>
         </div>
-        <div class="stat-pill">
-          <span class="stat-label">En Jeu</span>
-          <span class="stat-value text-orange-400">{{ formatFcfa(wallet.locked_amount) }}</span>
+        <div class="bg-[#0b0c12] border border-white/10 p-2 rounded-xl text-center">
+          <span class="text-[9px] text-white/40 uppercase font-semibold block">En Jeu</span>
+          <span class="text-xs sm:text-sm font-black text-orange-400 tabular-nums">{{ formatFcfa(wallet.locked_amount) }}</span>
         </div>
-        <div class="stat-pill">
-          <span class="stat-label">Gains Cumulés</span>
-          <span class="stat-value text-green-400">+{{ formatFcfa(wallet.total_won) }}</span>
+        <div class="bg-[#0b0c12] border border-white/10 p-2 rounded-xl text-center">
+          <span class="text-[9px] text-white/40 uppercase font-semibold block">Gains Cumulés</span>
+          <span class="text-xs sm:text-sm font-black text-green-400 tabular-nums">+{{ formatFcfa(wallet.total_won) }}</span>
         </div>
-        <div class="stat-pill">
-          <span class="stat-label">Total Déposé</span>
-          <span class="stat-value">{{ formatFcfa(wallet.total_deposited) }}</span>
+        <div class="bg-[#0b0c12] border border-white/10 p-2 rounded-xl text-center">
+          <span class="text-[9px] text-white/40 uppercase font-semibold block">Total Déposé</span>
+          <span class="text-xs sm:text-sm font-black text-white/80 tabular-nums">{{ formatFcfa(wallet.total_deposited) }}</span>
         </div>
       </div>
     </div>
 
-    <!-- ═══ MARCHÉS DISPONIBLES ═══ -->
-    <main class="container mx-auto px-4 max-w-5xl">
-      <!-- Section Header -->
-      <div class="flex items-center justify-between mb-5">
+
+    <!-- ═══ MATCHS DISPONIBLES ═══ -->
+    <main class="container mx-auto px-1  max-w-5xl">
+      <div class="flex items-center justify-between mb-5 px-1">
         <h2 class="text-lg font-black uppercase tracking-wider flex items-center gap-2">
-          <span class="text-gold">⚡</span> Marchés <span class="text-gold">Ouverts</span>
-          <span v-if="!loading" class="ml-1 px-2 py-0.5 bg-gold/15 text-gold text-[10px] font-black rounded-full">{{ markets.length }}</span>
+          <span v-if="!loading" class="ml-1 px-2 py-0.5 bg-gold/15 text-gold text-[10px] font-black rounded-full">{{
+            matches.length }}</span>
         </h2>
-        <button @click="fetchMarkets" :disabled="loading" class="flex items-center gap-1.5 text-xs text-white/40 hover:text-white transition-colors">
+        <button @click="fetchData" :disabled="loading"
+          class="flex items-center gap-1.5 text-xs text-white/40 hover:text-white transition-colors">
           <LucideRefreshCw :size="13" :class="loading ? 'animate-spin' : ''" />
           Actualiser
         </button>
       </div>
 
-      <!-- Skeleton Loader -->
+      <!-- Skeleton -->
       <div v-if="loading" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div v-for="n in 4" :key="n" class="market-card animate-pulse">
-          <div class="flex justify-between mb-4">
-            <div class="h-4 bg-white/10 rounded-full w-20"></div>
-            <div class="h-4 bg-white/5 rounded-full w-28"></div>
-          </div>
+          <div class="h-5 bg-white/10 rounded-full w-24 mb-4"></div>
           <div class="flex items-center justify-between gap-4 my-5">
             <div class="flex-1 flex flex-col items-center gap-2">
               <div class="w-14 h-14 bg-white/5 rounded-xl"></div>
@@ -100,91 +97,64 @@
         </div>
       </div>
 
-      <!-- Empty State -->
-      <div v-else-if="markets.length === 0" class="flex flex-col items-center justify-center py-24 text-center">
-        <div class="text-6xl mb-5">🏆</div>
+      <!-- Empty -->
+      <div v-else-if="matches.length === 0" class="flex flex-col items-center justify-center py-24 text-center">
+        <div class="text-6xl mb-5">🎫</div>
         <h3 class="text-xl font-black mb-2">Aucun marché ouvert</h3>
-        <p class="text-white/40 text-sm max-w-xs">Les prochains marchés de prédiction ouvriront dès qu'un match sera planifié.</p>
+        <p class="text-white/40 text-sm max-w-xs">Les prochains marchés de paris ouvriront dès qu'un match sera
+          planifié.</p>
       </div>
 
-      <!-- Market Grid -->
-      <div v-else class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div
-          v-for="market in markets"
-          :key="market.id"
-          class="market-card group"
-        >
-          <!-- Card Header -->
-          <div class="flex items-center justify-between mb-3 pb-3 border-b border-white/5">
-            <span class="badge-live">
-              <span class="dot-live"></span> EN DIRECT
+      <!-- Match Cards Ultra-Compacts (Style 1xBet Minimaliste) -->
+      <div v-else class="grid grid-cols-1 md:grid-cols-2 gap-2.5">
+        <NuxtLink v-for="match in matches" :key="match.id" :to="`/clash-bet/match/${match.id}`"
+          class="market-card-compact group block no-underline bg-[#0b0c12] border border-white/10 hover:border-gold/30 rounded-xl p-2.5 transition-all">
+          
+          <!-- Ligne 1 : Header Match & Statut -->
+          <div class="flex items-center justify-between text-[10px] text-white/40 mb-1.5 pb-1 border-b border-white/5">
+            <div class="flex items-center gap-1.5">
+              <span class="px-1.5 py-0.2 bg-green-500/10 text-green-400 border border-green-500/20 rounded font-black text-[9px]">OPEN</span>
+              <span class="font-mono text-[9px] uppercase">{{ formatDate(match.betting_closes_at) }}</span>
+            </div>
+            <span class="text-[9px] text-gold font-bold">
+              ⚡ {{ (match.yes_tickets_count || 0) + (match.no_tickets_count || 0) }} tickets
             </span>
-            <div class="flex items-center gap-1 text-[10px] text-white/40 font-mono">
-              POT : <span class="text-gold font-black ml-1">{{ formatFcfa(market.total_pool) }}</span>
-            </div>
           </div>
 
-          <!-- Clan Duel -->
-          <div class="grid grid-cols-[1fr_44px_1fr] items-center gap-2 py-2">
-            <!-- Home Clan -->
-            <div class="flex flex-col items-center gap-1.5">
-              <div class="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center p-2 group-hover:border-gold/20 transition-colors">
-                <img
-                  :src="market.match?.clan_home?.badge_url || '/default-clan.png'"
-                  :alt="market.match?.clan_home?.name"
-                  class="max-w-full max-h-full object-contain drop-shadow-md"
-                  @error="$event.target.src='/default-clan.png'"
-                />
+          <!-- Ligne 2 : Titre du marché (si présent) -->
+          <div class="text-[11px] font-black text-white group-hover:text-gold transition-colors truncate mb-2">
+            {{ match.title || 'Victoire du Clan' }}
+          </div>
+
+          <!-- Ligne 3 : Confrontation & Cotes Compactes Style 1xBet -->
+          <div class="flex items-center flex-col justify-between gap-2">
+            <!-- Clans & VS -->
+            <div class="flex items-center justify-between gap-2 w-full">
+              <div class="flex items-center gap-1.5 ">
+                <img :src="match.match?.clan_home?.badge_url || '/default-clan.png'" class="w-5 h-5 object-contain flex-shrink-0" @error="$event.target.src = '/default-clan.png'" />
+                <span class="text-[11px] font-bold text-white/90 ">{{ match.match?.clan_home?.name || 'Home' }}</span>
               </div>
-              <span class="text-[11px] font-black uppercase text-center leading-tight max-w-[80px] line-clamp-2">
-                {{ market.match?.clan_home?.name || 'Équipe A' }}
-              </span>
-            </div>
-
-            <!-- VS -->
-            <div class="flex flex-col items-center gap-1">
-              <span class="text-lg font-black italic text-gold">VS</span>
-              <span class="text-[9px] text-white/20 font-mono">R{{ market.match?.round || 1 }}</span>
-            </div>
-
-            <!-- Away Clan -->
-            <div class="flex flex-col items-center gap-1.5">
-              <div class="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center p-2 group-hover:border-gold/20 transition-colors">
-                <img
-                  :src="market.match?.clan_away?.badge_url || '/default-clan.png'"
-                  :alt="market.match?.clan_away?.name"
-                  class="max-w-full max-h-full object-contain drop-shadow-md"
-                  @error="$event.target.src='/default-clan.png'"
-                />
+              <span class="text-[9px] font-black text-gold/80 flex-shrink-0">VS</span>
+              <div class="flex items-center gap-1.5 ">
+                <img :src="match.match?.clan_away?.badge_url || '/default-clan.png'" class="w-5 h-5 object-contain flex-shrink-0" @error="$event.target.src = '/default-clan.png'" />
+                <span class="text-[11px] font-bold text-white/90 ">{{ match.match?.clan_away?.name || 'Away' }}</span>
               </div>
-              <span class="text-[11px] font-black uppercase text-center leading-tight max-w-[80px] line-clamp-2">
-                {{ market.match?.clan_away?.name || 'Équipe B' }}
-              </span>
+            </div>
+
+            <!-- Boutons Cotes (YES / NO) 1xBet Style -->
+            <div class="flex items-center justify-between px-3 gap-1 w-full">
+              <div class="px-2.5 py-1 bg-green-500/10 border border-green-500/20 hover:border-green-500/50 rounded-lg text-center transition-all w-1/3">
+                <div class="text-[8px] font-black text-green-400 uppercase leading-none">OUI</div>
+                <div class="text-xs font-black text-gold leading-tight">2.00</div>
+              </div>
+              <div class="px-2.5 py-1 bg-red-500/10 border border-red-500/20 hover:border-red-500/50 rounded-lg text-center transition-all w-1/3 ">
+                <div class="text-[8px] font-black text-red-400 uppercase leading-none">NON</div>
+                <div class="text-xs font-black text-gold leading-tight">2.00</div>
+              </div>
             </div>
           </div>
 
-          <!-- Odds Buttons -->
-          <div class="grid grid-cols-2 gap-2 mt-3">
-            <NuxtLink
-              v-for="option in market.options"
-              :key="option.id"
-              :to="`/clash-bet/match/${market.id}?option=${option.id}`"
-              class="odds-btn"
-            >
-              <span class="odds-label">{{ option.label }}</span>
-              <span class="odds-value">{{ (option.current_odds ?? 2.00).toFixed(2) }}</span>
-              <span class="odds-pool">{{ formatFcfa(option.current_pool) }}</span>
-            </NuxtLink>
-          </div>
-
-          <!-- Card Footer -->
-          <div class="mt-3 pt-3 border-t border-white/5 flex items-center justify-between">
-            <span class="text-[10px] text-white/30">🕒 {{ formatDate(market.betting_closes_at) }}</span>
-            <NuxtLink :to="`/clash-bet/match/${market.id}`" class="text-[11px] text-gold font-black hover:text-yellow-300 transition-colors flex items-center gap-1">
-              Parier →
-            </NuxtLink>
-          </div>
-        </div>
+        </NuxtLink>
       </div>
     </main>
   </div>
@@ -192,12 +162,13 @@
 
 <script setup>
 const { $api } = useNuxtApp();
+
 const { isLoggedIn } = useAuth();
 
-useHead({ title: 'CCA Clash Bet | Marché de Prédiction E-sport Cameroun' });
+useHead({ title: 'CCA Clash Bet | Marketplace P2P' });
 
 const loading = ref(true);
-const markets = ref([]);
+const matches = ref([]);
 const wallet = ref(null);
 
 const formatFcfa = (n) => {
@@ -206,59 +177,75 @@ const formatFcfa = (n) => {
 };
 
 const formatDate = (d) => {
-  if (!d) return 'Avant le match';
+  if (!d) return 'Clôture avant match';
   return new Date(d).toLocaleString('fr-FR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
 };
 
-const fetchMarkets = async () => {
+const totalOpenTickets = (match) => {
+  return (match.yes_tickets_count || 0) + (match.no_tickets_count || 0);
+};
+
+const fetchData = async () => {
   loading.value = true;
   try {
-    const res = await $api('/clash-bet/markets');
-    markets.value = res.data || res || [];
-  } catch (e) {
-    console.error(e);
+    const [matchesRes, walletRes] = await Promise.allSettled([
+      $api('/clash-bet/matches'),
+      isLoggedIn.value ? $api('/clash-bet/wallet') : null,
+    ]);
+    matches.value = matchesRes.status === 'fulfilled' ? (matchesRes.value?.data || matchesRes.value || []) : [];
+    if (walletRes?.status === 'fulfilled' && walletRes.value) {
+      wallet.value = walletRes.value;
+    }
   } finally {
     loading.value = false;
   }
 };
 
-const fetchWallet = async () => {
-  if (!isLoggedIn.value) return;
-  try { wallet.value = await $api('/clash-bet/wallet'); } catch {}
-};
-
-onMounted(() => { fetchMarkets(); fetchWallet(); });
+onMounted(fetchData);
 </script>
 
 <style scoped>
-/* ── Stat pills ── */
 .stat-pill {
   @apply flex flex-col gap-0.5 px-4 py-3 rounded-2xl bg-white/[0.03] border border-white/[0.06] text-center;
 }
-.stat-label { @apply text-[9px] uppercase tracking-widest text-white/30 font-semibold; }
-.stat-value  { @apply text-base font-black tabular-nums; }
 
-/* ── Market Card ── */
+.stat-label {
+  @apply text-[9px] uppercase tracking-widest text-white/30 font-semibold;
+}
+
+.stat-value {
+  @apply text-base font-black tabular-nums;
+}
+
+.step-explain {
+  @apply flex flex-col items-center gap-1;
+}
+
+.step-icon {
+  @apply text-2xl;
+}
+
+.step-title {
+  @apply text-[10px] font-black uppercase tracking-wider text-gold;
+}
+
+.step-desc {
+  @apply text-[9px] text-white/40;
+}
+
 .market-card {
-  @apply bg-white/[0.02] border border-white/[0.07] rounded-3xl p-5
-         hover:border-gold/25 hover:bg-white/[0.035] transition-all duration-300 cursor-pointer;
+  @apply bg-white/[0.02] border border-white/[0.07] rounded-3xl p-5 hover:border-gold/25 hover:bg-white/[0.04] transition-all duration-300 cursor-pointer;
 }
 
-/* ── Badge Live ── */
 .badge-live {
-  @apply inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-green-500/10
-         border border-green-500/25 text-green-400 text-[9px] font-black uppercase tracking-widest;
+  @apply inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-green-500/10 border border-green-500/25 text-green-400 text-[9px] font-black uppercase tracking-widest;
 }
+
 .dot-live {
   @apply w-1.5 h-1.5 rounded-full bg-green-400 inline-block animate-ping;
 }
 
-/* ── Odds Button ── */
-.odds-btn {
-  @apply flex flex-col items-center gap-0.5 py-3 px-2 rounded-xl border border-white/[0.07]
-         bg-white/[0.03] hover:bg-gold/10 hover:border-gold/40 transition-all duration-200 no-underline text-center;
+.ticket-option-pill {
+  @apply flex flex-col items-center gap-0.5 py-3 px-2 rounded-xl border border-white/[0.07] bg-white/[0.03] text-center;
 }
-.odds-label { @apply text-[9px] text-white/50 font-semibold uppercase truncate w-full text-center; }
-.odds-value { @apply text-2xl font-black text-gold leading-none; }
-.odds-pool  { @apply text-[8px] text-white/20 font-mono; }
 </style>

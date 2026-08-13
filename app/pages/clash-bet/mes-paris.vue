@@ -1,814 +1,273 @@
 <template>
-  <div class="min-h-screen bg-[#06070a] text-white pb-20 pt-24">
-    <!-- =========================================================
-     CCA CLASH BET — MES POSITIONS
-     ========================================================= -->
+  <div class="min-h-screen bg-[#06070a] text-white pb-12 pt-6">
+    <div class="container mx-auto px-1 max-w-3xl">
 
-    <div class="max-w-5xl mx-auto pb-10">
-
-      <!-- =======================================================
-       HEADER
-       ======================================================= -->
-      <div class="flex items-start justify-between gap-4 mb-7">
-
-        <div class="flex items-center gap-3">
-
-          <NuxtLink to="/clash-bet" class="group w-10 h-10 shrink-0 rounded-2xl
-               bg-white/[0.04] border border-white/[0.08]
-               flex items-center justify-center
-               text-white/40
-               hover:text-gold hover:border-gold/30
-               hover:bg-gold/[0.04]
-               transition-all duration-300">
-            <span class="text-lg transition-transform group-hover:-translate-x-0.5">
-              ←
-            </span>
-          </NuxtLink>
-
-          <div>
-
-            <div class="flex items-center gap-2">
-
-              <span class="hidden sm:flex w-8 h-8 rounded-xl
-                       bg-gold/[0.08] border border-gold/20
-                       items-center justify-center text-sm">
-                ⚡
-              </span>
-
-              <h1 class="text-2xl sm:text-3xl font-black italic
-                     uppercase tracking-tight text-white">
-                MES
-                <span class="text-gold">POSITIONS</span>
-              </h1>
-
-            </div>
-
-            <p class="mt-1 text-[11px] sm:text-xs text-white/35">
-              Suivez vos prédictions et vos cotes exécutées
-            </p>
-
-          </div>
-
-        </div>
-
-        <!-- Petit indicateur Clash Bet -->
-        <div class="hidden sm:flex items-center gap-2
-                px-3 py-2 rounded-xl
-                bg-gold/[0.04]
-                border border-gold/10">
-
-          <span class="relative flex h-2 w-2">
-            <span class="animate-ping absolute inline-flex h-full w-full
-                 rounded-full bg-gold opacity-50"></span>
-
-            <span class="relative inline-flex rounded-full
-                     h-2 w-2 bg-gold"></span>
-          </span>
-
-          <span class="text-[9px] font-black uppercase
-                   tracking-widest text-gold/70">
-            Clash Bet
-          </span>
-
-        </div>
-
+      <div class="flex items-center justify-between mb-6">
+        <NuxtLink to="/clash-bet"
+          class="inline-flex items-center gap-1.5 text-[11px] text-white/40 hover:text-gold transition-colors">
+          ← Retour aux marchés
+        </NuxtLink>
+        <NuxtLink to="/clash-bet/wallet"
+          class="inline-flex items-center gap-2 px-3 py-1.5 bg-gold/10 border border-gold/20 text-gold text-xs font-black rounded-xl hover:bg-gold/20 transition-all">
+          💰 {{ formatFcfa(wallet?.balance || 0) }}
+        </NuxtLink>
       </div>
 
-
-      <!-- =======================================================
-       ACTIVITY OVERVIEW
-       ======================================================= -->
-
-      <div class="relative overflow-hidden rounded-3xl
-              border border-white/[0.08]
-              bg-gradient-to-br
-              from-white/[0.055]
-              via-white/[0.025]
-              to-transparent
-              mb-5">
-
-        <!-- Decorative glow -->
-        <div class="absolute -top-24 -right-24
-                w-56 h-56 rounded-full
-                bg-gold/[0.07] blur-3xl pointer-events-none">
-        </div>
-
-        <div class="relative p-5 sm:p-6">
-
-          <div class="flex items-center justify-between gap-4 mb-5">
-
-            <div>
-
-              <p class="text-[9px] font-black uppercase
-                    tracking-[0.2em] text-gold/60 mb-1">
-                Mon activité
-              </p>
-
-              <h2 class="text-lg sm:text-xl font-black uppercase">
-                Vue d'ensemble
-              </h2>
-
-            </div>
-
-            <div class="hidden sm:block text-right">
-
-              <p class="text-[9px] uppercase tracking-wider text-white/25">
-                Total des gains
-              </p>
-
-              <p class="text-lg font-black font-mono text-gold">
-                {{ formatFcfa(totalWon) }}
-              </p>
-
-            </div>
-
-          </div>
-
-
-          <!-- Stats -->
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
-
-            <!-- Actifs -->
-            <div class="group rounded-2xl
-                    bg-amber-400/[0.04]
-                    border border-amber-400/10
-                    p-3.5
-                    hover:border-amber-400/20
-                    transition-all">
-
-              <div class="flex items-center justify-between mb-2">
-
-                <span class="text-[9px] font-black uppercase
-                         tracking-wider text-white/35">
-                  En cours
-                </span>
-
-                <span class="text-xs">◉</span>
-
-              </div>
-
-              <p class="text-xl sm:text-2xl font-black
-                    font-mono text-amber-400">
-                {{bets.filter(b => b.status === 'pending').length}}
-              </p>
-
-            </div>
-
-
-            <!-- Gagnés -->
-            <div class="group rounded-2xl
-                    bg-green-400/[0.04]
-                    border border-green-400/10
-                    p-3.5
-                    hover:border-green-400/20
-                    transition-all">
-
-              <div class="flex items-center justify-between mb-2">
-
-                <span class="text-[9px] font-black uppercase
-                         tracking-wider text-white/35">
-                  Gagnés
-                </span>
-
-                <span class="text-xs text-green-400">✓</span>
-
-              </div>
-
-              <p class="text-xl sm:text-2xl font-black
-                    font-mono text-green-400">
-                {{bets.filter(b => b.status === 'won').length}}
-              </p>
-
-            </div>
-
-
-            <!-- Perdus -->
-            <div class="group rounded-2xl
-                    bg-white/[0.02]
-                    border border-white/[0.06]
-                    p-3.5
-                    hover:border-white/10
-                    transition-all">
-
-              <div class="flex items-center justify-between mb-2">
-
-                <span class="text-[9px] font-black uppercase
-                         tracking-wider text-white/35">
-                  Perdus
-                </span>
-
-                <span class="text-xs text-white/20">×</span>
-
-              </div>
-
-              <p class="text-xl sm:text-2xl font-black
-                    font-mono text-white/40">
-                {{bets.filter(b => b.status === 'lost').length}}
-              </p>
-
-            </div>
-
-
-            <!-- Gains -->
-            <div class="group rounded-2xl
-                    bg-gold/[0.05]
-                    border border-gold/15
-                    p-3.5
-                    hover:border-gold/25
-                    transition-all">
-
-              <div class="flex items-center justify-between mb-2">
-
-                <span class="text-[9px] font-black uppercase
-                         tracking-wider text-white/35">
-                  Gains
-                </span>
-
-                <span class="text-xs text-gold">◆</span>
-
-              </div>
-
-              <p class="text-base sm:text-lg font-black
-                    font-mono text-gold truncate">
-                {{ formatFcfa(totalWon) }}
-              </p>
-
-            </div>
-
-          </div>
-
-
-          <!-- Mobile total -->
-          <div class="sm:hidden flex items-center justify-between
-                  mt-4 pt-4 border-t border-white/[0.06]">
-
-            <span class="text-[9px] uppercase
-                     tracking-wider text-white/30">
-              Total des gains
-            </span>
-
-            <span class="text-sm font-black font-mono text-gold">
-              {{ formatFcfa(totalWon) }}
-            </span>
-
-          </div>
-
-        </div>
-
+      <div class="mb-6">
+        <h1 class="text-2xl font-black italic uppercase">🎫 Mes Tickets</h1>
+        <p class="text-white/30 text-xs mt-1">Retrouvez tous vos paris P2P et leur état en temps réel.</p>
       </div>
 
-
-      <!-- =======================================================
-       FILTERS
-       ======================================================= -->
-
-      <div class="flex items-center justify-between gap-3 mb-5">
-
-        <div class="flex gap-1.5 overflow-x-auto
-                pb-1 -mx-1 px-1 scrollbar-hide">
-
-          <button v-for="tab in tabs" :key="tab.value" @click="activeTab = tab.value" :class="[
-            'relative flex-shrink-0',
-            'px-4 py-2.5 rounded-xl',
-            'text-[10px] sm:text-[11px]',
-            'font-black uppercase tracking-wider',
-            'transition-all duration-300',
-            activeTab === tab.value
-              ? 'bg-gold/[0.08] text-gold border border-gold/20'
-              : 'text-white/35 border border-transparent hover:text-white/70 hover:bg-white/[0.03]'
-          ]">
-
-            <span class="mr-1">
-              {{ tab.icon }}
-            </span>
-
-            {{ tab.label }}
-
-            <span class="ml-1 opacity-50 font-mono" v-if="tab.value !== 'all'">
-              {{bets.filter(b => b.status === tab.value).length}}
-            </span>
-
-            <!-- Active indicator -->
-            <span v-if="activeTab === tab.value" class="absolute bottom-0 left-1/2
-                 -translate-x-1/2
-                 w-5 h-[2px]
-                 rounded-full bg-gold"></span>
-
-          </button>
-
-        </div>
-
-        <span class="hidden sm:block text-[9px]
-                 uppercase tracking-widest text-white/20">
-          {{ filteredBets.length }} position{{ filteredBets.length > 1 ? 's' : '' }}
-        </span>
-
+      <!-- ═══ FILTRE PAR STATUT ═══ -->
+      <div class="flex gap-2 flex-wrap mb-5">
+        <button v-for="f in filters" :key="f.key" @click="activeFilter = f.key; fetchTickets()"
+          :class="['filter-btn', activeFilter === f.key ? 'active' : '']">
+          {{ f.label }}
+          <span v-if="counts[f.key] > 0" class="ml-1 text-[8px] opacity-70">({{ counts[f.key] }})</span>
+        </button>
       </div>
 
-
-      <!-- =======================================================
-       LOADING
-       ======================================================= -->
-
+      <!-- Loader -->
       <div v-if="loading" class="space-y-3">
-
-        <div v-for="n in 4" :key="n" class="h-44 rounded-3xl
-             bg-white/[0.025]
-             border border-white/[0.05]
-             animate-pulse"></div>
-
+        <div v-for="n in 4" :key="n" class="ticket-card animate-pulse">
+          <div class="h-4 bg-white/10 rounded w-36 mb-3"></div>
+          <div class="grid grid-cols-2 gap-2">
+            <div class="h-8 bg-white/5 rounded"></div>
+            <div class="h-8 bg-white/5 rounded"></div>
+          </div>
+        </div>
       </div>
 
+      <!-- Empty -->
+      <div v-else-if="tickets.length === 0" class="flex flex-col items-center py-20 text-center">
+        <div class="text-5xl mb-4">🎫</div>
+        <h3 class="text-lg font-black mb-2">Aucun ticket dans cette catégorie</h3>
+        <p class="text-white/40 text-sm mb-5">
+          {{ activeFilter === 'all' ? 'Vous n\'avez pas encore de ticket. Commencez à parier !' : 'Aucun ticket dans cet état.' }}
+        </p>
+        <NuxtLink to="/clash-bet"
+          class="px-5 py-2.5 bg-gradient-to-r from-gold to-yellow-600 text-black font-black text-sm rounded-xl">
+          Voir les Matchs
+        </NuxtLink>
+      </div>
 
-      <!-- =======================================================
-       EMPTY STATE
-       ======================================================= -->
+      <!-- Tickets List Compact (Style 1xBet Minimaliste) -->
+      <div v-else class="space-y-2">
+        <div v-for="ticket in tickets" :key="ticket.id"
+          class="bg-[#0b0c12] border border-white/10 hover:border-gold/30 rounded-xl p-3 space-y-2 transition-all">
 
-      <div v-else-if="filteredBets.length === 0" class="relative overflow-hidden
-           rounded-3xl
-           border border-white/[0.07]
-           bg-white/[0.02]
-           py-20 sm:py-24
-           px-6
-           text-center">
-
-        <!-- Glow -->
-        <div class="absolute top-1/2 left-1/2
-                -translate-x-1/2 -translate-y-1/2
-                w-48 h-48
-                bg-gold/[0.05]
-                blur-3xl rounded-full">
-        </div>
-
-        <div class="relative">
-
-          <div class="w-20 h-20 mx-auto mb-5
-                  rounded-3xl
-                  bg-gold/[0.05]
-                  border border-gold/10
-                  flex items-center justify-center">
-
-            <span class="text-3xl opacity-70">
-              ◇
-            </span>
-
+          <!-- Ligne 1 : Top Header (N° Ticket, Statut & Date) -->
+          <div class="flex items-center justify-between text-[10px] pb-1.5 border-b border-white/5">
+            <div class="flex items-center gap-2">
+              <span class="font-mono text-gold font-bold">#{{ ticket.ticket_number }}</span>
+              <span :class="getStatusBadgeClass(ticket.status)">{{ statusLabel(ticket.status) }}</span>
+            </div>
+            <span class="text-white/30 text-[9px]">{{ formatDate(ticket.created_at) }}</span>
           </div>
 
-          <h3 class="text-xl font-black uppercase mb-2">
-            Aucune position
-          </h3>
-
-          <p class="text-white/35 text-xs sm:text-sm
-                mb-7 max-w-sm mx-auto leading-relaxed">
-            Vous n'avez encore aucune prédiction dans
-            cette catégorie. Explorez les marchés
-            disponibles et faites votre analyse.
-          </p>
-
-          <NuxtLink to="/clash-bet" class="inline-flex items-center gap-2
-               px-6 py-3
-               rounded-xl
-               bg-gradient-to-r
-               from-gold
-               to-yellow-600
-               text-black
-               font-black
-               text-[11px]
-               uppercase
-               tracking-wider
-               shadow-lg shadow-gold/10
-               hover:scale-[1.02]
-               active:scale-[0.98]
-               transition-all">
-            Explorer les marchés
-
-            <span class="text-sm">
-              →
-            </span>
-
-          </NuxtLink>
-
-        </div>
-
-      </div>
-
-
-      <!-- =======================================================
-       POSITIONS
-       ======================================================= -->
-
-      <div v-else class="space-y-3">
-
-        <div v-for="bet in filteredBets" :key="bet.id" :class="[
-          'group relative overflow-hidden',
-          'rounded-3xl',
-          'border',
-          'transition-all duration-300',
-
-          bet.status === 'won'
-            ? 'border-green-400/10 bg-green-400/[0.015] hover:border-green-400/20'
-            : bet.status === 'lost'
-              ? 'border-white/[0.05] bg-white/[0.015] opacity-80'
-              : 'border-white/[0.08] bg-white/[0.025] hover:border-gold/20 hover:bg-white/[0.035]'
-        ]">
-
-          <!-- Status accent -->
-          <div :class="[
-            'absolute left-0 top-0 bottom-0 w-[2px]',
-            bet.status === 'won'
-              ? 'bg-green-400'
-              : bet.status === 'lost'
-                ? 'bg-white/10'
-                : 'bg-gold'
-          ]"></div>
-
-
-          <div class="p-4 sm:p-5">
-
-            <!-- =================================================
-             TOP ROW
-             ================================================= -->
-
-            <div class="flex items-center gap-2 mb-4">
-
-              <!-- Status -->
-              <span :class="[
-                'inline-flex items-center gap-1.5',
-                'px-2.5 py-1.5',
-                'rounded-lg',
-                'text-[8px]',
-                'font-black uppercase tracking-wider',
-
-                bet.status === 'won'
-                  ? 'bg-green-400/10 text-green-400 border border-green-400/10'
-                  : bet.status === 'lost'
-                    ? 'bg-white/[0.04] text-white/30 border border-white/[0.05]'
-                    : 'bg-amber-400/10 text-amber-400 border border-amber-400/10'
-              ]">
-
-                <span :class="[
-                  'w-1.5 h-1.5 rounded-full',
-                  bet.status === 'won'
-                    ? 'bg-green-400'
-                    : bet.status === 'lost'
-                      ? 'bg-white/20'
-                      : 'bg-amber-400 animate-pulse'
-                ]"></span>
-
-                {{ getStatusLabel(bet.status) }}
-
-              </span>
-
-
-              <!-- ID -->
-              <span class="text-[9px] text-white/20 font-mono">
-                CCA-{{ bet.id }}
-              </span>
-
-
-              <!-- Date -->
-              <span class="text-[9px] text-white/20
-                       font-mono ml-auto">
-                {{ formatDate(bet.created_at) }}
-              </span>
-
+          <!-- Ligne 2 : Détails du Pari & Cotes (Horizontal Minimaliste) -->
+          <div class="flex items-center justify-between gap-3">
+            <div class="min-w-0 flex-1">
+              <div class="text-xs font-black text-white ">
+                {{ ticket.market_title || (ticket.match?.home + ' vs ' + ticket.match?.away) }}
+              </div>
+              <div class="text-[10px] text-white/40 ">
+                {{ ticket.match?.home }} vs {{ ticket.match?.away }}
+              </div>
             </div>
 
-
-            <!-- =================================================
-             MATCH
-             ================================================= -->
-
-            <div class="flex items-center gap-3 sm:gap-5">
-
-              <!-- Home -->
-              <div class="flex-1 min-w-0">
-
-                <div class="text-sm sm:text-base
-                        font-black uppercase
-                        tracking-tight text-white
-                        truncate">
-                  {{ bet.market?.match?.clan_home?.name || 'Équipe A' }}
-                </div>
-
-                <div class="text-[8px] uppercase
-                        tracking-widest
-                        text-white/20 mt-1">
-                  Équipe domicile
-                </div>
-
-              </div>
-
-
-              <!-- VS -->
-              <div class="shrink-0 flex flex-col items-center">
-
-                <span class="text-[9px] font-black
-                         italic text-gold">
-                  VS
-                </span>
-
-                <span class="w-5 h-px bg-gold/20 mt-1"></span>
-
-              </div>
-
-
-              <!-- Away -->
-              <div class="flex-1 min-w-0 text-right">
-
-                <div class="text-sm sm:text-base
-                        font-black uppercase
-                        tracking-tight text-white
-                        truncate">
-                  {{ bet.market?.match?.clan_away?.name || 'Équipe B' }}
-                </div>
-
-                <div class="text-[8px] uppercase
-                        tracking-widest
-                        text-white/20 mt-1">
-                  Équipe extérieur
-                </div>
-
-              </div>
-
+            <!-- Side (YES/NO) & Cote -->
+            <div class="flex items-center gap-2 flex-shrink-0">
+              <span
+                :class="['px-2 py-0.5 rounded text-[10px] font-black uppercase', ticket.my_side === 'YES' ? 'bg-green-500/20 text-green-400 border border-green-500/30' : 'bg-red-500/20 text-red-400 border border-red-500/30']">
+                {{ ticket.my_side === 'YES' ? '👍 OUI' : '👎 NON' }}
+              </span>
             </div>
+          </div>
 
-
-            <!-- =================================================
-             PRONOSTIC
-             ================================================= -->
-
-            <div class="mt-4 p-3 rounded-2xl
-                    bg-gold/[0.035]
-                    border border-gold/[0.08]">
-
-              <div class="flex items-center justify-between gap-3">
-
-                <div>
-
-                  <div class="text-[8px]
-                          uppercase tracking-widest
-                          text-white/25 mb-1">
-                    Votre pronostic
-                  </div>
-
-                  <div class="text-xs sm:text-sm
-                          font-black uppercase
-                          text-gold">
-                    {{ bet.option?.label || '—' }}
-                  </div>
-
-                </div>
-
-                <span class="text-lg opacity-50">
-                  ◆
-                </span>
-
-              </div>
-
-            </div>
-
-
-            <!-- =================================================
-             FINANCIAL DATA
-             ================================================= -->
-
-            <div class="grid grid-cols-2 sm:grid-cols-3
-                    gap-3
-                    mt-4
-                    pt-4
-                    border-t border-white/[0.06]">
-
-              <!-- Mise -->
+          <!-- Ligne 3 : Montants & Actions (Barre Basse Compacte) -->
+          <div class="flex items-center justify-between pt-1 text-[10px] bg-white/[0.02] p-2 rounded-lg">
+            <div class="flex items-center gap-3">
               <div>
-
-                <div class="text-[8px]
-                        uppercase tracking-widest
-                        text-white/25 mb-1">
-                  Mise
-                </div>
-
-                <div class="text-sm
-                        font-black font-mono
-                        text-white">
-                  {{ formatFcfa(bet.amount) }}
-                </div>
-
+                <span class="text-white/30 uppercase text-[8px] block">Mise</span>
+                <span class="font-black text-white tabular-nums">{{ formatFcfa(ticket.amount) }}</span>
               </div>
-
-
-              <!-- Cote exécutée -->
               <div>
-
-                <div class="text-[8px]
-                        uppercase tracking-widest
-                        text-white/25 mb-1">
-                  Cote exécutée
-                </div>
-
-                <div class="text-sm
-                        font-black font-mono
-                        text-gold">
-                  {{ parseFloat(bet.executed_odds || 0).toFixed(2) }}
-                </div>
-
-                <div class="text-[8px] text-white/20 mt-0.5">
-                  verrouillée
-                </div>
-
+                <span class="text-green-400/60 uppercase text-[8px] block">Gain Net</span>
+                <span class="font-black text-green-400 tabular-nums">{{ formatFcfa(ticket.net_payout) }}</span>
               </div>
-
-
-              <!-- Gain -->
-              <div class="col-span-2 sm:col-span-1
-                      sm:text-right">
-
-                <div class="text-[8px]
-                        uppercase tracking-widest
-                        text-white/25 mb-1">
-
-                  {{ bet.status === 'won'
-                    ? 'Gain effectif'
-                    : 'Gain potentiel'
-                  }}
-
-                </div>
-
-                <div :class="[
-                  'text-base sm:text-lg',
-                  'font-black font-mono',
-
-                  bet.status === 'won'
-                    ? 'text-green-400'
-                    : bet.status === 'lost'
-                      ? 'text-white/20 line-through'
-                      : 'text-white'
-                ]">
-                  {{ formatFcfa(
-                    bet.actual_payout || bet.potential_payout
-                  ) }}
-                </div>
-
+              <div v-if="ticket.status === 'settled'">
+                <span :class="['font-black text-[10px]', ticket.is_winner ? 'text-green-400' : 'text-red-400']">
+                  {{ ticket.is_winner ? '🏆 GAGNÉ' : '😔 PERDU' }}
+                </span>
               </div>
-
             </div>
 
-
-            <!-- =================================================
-             CURRENT ODDS
-             ================================================= -->
-
-            <!--
-          Affiché uniquement si l'API fournit current_odds.
-          Cela permet de comparer la cote actuelle
-          avec la cote exécutée sans modifier
-          la cote historique du pari.
-        -->
-
-            <div v-if="bet.status === 'pending' && bet.current_odds" class="mt-4 flex items-center
-                 justify-between gap-3
-                 px-3 py-2.5
-                 rounded-xl
-                 bg-white/[0.025]
-                 border border-white/[0.05]">
-
-              <div class="flex items-center gap-2">
-
-                <span class="text-xs">
-                  📈
-                </span>
-
-                <span class="text-[8px]
-                         uppercase tracking-widest
-                         text-white/30">
-                  Cote actuelle
-                </span>
-
-              </div>
-
-              <div class="flex items-center gap-2">
-
-                <span class="text-xs font-black
-                         font-mono text-white/60">
-                  {{ parseFloat(bet.current_odds).toFixed(2) }}
-                </span>
-
-                <span v-if="
-                  parseFloat(bet.current_odds) !==
-                  parseFloat(bet.executed_odds)
-                " class="text-[8px] px-1.5 py-0.5
-                     rounded-md bg-amber-400/10
-                     text-amber-400">
-                  Marché en mouvement
-                </span>
-
-              </div>
-
-            </div>
-
-
-            <!-- =================================================
-             FOOTER
-             ================================================= -->
-
-            <div class="flex items-center
-                    justify-between gap-3
-                    mt-4 pt-3
-                    border-t border-white/[0.04]">
-
-              <span class="text-[8px]
-                       uppercase tracking-widest
-                       text-white/20">
-                {{ bet.status === 'pending'
-                  ? 'Position active'
-                  : 'Position réglée'
-                }}
-              </span>
-
-              <button type="button" class="text-[9px] font-black
-                   uppercase tracking-wider
-                   text-white/30
-                   hover:text-gold
-                   transition-colors">
-                Voir les détails →
-              </button>
-
-            </div>
-
+            <!-- Annuler si open -->
+            <button v-if="ticket.status === 'open'" @click="cancelTicket(ticket)" :disabled="cancelling === ticket.id"
+              class="px-2.5 py-1 bg-red-500/10 border border-red-500/30 text-red-400 text-[10px] font-bold rounded-lg hover:bg-red-500/20 transition-all disabled:opacity-40">
+              <span v-if="cancelling === ticket.id">...</span>
+              <span v-else>🗑 Annuler</span>
+            </button>
           </div>
 
         </div>
-
       </div>
 
+      <!-- Pagination -->
+      <div v-if="meta.last_page > 1" class="flex justify-center gap-2 mt-4">
+        <button @click="fetchTickets(meta.current_page - 1)" :disabled="meta.current_page <= 1"
+          class="px-3 py-1 text-xs border border-white/10 rounded-lg text-white/40 hover:text-gold disabled:opacity-30">←</button>
+        <span class="px-3 py-1 text-xs text-white/40">{{ meta.current_page }} / {{ meta.last_page }}</span>
+        <button @click="fetchTickets(meta.current_page + 1)" :disabled="meta.current_page >= meta.last_page"
+          class="px-3 py-1 text-xs border border-white/10 rounded-lg text-white/40 hover:text-gold disabled:opacity-30">→</button>
+      </div>
     </div>
+
   </div>
 </template>
 
 <script setup>
-const { $api } = useNuxtApp();
-const { isLoggedIn } = useAuth();
+definePageMeta({
+  alias: ['/clash-bet/mes-tickets'],
+});
 
-useHead({ title: 'Mes Paris — CCA Clash Bet' });
+const { $api, $toast } = useNuxtApp();
+useHead({ title: 'Mes Tickets — CCA Clash Bet P2P' });
 
 const loading = ref(true);
-const bets = ref([]);
-const activeTab = ref('all');
+const cancelling = ref(null);
+const tickets = ref([]);
+const wallet = ref(null);
+const counts = ref({});
+const activeFilter = ref('all');
+const meta = ref({ current_page: 1, last_page: 1, total: 0 });
 
-const tabs = [
-  { label: 'Tous',         value: 'all',      icon: '🎟️' },
-  { label: 'En cours',     value: 'pending',  icon: '⏳' },
-  { label: 'Gagnés',       value: 'won',      icon: '🏆' },
-  { label: 'Perdus',       value: 'lost',     icon: '❌' },
-  { label: 'Remboursés',   value: 'refunded', icon: '↩️' },
+const filters = [
+  { key: 'all', label: 'Tous' },
+  { key: 'open', label: '🟡 Ouverts' },
+  { key: 'matched', label: '🔵 Appariés' },
+  { key: 'settled', label: '✅ Terminés' },
+  { key: 'cancelled', label: '❌ Annulés' },
+  { key: 'refunded', label: '↩️ Remboursés' },
 ];
 
-const filteredBets = computed(() => activeTab.value === 'all' ? bets.value : bets.value.filter(b => b.status === activeTab.value));
-const totalWon = computed(() => bets.value.filter(b => b.status === 'won').reduce((s, b) => s + (b.actual_payout || 0), 0));
+const statusLabel = (s) => ({
+  open: '⏳ En attente',
+  matched: '🔵 EN COURS',
+  locked: '🔒 VERROUILLÉ',
+  settled: '✅ RÉGLÉ',
+  cancelled: '❌ ANNULÉ',
+  refunded: '↩️ REMBOURSÉ',
+}[s] || s);
 
-const formatFcfa = (n) => { if (!n && n !== 0) return '0 FCFA'; return Number(n).toLocaleString('fr-FR') + ' FCFA'; };
-const formatDate = (d) => { if (!d) return '-'; return new Date(d).toLocaleString('fr-FR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }); };
-const getStatusLabel = (s) => ({ pending: '● En Cours', won: '🏆 Gagné', lost: '❌ Perdu', refunded: '↩️ Remboursé' }[s] || s);
+const getStatusBadgeClass = (s) => ({
+  open: 'px-2 py-0.5 bg-yellow-500/10 text-yellow-400 border border-yellow-500/20 rounded font-black text-[9px]',
+  matched: 'px-2 py-0.5 bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded font-black text-[9px]',
+  locked: 'px-2 py-0.5 bg-purple-500/10 text-purple-400 border border-purple-500/20 rounded font-black text-[9px]',
+  settled: 'px-2 py-0.5 bg-green-500/10 text-green-400 border border-green-500/20 rounded font-black text-[9px]',
+  cancelled: 'px-2 py-0.5 bg-red-500/10 text-red-400 border border-red-500/20 rounded font-black text-[9px]',
+  refunded: 'px-2 py-0.5 bg-gray-500/10 text-gray-400 border border-gray-500/20 rounded font-black text-[9px]',
+}[s] || 'px-2 py-0.5 bg-white/10 text-white/50 rounded font-bold text-[9px]');
 
-const fetchMyBets = async () => {
-  if (!isLoggedIn.value) return;
-  loading.value = true;
-  try {
-    const res = await $api('/clash-bet/my-bets');
-    bets.value = res.data || res || [];
-  } catch {} finally { loading.value = false; }
+const formatFcfa = (n) => {
+  if (!n && n !== 0) return '0 FCFA';
+  return Number(n).toLocaleString('fr-FR') + ' FCFA';
 };
 
-onMounted(() => fetchMyBets());
+const formatDate = (d) => {
+  if (!d) return '—';
+  return new Date(d).toLocaleString('fr-FR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
+};
+
+const fetchTickets = async (page = 1) => {
+  loading.value = true;
+  try {
+    const params = { page };
+    if (activeFilter.value !== 'all') params.status = activeFilter.value;
+    const res = await $api('/clash-bet/my-tickets', { params });
+    tickets.value = res.data || res || [];
+    if (res.meta) meta.value = res.meta;
+    else if (res.last_page) meta.value = { current_page: res.current_page, last_page: res.last_page, total: res.total };
+  } catch (e) {
+    console.error(e);
+  } finally {
+    loading.value = false;
+  }
+};
+
+const buildCounts = async () => {
+  try {
+    const statuses = ['open', 'matched', 'settled'];
+    await Promise.all(statuses.map(async (s) => {
+      const res = await $api('/clash-bet/my-tickets', { params: { status: s, page: 1 } });
+      counts.value[s] = res.meta?.total || res.total || 0;
+    }));
+  } catch { }
+};
+
+const cancelTicket = async (ticket) => {
+  cancelling.value = ticket.id;
+  try {
+    await $api(`/clash-bet/tickets/${ticket.id}/cancel`, { method: 'POST' });
+    $toast.success(`Ticket annulé — ${formatFcfa(ticket.amount)} remboursés.`);
+    fetchTickets();
+  } catch (e) {
+    $toast.error(e?.data?.message || 'Impossible d\'annuler ce ticket.');
+  } finally {
+    cancelling.value = null;
+  }
+};
+
+const fetchWallet = async () => {
+  try { wallet.value = await $api('/clash-bet/wallet'); } catch { }
+};
+
+onMounted(() => {
+  fetchTickets();
+  buildCounts();
+  fetchWallet();
+});
 </script>
 
 <style scoped>
-.stat-mini       { @apply flex flex-col items-center gap-0.5 p-3 rounded-2xl bg-white/[0.03] border border-white/[0.06] text-center; }
-.stat-mini-label { @apply text-[9px] uppercase tracking-widest text-white/30; }
-.stat-mini-val   { @apply text-lg font-black tabular-nums; }
-
-.tab-btn {
-  @apply px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wide whitespace-nowrap
-         bg-white/[0.04] border border-white/[0.07] text-white/50
-         hover:bg-white/[0.08] hover:text-white transition-all;
-}
-.tab-btn.active {
-  @apply bg-gold text-black border-transparent shadow-[0_0_20px_rgba(212,175,55,0.3)];
+.filter-btn {
+  @apply px-3 py-1.5 text-[10px] font-bold border border-white/10 rounded-lg text-white/40 hover:border-gold/30 hover:text-gold transition-all;
 }
 
-.bet-card {
-  @apply bg-white/[0.02] border border-white/[0.07] rounded-3xl p-5
-         hover:bg-white/[0.03] transition-all;
+.filter-btn.active {
+  @apply border-gold/50 text-gold bg-gold/10;
 }
-.bet-card.won     { @apply border-green-500/20; }
-.bet-card.pending { @apply border-amber-500/20; }
-.bet-card.lost    { @apply opacity-60; }
+
+.ticket-card {
+  @apply bg-white/[0.02] border border-white/[0.08] rounded-2xl p-4;
+}
 
 .status-badge {
-  @apply text-[9px] font-black uppercase px-2.5 py-1 rounded-full border;
+  @apply inline-flex items-center px-2 py-0.5 rounded-lg text-[9px] font-black uppercase tracking-wider;
 }
-.status-badge.pending  { @apply bg-amber-500/10 text-amber-400 border-amber-500/30; }
-.status-badge.won      { @apply bg-green-500/10 text-green-400 border-green-500/30; }
-.status-badge.lost     { @apply bg-white/5 text-white/30 border-white/10; }
-.status-badge.refunded { @apply bg-blue-500/10 text-blue-400 border-blue-500/30; }
+
+.status-badge.open {
+  @apply bg-amber-500/10 border border-amber-500/25 text-amber-400;
+}
+
+.status-badge.matched {
+  @apply bg-blue-500/10 border border-blue-500/25 text-blue-400;
+}
+
+.status-badge.locked {
+  @apply bg-purple-500/10 border border-purple-500/25 text-purple-400;
+}
+
+.status-badge.settled {
+  @apply bg-green-500/10 border border-green-500/25 text-green-400;
+}
+
+.status-badge.cancelled {
+  @apply bg-red-500/10 border border-red-500/25 text-red-400;
+}
+
+.status-badge.refunded {
+  @apply bg-white/5 border border-white/15 text-white/40;
+}
 </style>
