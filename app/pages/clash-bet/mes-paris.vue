@@ -103,12 +103,25 @@
               </div>
             </div>
 
-            <!-- Annuler si open -->
-            <button v-if="ticket.status === 'open'" @click="cancelTicket(ticket)" :disabled="cancelling === ticket.id"
-              class="px-2.5 py-1 bg-red-500/10 border border-red-500/30 text-red-400 text-[10px] font-bold rounded-lg hover:bg-red-500/20 transition-all disabled:opacity-40">
-              <span v-if="cancelling === ticket.id">...</span>
-              <span v-else>🗑 Annuler</span>
-            </button>
+            <!-- Annuler & Partager si open -->
+            <div class="flex items-center gap-1.5">
+              <button v-if="ticket.status === 'open'" @click="shareTicket(ticket)"
+                class="px-2.5 py-1 bg-green-500/20 border border-green-500/40 text-green-400 text-[10px] font-black rounded-lg hover:bg-green-500/30 transition-all flex items-center gap-1.5 cursor-pointer">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="18" cy="5" r="3"></circle>
+                  <circle cx="6" cy="12" r="3"></circle>
+                  <circle cx="18" cy="19" r="3"></circle>
+                  <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                  <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+                </svg>
+                <span>Partager</span>
+              </button>
+              <button v-if="ticket.status === 'open'" @click="cancelTicket(ticket)" :disabled="cancelling === ticket.id"
+                class="px-2.5 py-1 bg-red-500/10 border border-red-500/30 text-red-400 text-[10px] font-bold rounded-lg hover:bg-red-500/20 transition-all disabled:opacity-40">
+                <span v-if="cancelling === ticket.id">...</span>
+                <span v-else>🗑 Annuler</span>
+              </button>
+            </div>
           </div>
 
         </div>
@@ -221,6 +234,27 @@ const cancelTicket = async (ticket) => {
 
 const fetchWallet = async () => {
   try { wallet.value = await $api('/clash-bet/wallet'); } catch { }
+};
+
+const shareTicket = (ticket) => {
+  const side = ticket.my_side === 'YES' ? 'OUI' : 'NON';
+  const opposite = side === 'YES' ? 'NON' : 'OUI';
+  const amount = formatFcfa(ticket.amount);
+  const payout = formatFcfa(ticket.net_payout || ticket.gross_payout);
+  const url = `${window.location.origin}/clash-bet/ticket/${ticket.ticket_number}`;
+
+  const text = `🎫 *DEFI PARI P2P CCA CLASH BET* (#${ticket.ticket_number})\n\n` +
+    `🏆 Match : *${ticket.match?.home || 'Match'} VS ${ticket.match?.away || 'Match'}*\n` +
+    `📌 Pari : *${ticket.market_title || 'Victoire'}*\n` +
+    `💰 J'ai misé ${amount} sur *${side}*.\n` +
+    `⚡ Prends la position *${opposite}* (Cote 2.00) et tente d'emporter ${payout} !\n\n` +
+    `Rejoins le pari ici : ${url}`;
+
+  if (navigator.share) {
+    navigator.share({ title: `Pari P2P #${ticket.ticket_number}`, text, url }).catch(() => {});
+  } else {
+    window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, '_blank');
+  }
 };
 
 onMounted(() => {

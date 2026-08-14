@@ -22,7 +22,12 @@
         <NuxtLink to="/players/cameroun" class="nav-link" active-class="active">Joueurs</NuxtLink>
         <NuxtLink to="/tournaments" class="nav-link" active-class="active">Tournois</NuxtLink>
         <NuxtLink v-if="canAccessClashBet" to="/clash-bet"
-          class="nav-link text-gold font-bold flex items-center gap-1" active-class="active">🔥 Clash Bet</NuxtLink>
+          class="nav-link text-gold font-bold flex items-center gap-1.5" active-class="active">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline">
+            <rect x="2" y="10" width="20" height="14" rx="2" /><circle cx="12" cy="17" r="2" /><path d="M6 10V6a6 6 0 0 1 12 0v4" />
+          </svg>
+          Clash Bet
+        </NuxtLink>
         <NuxtLink to="/rules" class="nav-link" active-class="active">Règlement</NuxtLink>
       </div>
 
@@ -35,15 +40,21 @@
 
         <button class="mobile-inline-link" :class="{ active: rankingsOpen }" @click="toggleRankings">
           <LucideBarChart3 :size="20" class="inline icon" />
-          <span class="label-text">Rang national <span class="tiny-chevron">▾</span></span>
+          <span class="label-text">Rang  <span class="tiny-chevron">▾</span></span>
         </button>
+
 
         <button class="mobile-inline-link" :class="{ active: tournamentsMenuOpen }" @click="toggleTournamentsMenu">
           <LucideSwords :size="20" class="inline icon" />
           <span class="label-text">Tournoi <span class="tiny-chevron">▾</span></span>
         </button>
+        <NuxtLink v-if="canAccessClashBet" to="/clash-bet" class="mobile-inline-link" active-class="active">
+          <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="10" width="20" height="12" rx="2" /><circle cx="12" cy="17" r="2" /><path d="M6 10V6a6 6 0 0 1 12 0v4" />
+          </svg>
+          <span class="label-text">Clash Bet</span>
+        </NuxtLink>
       </div>
-
       <!-- Actions Desktop / Hamburger Mobile -->
       <div class="nav-actions">
         <div class="nav-actions-desktop" v-if="!isMobile">
@@ -309,11 +320,11 @@ const showMyClan = computed(
 /* ── Mobile Inline Links (Stacked) ──────────── */
 .nav-links-mobile-inline {
   display: flex;
-  gap: 8px;
+  gap: 3px;
   align-items: center;
   flex: 1;
   justify-content: center;
-  margin: 0 10px;
+  margin: 0 6px;
 }
 
 .mobile-inline-link {
