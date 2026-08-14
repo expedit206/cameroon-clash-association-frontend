@@ -1,10 +1,26 @@
 <template>
   <div class="min-h-screen bg-[#06070a] text-white pb-20 pt-24">
-    <div class="container mx-auto px-4 max-w-4xl">
+
+    <!-- ═══ ECRAN DE MAINTENANCE SI DESACTIVE EN BDD ═══ -->
+    <div v-if="!canAccessClashBet" class="container mx-auto px-4 max-w-2xl py-20 text-center space-y-5">
+      <div class="w-20 h-20 bg-gold/10 border border-gold/30 rounded-3xl flex items-center justify-center text-4xl mx-auto shadow-[0_0_30px_rgba(212,175,55,0.2)]">
+        🔒
+      </div>
+      <h2 class="text-3xl font-black italic uppercase text-white tracking-tight">Accès Portefeuille Désactivé</h2>
+      <p class="text-white/60 text-sm leading-relaxed max-w-md mx-auto">
+        Le module Clash Bet P2P et l'accès au portefeuille sont actuellement suspendus par l'administration.
+      </p>
+      <NuxtLink to="/" class="inline-block px-6 py-3 bg-gradient-to-r from-gold to-yellow-600 text-black font-black text-xs uppercase tracking-wider rounded-xl hover:brightness-110 transition-all">
+        ← Retourner à l'accueil
+      </NuxtLink>
+    </div>
+
+    <div v-else class="container mx-auto px-4 max-w-4xl">
 
       <!-- ═══ PAGE HEADER ═══ -->
       <div class="flex items-center gap-3 mb-8">
-        <NuxtLink to="/clash-bet" class="w-9 h-9 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-white/50 hover:text-gold hover:border-gold/30 transition-all">
+        <NuxtLink to="/clash-bet"
+          class="w-9 h-9 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-white/50 hover:text-gold hover:border-gold/30 transition-all">
           ←
         </NuxtLink>
         <div>
@@ -35,117 +51,133 @@
         </div>
       </div>
 
-      <!-- ═══ DEPOSIT / WITHDRAWAL FORMS ═══ -->
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-8">
-
-        <!-- DÉPÔT -->
-        <div class="form-card">
-          <div class="form-card-header">
-            <span class="text-xl">📥</span>
-            <div>
-              <h3 class="font-black text-sm uppercase tracking-wide">Recharger mon solde</h3>
-              <p class="text-[10px] text-white/30">Via Mobile Money (NotchPay)</p>
-            </div>
-          </div>
-
-          <form @submit.prevent="handleDeposit" class="space-y-3 mt-4">
-            <div class="quick-amounts">
-              <button v-for="q in [1000, 2000, 5000, 10000]" :key="q" type="button"
-                @click="depositForm.amount = q"
-                :class="['quick-amount-btn', depositForm.amount === q ? 'active' : '']">
-                {{ formatFcfaShort(q) }}
-              </button>
-            </div>
-
-            <div class="field-group">
-              <label class="field-label">Montant (FCFA)</label>
-              <input v-model.number="depositForm.amount" type="number" min="100" step="500" required
-                placeholder="Ex: 5000" class="field-input" />
-            </div>
-
-            <div class="field-group">
-              <label class="field-label">Moyen de paiement</label>
-              <select v-model="depositForm.payment_method" class="field-input">
-                <option value="orange_money">🟠 Orange Money</option>
-                <option value="mtn_momo">🟡 MTN MoMo</option>
-              </select>
-            </div>
-
-            <div class="field-group">
-              <label class="field-label">Numéro Mobile Money</label>
-              <input v-model="depositForm.phone_number" type="tel" required placeholder="6XX XXX XXX" class="field-input" />
-            </div>
-
-            <div class="field-group">
-              <label class="field-label">Email de confirmation</label>
-              <input v-model="depositForm.email" type="email" required placeholder="vous@email.com" class="field-input" />
-            </div>
-
-            <button type="submit" :disabled="depositing || depositForm.amount < 100"
-              class="w-full py-3.5 bg-gradient-to-r from-gold to-yellow-600 text-black font-black uppercase text-sm rounded-xl hover:shadow-[0_0_25px_rgba(212,175,55,0.4)] transition-all disabled:opacity-40 disabled:cursor-not-allowed">
-              <span v-if="depositing">⏳ Initialisation...</span>
-              <span v-else>Payer via NotchPay →</span>
-            </button>
-          </form>
+      <!-- ═══ DEPOSIT / WITHDRAWAL TABS & FORMS ═══ -->
+      <div class="mb-8">
+        <!-- Navigation Onglets Dépôt / Retrait -->
+        <div class="flex items-center gap-2 p-1 bg-white/5 border border-white/10 rounded-2xl mb-6 max-w-md mx-auto">
+          <button @click="activeTab = 'deposit'"
+            :class="['flex-1 py-2.5 px-4 rounded-xl text-xs font-black uppercase transition-all flex items-center justify-center gap-2', activeTab === 'deposit' ? 'bg-gold text-black shadow-lg shadow-gold/20' : 'text-white/60 hover:text-white']">
+            <span>📥</span>
+            <span>Dépôt</span>
+          </button>
+          <button @click="activeTab = 'withdraw'"
+            :class="['flex-1 py-2.5 px-4 rounded-xl text-xs font-black uppercase transition-all flex items-center justify-center gap-2', activeTab === 'withdraw' ? 'bg-gold text-black shadow-lg shadow-gold/20' : 'text-white/60 hover:text-white']">
+            <span>📤</span>
+            <span>Retrait</span>
+          </button>
         </div>
 
-        <!-- RETRAIT -->
-        <div class="form-card">
-          <div class="form-card-header">
-            <span class="text-xl">📤</span>
-            <div>
-              <h3 class="font-black text-sm uppercase tracking-wide">Demander un retrait</h3>
-              <p class="text-[10px] text-white/30">Frais de plateforme : 7%</p>
+        <div class="max-w-xl mx-auto">
+
+          <!-- SECTION DÉPÔT -->
+          <div v-if="activeTab === 'deposit'" class="form-card">
+            <div class="form-card-header">
+              <span class="text-2xl">📥</span>
+              <div>
+                <h3 class="font-black text-base uppercase tracking-wide text-white">Recharger mon solde</h3>
+                <p class="text-[11px] text-white/40">Guichet de paiement sécurisé (CinetPay / Mobile Money)</p>
+              </div>
             </div>
+
+            <form @submit.prevent="handleDeposit" class="space-y-4 mt-5">
+              <div class="quick-amounts">
+                <button v-for="q in [1000, 2000, 5000, 10000]" :key="q" type="button" @click="depositForm.amount = q"
+                  :class="['quick-amount-btn', depositForm.amount === q ? 'active' : '']">
+                  +{{ formatFcfaShort(q) }}
+                </button>
+              </div>
+
+              <div class="field-group">
+                <label class="field-label">Montant à recharger (FCFA)</label>
+                <input v-model.number="depositForm.amount" type="number" min="100" required placeholder="Ex: 5000"
+                  class="field-input text-lg font-black text-gold" />
+              </div>
+
+              <div class="p-3 bg-gold/10 border border-gold/20 rounded-xl text-xs text-gold/90 space-y-1">
+                <div class="font-bold flex items-center gap-1.5">
+                  <span>🔒 Paiement Direct & Sécurisé</span>
+                </div>
+                <p class="text-[10px] text-white/60">
+                  Aucune information personnelle n'est requise ici. Vous saisirez votre numéro de téléphone et validerez
+                  votre paiement directement sur la fenêtre sécurisée CinetPay.
+                </p>
+              </div>
+
+              <button type="submit" :disabled="depositing || depositForm.amount < 100"
+                class="w-full py-4 bg-gradient-to-r from-gold to-yellow-600 text-black font-black uppercase text-sm rounded-xl hover:shadow-[0_0_25px_rgba(212,175,55,0.4)] transition-all disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer">
+                <span v-if="depositing">⏳ Ouverture du guichet...</span>
+                <span v-else>Procéder au dépôt ({{ formatFcfa(depositForm.amount) }}) →</span>
+              </button>
+            </form>
           </div>
 
-          <form @submit.prevent="handleWithdraw" class="space-y-3 mt-4">
-            <div class="quick-amounts">
-              <button v-for="q in [5000, 10000, 20000, 50000]" :key="q" type="button"
-                @click="withdrawForm.amount = q"
-                :class="['quick-amount-btn', withdrawForm.amount === q ? 'active' : '']">
-                {{ formatFcfaShort(q) }}
+          <!-- SECTION RETRAIT -->
+          <div v-else-if="activeTab === 'withdraw'" class="form-card">
+            <div class="form-card-header">
+              <span class="text-2xl">📤</span>
+              <div>
+                <h3 class="font-black text-base uppercase tracking-wide text-white">Demander un retrait</h3>
+                <p class="text-[11px] text-white/40">Frais de plateforme : 10% — Traitement rapide</p>
+              </div>
+            </div>
+
+            <form @submit.prevent="handleWithdraw" class="space-y-4 mt-5">
+              <div class="quick-amounts">
+                <button v-for="q in [5000, 10000, 20000, 50000]" :key="q" type="button" @click="withdrawForm.amount = q"
+                  :class="['quick-amount-btn', withdrawForm.amount === q ? 'active' : '']">
+                  {{ formatFcfaShort(q) }}
+                </button>
+              </div>
+
+              <div class="field-group">
+                <label class="field-label">Montant du retrait (FCFA) - Min 1 000 FCFA</label>
+                <input v-model.number="withdrawForm.amount" type="number" min="100"  required
+                  placeholder="Ex: 5000" class="field-input text-lg font-black text-gold" />
+              </div>
+
+              <div class="field-group">
+                <label class="field-label">Nom du titulaire du compte (MoMo / OM)</label>
+                <input v-model="withdrawForm.account_name" type="text" required
+                  placeholder="Nom exact enregistré chez l'opérateur" class="field-input" />
+                <span class="text-[9px] text-white/40">Entrez le nom et prénom de la personne détentrice de la
+                  puce.</span>
+              </div>
+
+              <div class="field-group">
+                <label class="field-label">Recevoir sur le réseau</label>
+                <select v-model="withdrawForm.payment_method" class="field-input">
+                  <option value="orange_money">🟠 Orange Money</option>
+                  <option value="mtn_momo">🟡 MTN MoMo</option>
+                </select>
+              </div>
+
+              <div class="field-group">
+                <label class="field-label">Numéro de réception Mobile Money</label>
+                <input v-model="withdrawForm.phone_number" type="tel" required placeholder="6XX XXX XXX"
+                  class="field-input" />
+              </div>
+
+              <!-- Synthèse Frais & Montant Net -->
+              <div class="p-3.5 bg-black/50 rounded-xl border border-white/10 space-y-2 text-xs">
+                <div class="flex justify-between text-white/50">
+                  <span>Frais de transfert (10%)</span>
+                  <span class="text-amber-400 font-bold">- {{ formatFcfa(withdrawalFee) }}</span>
+                </div>
+                <div class="flex justify-between font-black text-white border-t border-white/10 pt-2">
+                  <span>Montant net versé sur votre téléphone</span>
+                  <span class="text-green-400 text-sm font-mono">{{ formatFcfa(netWithdrawal) }}</span>
+                </div>
+              </div>
+
+              <button type="submit"
+                :disabled="withdrawing  || !withdrawForm.account_name || !withdrawForm.phone_number || (wallet && wallet.balance < withdrawForm.amount)"
+                class="w-full py-4 bg-gradient-to-r from-green-500 to-emerald-600 text-black font-black uppercase text-sm rounded-xl hover:brightness-110 transition-all disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer">
+                <span v-if="withdrawing">⏳ Soumission en cours...</span>
+                <span v-else>Confirmer la demande de retrait →</span>
               </button>
-            </div>
+            </form>
+          </div>
 
-            <div class="field-group">
-              <label class="field-label">Montant du retrait (FCFA)</label>
-              <input v-model.number="withdrawForm.amount" type="number" min="1000" step="500" required
-                placeholder="Ex: 10000" class="field-input" />
-            </div>
-
-            <div class="field-group">
-              <label class="field-label">Recevoir sur</label>
-              <select v-model="withdrawForm.payment_method" class="field-input">
-                <option value="orange_money">🟠 Orange Money</option>
-                <option value="mtn_momo">🟡 MTN MoMo</option>
-              </select>
-            </div>
-
-            <div class="field-group">
-              <label class="field-label">Numéro de réception</label>
-              <input v-model="withdrawForm.phone_number" type="tel" required placeholder="6XX XXX XXX" class="field-input" />
-            </div>
-
-            <!-- Fee summary -->
-            <div class="p-3.5 bg-black/40 rounded-xl border border-white/[0.08] space-y-2 text-xs">
-              <div class="flex justify-between text-white/50">
-                <span>Frais plateforme (7%)</span>
-                <span class="text-amber-400 font-bold">- {{ formatFcfa(withdrawalFee) }}</span>
-              </div>
-              <div class="flex justify-between font-black text-white border-t border-white/10 pt-2">
-                <span>Vous recevez</span>
-                <span class="text-green-400 text-sm">{{ formatFcfa(netWithdrawal) }}</span>
-              </div>
-            </div>
-
-            <button type="submit"
-              :disabled="withdrawing || withdrawForm.amount < 1000 || (wallet && wallet.balance < withdrawForm.amount)"
-              class="w-full py-3.5 bg-white/8 border border-white/15 text-white font-black uppercase text-sm rounded-xl hover:bg-white/15 transition-all disabled:opacity-40 disabled:cursor-not-allowed">
-              <span v-if="withdrawing">⏳ Soumission...</span>
-              <span v-else>Soumettre la demande</span>
-            </button>
-          </form>
         </div>
       </div>
 
@@ -176,7 +208,8 @@
           <div v-for="t in transactions" :key="t.id"
             class="flex items-center gap-3 px-4 py-3 rounded-2xl bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.04] transition-all">
             <!-- Icon -->
-            <div :class="['w-9 h-9 rounded-xl flex items-center justify-center text-base flex-shrink-0', getTypeIconBg(t.type)]">
+            <div
+              :class="['w-9 h-9 rounded-xl flex items-center justify-center text-base flex-shrink-0', getTypeIconBg(t.type)]">
               {{ getTypeIcon(t.type) }}
             </div>
             <!-- Info -->
@@ -205,8 +238,13 @@
 <script setup>
 const { $api, $toast } = useNuxtApp();
 const { user, isLoggedIn } = useAuth();
+// import ref
+import { ref } from 'vue'
 
 useHead({ title: 'Mon Wallet — CCA Clash Bet' });
+
+const route = useRoute();
+const activeTab = ref(route.query.tab === 'withdraw' || route.query.action === 'withdraw' ? 'withdraw' : 'deposit');
 
 const wallet = ref(null);
 const transactions = ref([]);
@@ -216,9 +254,6 @@ const withdrawing = ref(false);
 
 const depositForm = ref({
   amount: 2000,
-  payment_method: 'orange_money',
-  phone_number: user.value?.phone_whatsapp || '',
-  email: 'user@cca.cm',
 });
 
 const withdrawForm = ref({
@@ -235,13 +270,13 @@ const formatFcfaShort = (n) => { if (n >= 1000) return (n / 1000).toFixed(0) + '
 const formatDate = (d) => { if (!d) return '-'; return new Date(d).toLocaleString('fr-FR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }); };
 
 const getTypeLabel = (t) => ({ deposit: 'Dépôt', bet_place: 'Mise', bet_win: 'Gain', bet_refund: 'Remboursement', withdrawal: 'Retrait' }[t] || t);
-const getTypeIcon  = (t) => ({ deposit: '📥', bet_place: '🎯', bet_win: '🏆', bet_refund: '↩️', withdrawal: '📤' }[t] || '💸');
+const getTypeIcon = (t) => ({ deposit: '📥', bet_place: '🎯', bet_win: '🏆', bet_refund: '↩️', withdrawal: '📤' }[t] || '💸');
 const getTypeIconBg = (t) => ({ deposit: 'bg-green-500/10', bet_place: 'bg-white/5', bet_win: 'bg-amber-500/10', bet_refund: 'bg-blue-500/10', withdrawal: 'bg-red-500/10' }[t] || 'bg-white/5');
 const isPositive = (t) => ['deposit', 'bet_win', 'bet_refund'].includes(t);
 
 const fetchWalletData = async () => {
   if (!isLoggedIn.value) return;
-  try { wallet.value = await $api('/clash-bet/wallet'); } catch {}
+  try { wallet.value = await $api('/clash-bet/wallet'); } catch { }
 };
 
 const fetchTransactions = async () => {
@@ -250,7 +285,7 @@ const fetchTransactions = async () => {
   try {
     const res = await $api('/clash-bet/wallet/history');
     transactions.value = res.data || res || [];
-  } catch {} finally { loadingHistory.value = false; }
+  } catch { } finally { loadingHistory.value = false; }
 };
 
 const handleDeposit = async () => {
@@ -289,7 +324,12 @@ const verifyPendingDeposit = async (ref) => {
   } catch (e) { console.error(e); }
 };
 
+const { canAccessClashBet, fetchPublicConfig } = useClashBetConfig();
+
 onMounted(async () => {
+  await fetchPublicConfig();
+  if (!canAccessClashBet.value) return;
+
   const route = useRoute();
   const ref = route.query.reference || route.query.trx_reference;
   if (ref) {
@@ -308,30 +348,43 @@ onMounted(async () => {
 .balance-card {
   @apply flex flex-col gap-0.5 p-4 rounded-2xl bg-white/[0.03] border border-white/[0.06] text-center;
 }
-.balance-label { @apply text-[9px] uppercase tracking-widest text-white/30 font-semibold; }
-.balance-value  { @apply text-base font-black tabular-nums leading-tight mt-0.5; }
+
+.balance-label {
+  @apply text-[9px] uppercase tracking-widest text-white/30 font-semibold;
+}
+
+.balance-value {
+  @apply text-base font-black tabular-nums leading-tight mt-0.5;
+}
 
 .form-card {
   @apply bg-white/[0.02] border border-white/[0.07] rounded-3xl p-5;
 }
+
 .form-card-header {
   @apply flex items-start gap-3 pb-4 border-b border-white/[0.06];
 }
 
-.field-group { @apply flex flex-col gap-1; }
-.field-label  { @apply text-[10px] font-bold text-white/40 uppercase tracking-wider; }
-.field-input  {
-  @apply w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white font-bold text-sm
-         focus:border-gold/50 focus:outline-none focus:ring-1 focus:ring-gold/20 transition-all;
+.field-group {
+  @apply flex flex-col gap-1;
+}
+
+.field-label {
+  @apply text-[10px] font-bold text-white/40 uppercase tracking-wider;
+}
+
+.field-input {
+  @apply w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white font-bold text-sm focus:border-gold/50 focus:outline-none focus:ring-1 focus:ring-gold/20 transition-all;
 }
 
 .quick-amounts {
   @apply flex gap-2 flex-wrap;
 }
+
 .quick-amount-btn {
-  @apply flex-1 min-w-[60px] py-2 text-xs font-bold text-white/50 border border-white/10 rounded-xl
-         hover:border-gold/40 hover:text-gold transition-all text-center bg-transparent;
+  @apply flex-1 min-w-[60px] py-2 text-xs font-bold text-white/50 border border-white/10 rounded-xl hover:border-gold/40 hover:text-gold transition-all text-center bg-transparent;
 }
+
 .quick-amount-btn.active {
   @apply border-gold/60 text-gold bg-gold/10;
 }

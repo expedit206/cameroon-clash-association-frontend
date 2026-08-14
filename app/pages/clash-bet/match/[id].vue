@@ -306,7 +306,7 @@
                 <span class="font-black text-gold">× 2.00</span>
               </div>
               <div class="flex justify-between font-black text-sm border-t border-white/10 pt-2">
-                <span>Gain net si victoire</span>
+                <span>Gain net </span>
                 <span class="text-green-400">{{ formatFcfa(matchModal.ticket?.net_payout) }}</span>
               </div>
             </div>

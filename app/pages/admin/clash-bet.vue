@@ -24,7 +24,7 @@
         <div class="glass-card !p-5 border-white/10">
           <div class="text-[10px] text-white/40 uppercase tracking-widest mb-1">Marchés Ouverts</div>
           <div class="text-xl font-black text-white italic">{{ stats.open_markets || 0 }} / {{ stats.total_markets || 0
-          }}</div>
+            }}</div>
         </div>
 
         <div class="glass-card !p-5 border-white/10">
@@ -87,87 +87,242 @@
         </div>
       </div>
 
-      <!-- SECTION 1: Liste des Marchés -->
+      <!-- SECTION 1: Liste des Marchés Redessinée avec Actions en Masse -->
       <div v-if="activeSection === 'markets'" class="space-y-4">
+        <!-- Barre de Filtres -->
+        <div class="glass-card !p-4 border-white/10 flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <!-- Filtres de Statut -->
+          <div class="flex items-center gap-1.5 flex-wrap">
+            <span class="text-[10px] font-black uppercase text-white/40 mr-1">Statut:</span>
+            <button v-for="sf in marketStatusFilters" :key="sf.key" @click="marketStatusFilter = sf.key"
+              :class="['px-2.5 py-1 rounded-lg text-xs font-bold transition-all', marketStatusFilter === sf.key ? 'bg-gold text-black' : 'bg-white/5 text-white/60 hover:text-white']">
+              {{ sf.label }}
+            </button>
+          </div>
+
+          <!-- Filtres de Catégorie -->
+          <div class="flex items-center gap-1.5 flex-wrap">
+            <span class="text-[10px] font-black uppercase text-white/40 mr-1">Catégorie:</span>
+            <button v-for="cf in marketCategoryFilters" :key="cf.key" @click="marketCategoryFilter = cf.key"
+              :class="['px-2.5 py-1 rounded-lg text-xs font-bold transition-all', marketCategoryFilter === cf.key ? 'bg-white/20 text-white font-black' : 'bg-white/5 text-white/60 hover:text-white']">
+              {{ cf.label }}
+            </button>
+          </div>
+        </div>
+
+        <!-- BARRE D'ACTIONS EN MASSE (Visible quand au moins 1 marché est sélectionné) -->
+        <div v-if="selectedMarketIds.length > 0"
+          class="bg-gold/15 border border-gold/40 rounded-2xl p-3.5 flex flex-wrap items-center justify-between gap-3 animate-fade-in shadow-xl">
+          <div class="flex items-center gap-2">
+            <span class="px-2.5 py-1 bg-gold text-black font-black text-xs rounded-lg">
+              {{ selectedMarketIds.length }} marché(s) sélectionné(s)
+            </span>
+            <button @click="selectedMarketIds = []" class="text-xs text-white/60 hover:text-white underline">
+              Désélectionner tout
+            </button>
+          </div>
+
+          <div class="flex items-center gap-2 flex-wrap">
+            <button @click="bulkUpdateStatus('suspended')"
+              class="px-3 py-1.5 bg-amber-500/20 text-amber-300 border border-amber-500/30 rounded-xl text-xs font-bold hover:bg-amber-500/30">
+              ⏸️ Suspendre la sélection
+            </button>
+            <button @click="bulkUpdateStatus('open')"
+              class="px-3 py-1.5 bg-green-500/20 text-green-300 border border-green-500/30 rounded-xl text-xs font-bold hover:bg-green-500/30">
+              ▶️ Rouvrir la sélection
+            </button>
+            <button @click="bulkSettleAutoMarkets"
+              class="px-3 py-1.5 bg-gradient-to-r from-emerald-600 to-green-600 text-white font-black text-xs rounded-xl shadow-lg hover:brightness-110">
+              ⚡ Auto-Régler AST sélection
+            </button>
+            <button @click="bulkCancelMarkets"
+              class="px-3 py-1.5 bg-amber-500/20 text-amber-300 border border-amber-500/30 rounded-xl text-xs font-bold hover:bg-amber-500/30">
+              ❌ Annuler sélection
+            </button>
+            <button @click="bulkDeleteMarkets"
+              class="px-3 py-1.5 bg-red-600 text-white rounded-xl text-xs font-black hover:bg-red-700 shadow-md">
+              🗑️ Supprimer sélection
+            </button>
+          </div>
+        </div>
+
+        <!-- En-tête Tableau / Select All -->
+        <div class="flex items-center justify-between text-xs px-2 text-white/50 font-bold">
+          <div class="flex items-center gap-2">
+            <input type="checkbox" :checked="isAllMarketsSelected" @change="toggleSelectAllMarkets"
+              class="w-4 h-4 rounded accent-gold cursor-pointer" />
+            <span>Sélectionner tout ({{ filteredMarkets.length }} marchés)</span>
+          </div>
+          <span>Total: {{ filteredMarkets.length }} marché(s)</span>
+        </div>
+
+        <!-- Liste des Marchés Détaillée -->
         <div v-if="loadingMarkets" class="text-center text-white/40 py-8">Chargement des marchés...</div>
-        <div v-else-if="markets.length === 0" class="glass-card !p-8 text-center text-white/40 text-xs">Aucun marché
-          disponible.</div>
-        <div v-else class="grid grid-cols-1 gap-4">
-          <div v-for="market in markets" :key="market.id"
-            class="glass-card !p-6 border-white/10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-            <div class="space-y-2 flex-1">
-              <div class="flex items-center gap-3 flex-wrap">
-                <span :class="getStatusBadgeClass(market.status)">{{ market.status }}</span>
-                <span class="px-2 py-0.5 bg-white/10 rounded text-[10px] uppercase font-bold text-gold">{{
-                  market.category || 'team' }}</span>
-                <span class="text-xs text-white/40 font-mono">Marché #{{ market.id }}</span>
-                <span class="text-xs text-white/40">
-                  👍 YES: <strong class="text-green-400">{{ market.yes_tickets_count || 0 }}</strong> | 👎 NO: <strong
-                    class="text-red-400">{{ market.no_tickets_count || 0 }}</strong>
-                </span>
-              </div>
+        <div v-else-if="filteredMarkets.length === 0" class="glass-card !p-8 text-center text-white/40 text-xs">
+          Aucun marché ne correspond à vos filtres.
+        </div>
+        <div v-else class="grid grid-cols-1 gap-3">
+          <div v-for="market in filteredMarkets" :key="market.id"
+            :class="['glass-card !p-5 border-white/10 flex flex-col md:flex-row items-start md:items-center justify-between gap-5 transition-all', selectedMarketIds.includes(market.id) ? 'border-gold/60 bg-gold/[0.04]' : '']">
 
-              <div class="text-lg font-black uppercase text-white">
-                {{ market.title || (market.match?.home + ' VS ' + market.match?.away) }}
-              </div>
-              <div v-if="market.description" class="text-xs text-white/60">
-                {{ market.description }}
-              </div>
+            <div class="flex items-start gap-3 flex-1">
+              <!-- Checkbox de sélection -->
+              <input type="checkbox" :checked="selectedMarketIds.includes(market.id)"
+                @change="toggleSelectMarket(market.id)" class="w-4 h-4 rounded accent-gold cursor-pointer mt-1" />
 
-              <!-- Affirmation bilingue / Règle technique -->
-              <div v-if="market.rule_definition"
-                class="p-3 bg-black/40 border border-gold/20 rounded-xl text-xs space-y-1">
-                <div class="text-[10px] text-gold font-bold uppercase tracking-wider">Règle AST Déclarative (Version {{
-                  market.rule_version || 1 }}) :</div>
-                <div class="font-mono text-white/80 text-[11px] overflow-x-auto">{{
-                  JSON.stringify(market.rule_definition) }}</div>
-                <!-- Panel 7 : Résultat du marché (Après Match) -->
-                <div v-if="market.status === 'settled' || market.winning_side"
-                  class="mt-3 p-3 bg-black/60 border border-white/10 rounded-xl space-y-2">
-                  <div class="flex items-center justify-between">
-                    <span class="text-[10px] text-white/50 uppercase font-bold">Résultat du Marché (Après Match)</span>
-                    <span
-                      class="px-2 py-0.5 bg-green-500/20 text-green-400 border border-green-500/30 rounded text-[9px] font-black uppercase">
-                      ✓ MARCHÉ RÉGLÉ
+              <div class="space-y-2 flex-1">
+                <!-- Badges & Métadonnées -->
+                <div class="flex items-center gap-2 flex-wrap">
+                  <span :class="getStatusBadgeClass(market.status)">{{ market.status }}</span>
+
+                  <span class="px-2 py-0.5 rounded text-[10px] uppercase font-black tracking-wider" :class="{
+                    'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30': market.category === 'team',
+                    'bg-purple-500/20 text-purple-400 border border-purple-500/30': market.category === 'player',
+                    'bg-blue-500/20 text-blue-400 border border-blue-500/30': market.category === 'comparison',
+                    'bg-red-500/20 text-red-400 border border-red-500/30': market.category === 'duel',
+                  }">
+                    {{ market.category === 'team' ? '🏆 ÉQUIPE' : (market.category === 'player' ? '👤 JOUEUR' :
+                      (market.category === 'duel' ? '🥊 DUEL H2H' : '⚔️ COMPARAISON')) }}
+                  </span>
+
+                  <span class="text-xs text-white/40 font-mono">Marché #{{ market.id }}</span>
+
+                  <span class="text-xs text-white/50 border-l border-white/10 pl-2">
+                    Pool: <strong class="text-gold font-mono">{{ formatFcfa(market.total_pool || 0) }}</strong>
+                  </span>
+
+                  <span class="text-xs text-white/50">
+                    Tickets: <strong class="text-green-400">👍 {{ market.yes_tickets_count || 0 }}</strong> | <strong
+                      class="text-red-400">👎 {{ market.no_tickets_count || 0 }}</strong>
+                  </span>
+                </div>
+
+                <!-- Titre du Marché -->
+                <div class="text-base font-black text-white leading-tight flex items-center gap-2">
+                  <span class="text-gold">📌</span>
+                  <span class="text-white drop-shadow">{{ market.title || (market.match?.clan_home + ' VS ' +
+                    market.match?.clan_away) }}</span>
+                </div>
+
+                <!-- Match Associé -->
+                <div class="text-xs text-white/60 flex items-center gap-2">
+                  <span>Match #{{ market.match_id }}</span>
+                  <span v-if="market.match" class="text-gold font-bold">({{ market.match.clan_home }} VS {{
+                    market.match.clan_away }})</span>
+                </div>
+
+                <!-- Synthèse Règle AST Déclarative en Français Clair -->
+                <div v-if="market.rule_definition"
+                  class="p-3 bg-black/60 border border-gold/30 rounded-xl text-xs space-y-2">
+                  <div class="flex items-center justify-between text-[10px]">
+                    <span class="text-gold font-black uppercase tracking-wider flex items-center gap-1">
+                      ⚡ Condition d'évaluation (Règle AST v{{ market.rule_version || 1 }})
+                    </span>
+                    <span class="text-white/40 font-mono text-[9px]">
+                      {{ market.rule_definition.type === 'logical' ? 'Règle Composée (' +
+                        market.rule_definition.operator + ')' : 'Règle Simple' }}
                     </span>
                   </div>
-                  <div class="text-xs font-black text-white">
-                    RÉSULTAT : <span
-                      :class="market.winning_side === 'YES' ? 'text-green-400 font-extrabold' : 'text-red-400 font-extrabold'">{{
-                        market.winning_side || 'NON DÉFINI' }}</span>
+
+                  <!-- Traduction Humaine Position OUI / Position NON -->
+                  <div class="space-y-1.5 pt-0.5">
+                    <div
+                      class="p-2 bg-green-500/10 border border-green-500/30 rounded-lg text-white font-bold text-xs flex items-start gap-2">
+                      <span
+                        class="px-1.5 py-0.5 bg-green-500 text-black text-[9px] font-black rounded shrink-0">POSITION
+                        OUI</span>
+                      <span class="text-green-300 font-semibold">{{ describeASTNode(market.rule_definition, market.match
+                        || selectedMatchForMarket(market), false) }}</span>
+                    </div>
+
+                    <div
+                      class="p-2 bg-red-500/10 border border-red-500/30 rounded-lg text-white font-bold text-xs flex items-start gap-2">
+                      <span class="px-1.5 py-0.5 bg-red-500 text-white text-[9px] font-black rounded shrink-0">POSITION
+                        NON</span>
+                      <span class="text-red-300 font-semibold">{{ describeASTNode(market.rule_definition, market.match
+                        || selectedMatchForMarket(market), true) }}</span>
+                    </div>
                   </div>
-                  <div class="grid grid-cols-2 gap-2 pt-1">
-                    <div
-                      :class="['p-2 rounded-lg border text-center font-bold text-[10px]', market.winning_side === 'YES' ? 'bg-green-500/15 border-green-500/40 text-green-400' : 'bg-white/5 border-white/10 text-white/40']">
-                      YES — {{ market.winning_side === 'YES' ? 'GAGNANT 🏆' : 'PERDANT' }}
-                    </div>
-                    <div
-                      :class="['p-2 rounded-lg border text-center font-bold text-[10px]', market.winning_side === 'NO' ? 'bg-red-500/15 border-red-500/40 text-red-400' : 'bg-white/5 border-white/10 text-white/40']">
-                      NO — {{ market.winning_side === 'NO' ? 'GAGNANT 🏆' : 'PERDANT' }}
-                    </div>
+
+                  <!-- AST Technique (dépliable) -->
+                  <details class="text-[10px] text-white/40">
+                    <summary class="cursor-pointer hover:text-white/70 font-mono py-1">🔍 Voir JSON AST Brut</summary>
+                    <pre
+                      class="font-mono text-green-400 text-[10px] p-2 bg-black rounded overflow-x-auto max-h-24 mt-1">{{ JSON.stringify(market.rule_definition, null, 2) }}</pre>
+                  </details>
+                </div>
+
+                <!-- Panel 7 : Résultat du marché (Après Match) -->
+                <div v-if="market.status === 'settled' || market.winning_side"
+                  class="p-2.5 bg-black/60 border border-gold/30 rounded-xl space-y-1">
+                  <div class="flex items-center justify-between text-[10px]">
+                    <span class="text-gold uppercase font-bold">🏆 RÉSULTAT DU MARCHÉ</span>
+                    <span class="px-2 py-0.5 bg-green-500/20 text-green-400 rounded font-black">✓ RÉGLÉ</span>
+                  </div>
+                  <div class="text-xs font-black text-white">
+                    GAGNANT : <span :class="market.winning_side === 'YES' ? 'text-green-400' : 'text-red-400'">POSITION
+                      {{ market.winning_side || 'NON DÉFINI' }}</span>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div class="flex flex-wrap items-center gap-2">
+            <!-- Actions Individuelles -->
+            <div class="flex flex-wrap md:flex-col items-stretch gap-2 shrink-0">
+              <button @click="toggleLiveBetting(market)"
+                :class="['px-3 py-1.5 rounded-lg text-xs font-bold transition-all border flex items-center justify-center gap-1 cursor-pointer', market.allow_during_match ? 'bg-purple-500/20 text-purple-300 border-purple-500/40 font-black shadow-[0_0_15px_rgba(168,85,247,0.3)]' : 'bg-white/5 text-white/50 border-white/10 hover:border-white/30']">
+                <span>⚡</span>
+                <span>{{ market.allow_during_match ? 'Pendant Match : OUI' : 'Pendant Match : NON' }}</span>
+              </button>
               <button v-if="market.status === 'open'" @click="updateMarketStatus(market, 'suspended')"
-                class="px-3 py-2 bg-amber-500/20 text-amber-300 border border-amber-500/30 rounded-lg text-xs font-bold hover:bg-amber-500/30">⏸️
-                Suspendre</button>
+                class="px-3 py-1.5 bg-amber-500/20 text-amber-300 border border-amber-500/30 rounded-lg text-xs font-bold hover:bg-amber-500/30">
+                ⏸️ Suspendre
+              </button>
               <button v-if="market.status === 'suspended'" @click="updateMarketStatus(market, 'open')"
-                class="px-3 py-2 bg-green-500/20 text-green-300 border border-green-500/30 rounded-lg text-xs font-bold hover:bg-green-500/30">▶️
-                Rouvrir</button>
-
+                class="px-3 py-1.5 bg-green-500/20 text-green-300 border border-green-500/30 rounded-lg text-xs font-bold hover:bg-green-500/30">
+                ▶️ Rouvrir
+              </button>
               <button v-if="market.rule_definition && market.status !== 'settled'" @click="triggerSettleAuto(market)"
-                class="px-3 py-2 bg-gradient-to-r from-emerald-600 to-green-600 text-white rounded-lg text-xs font-black uppercase shadow-lg hover:brightness-110">⚡
-                Régler (Rule Engine)</button>
-
+                class="px-3 py-1.5 bg-gradient-to-r from-emerald-600 to-green-600 text-white rounded-lg text-xs font-black uppercase shadow-lg hover:brightness-110">
+                ⚡ Auto-Régler
+              </button>
               <button v-if="market.status !== 'settled'" @click="cancelMarket(market)"
-                class="px-3 py-2 bg-red-500/20 text-red-300 border border-red-500/30 rounded-lg text-xs font-bold hover:bg-red-500/30">❌
-                Annuler</button>
+                class="px-3 py-1.5 bg-amber-500/20 text-amber-300 border border-amber-500/30 rounded-lg text-xs font-bold hover:bg-amber-500/30">
+                ❌ Annuler
+              </button>
+              <button @click="deleteMarket(market)"
+                class="px-3 py-1.5 bg-red-600 text-white rounded-lg text-xs font-black hover:bg-red-700 shadow-md">
+                🗑️ Supprimer
+              </button>
+            </div>
+
+          </div>
+          <div v-if="marketsPagination.last_page > 1"
+            class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-4 border-t border-white/10 text-xs">
+            <div class="text-white/50 font-bold">
+              Page {{ marketsPagination.current_page }} sur {{ marketsPagination.last_page }} ({{
+                marketsPagination.total }} marchés au total)
+            </div>
+            <div class="flex items-center gap-2">
+              <button :disabled="marketsPagination.current_page === 1"
+                @click="fetchMarkets(marketsPagination.current_page - 1)"
+                class="px-3 py-1.5 bg-white/10 hover:bg-white/20 text-white rounded-xl text-xs font-bold disabled:opacity-30 transition-all cursor-pointer">
+                ← Précédent
+              </button>
+              <span class="px-3 py-1.5 bg-gold/10 border border-gold/30 text-gold rounded-xl font-black">
+                {{ marketsPagination.current_page }} / {{ marketsPagination.last_page }}
+              </span>
+              <button :disabled="marketsPagination.current_page === marketsPagination.last_page"
+                @click="fetchMarkets(marketsPagination.current_page + 1)"
+                class="px-3 py-1.5 bg-white/10 hover:bg-white/20 text-white rounded-xl text-xs font-bold disabled:opacity-30 transition-all cursor-pointer">
+                Suivant →
+              </button>
             </div>
           </div>
         </div>
+
+        <!-- Barre de Pagination Frontend -->
+
       </div>
 
       <!-- SECTION 2: Tickets -->
@@ -255,7 +410,7 @@
               <span class="text-white/40 text-[10px]">{{ formatDate(a.created_at) }}</span>
             </div>
             <div class="text-white/80 font-bold">Admin #{{ a.admin_id || 'Système' }} — Marché #{{ a.market_id || 'N/A'
-            }}</div>
+              }}</div>
             <pre
               class="mt-2 p-2 bg-black/50 rounded text-[10px] font-mono text-white/60 overflow-x-auto">{{ JSON.stringify(a.payload, null, 2) }}</pre>
           </div>
@@ -264,24 +419,45 @@
 
       <!-- SECTION 5: Configuration -->
       <div v-if="activeSection === 'settings'" class="glass-card !p-8 border-white/10 max-w-xl mx-auto space-y-6">
-        <h2 class="text-lg font-black uppercase text-white italic border-b border-white/10 pb-3">Paramètres Généraux
+        <h2
+          class="text-lg font-black uppercase text-white italic border-b border-white/10 pb-3 flex items-center justify-between">
+          <span>Paramètres Généraux</span>
+          <span class="text-xs px-2.5 py-1 rounded-full font-mono font-bold uppercase"
+            :class="settings.clash_bet_public_enabled ? 'bg-green-500/20 text-green-400 border border-green-500/30' : 'bg-red-500/20 text-red-400 border border-red-500/30'">
+            {{ settings.clash_bet_public_enabled ? '🌐 PUBLIC ACTIF' : '🔒 MODE ADMIN SEUL' }}
+          </span>
         </h2>
         <div v-if="loadingSettings" class="text-center text-white/40">Chargement...</div>
-        <div v-else class="space-y-4">
+        <div v-else class="space-y-5">
+          <!-- Toggle Visibilité Publique -->
+          <div class="p-4 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-between gap-4">
+            <div>
+              <div class="font-black text-sm text-white uppercase">Visibilité Publique du Clash Bet</div>
+              <div class="text-[11px] text-white/50">Activez pour ouvrir le marché P2P à tout le public.</div>
+            </div>
+            <button @click="settings.clash_bet_public_enabled = !settings.clash_bet_public_enabled" type="button"
+              :class="['px-4 py-2 rounded-xl font-black text-xs uppercase transition-all cursor-pointer border', settings.clash_bet_public_enabled ? 'bg-green-500 text-black border-green-400 shadow-lg shadow-green-500/20' : 'bg-white/10 text-white/60 border-white/20']">
+              {{ settings.clash_bet_public_enabled ? '🟢 ACCESSIBLE (ON)' : '🔴 MASQUÉ (OFF)' }}
+            </button>
+          </div>
+
           <div v-for="(val, key) in settings" :key="key">
-            <label class="block text-xs font-bold text-white/70 uppercase mb-1">{{ settingLabel(key) }}</label>
-            <input v-model="settings[key]" type="text"
-              class="w-full bg-black/60 border border-white/20 rounded-xl px-4 py-2.5 text-white font-mono text-xs focus:border-gold outline-none" />
+            <template v-if="key !== 'clash_bet_public_enabled'">
+              <label class="block text-xs font-bold text-white/70 uppercase mb-1">{{ settingLabel(key) }}</label>
+              <input v-model="settings[key]" type="text"
+                class="w-full bg-black/60 border border-white/20 rounded-xl px-4 py-2.5 text-white font-mono text-xs focus:border-gold outline-none" />
+            </template>
           </div>
           <button @click="saveSettings"
-            class="w-full py-3 bg-gold text-black font-black uppercase text-xs rounded-xl hover:brightness-110">Sauvegarder
-            la Config</button>
+            class="w-full py-3.5 bg-gold text-black font-black uppercase text-xs rounded-xl hover:brightness-110 shadow-lg shadow-gold/20 cursor-pointer">
+            Sauvegarder la Configuration
+          </button>
         </div>
       </div>
 
       <!-- MODALE MARKET BUILDER NO-CODE AST V2 (PANEL 5 & LIVE PREVIEW) -->
       <div v-if="showBuilderModal"
-        class="fixed inset-0 z-50 flex items-center justify-center pt-8 p-4 bg-black/85 backdrop-blur-md overflow-y-auto">
+        class="fixed inset-0 z-50 flex items-center justify-center pt-12 mt-12 p-4 bg-black/85 backdrop-blur-md overflow-y-auto">
         <div class="glass-card !p-6 border-gold/30 max-w-6xl w-full my-6 space-y-5 text-xs">
 
           <!-- Header Modale -->
@@ -313,35 +489,58 @@
               <!-- Sujet -->
               <div>
                 <span class="text-[10px] text-white/40 uppercase font-bold block mb-1.5">Sujet de la règle</span>
-                <div class="grid grid-cols-3 gap-1">
+                <div class="grid grid-cols-2 gap-1">
                   <button @click="ruleDraft.subject_type = 'team'"
                     :class="['palette-btn', ruleDraft.subject_type === 'team' ? 'active' : '']">🏆 Équipe</button>
                   <button @click="ruleDraft.subject_type = 'player'"
                     :class="['palette-btn', ruleDraft.subject_type === 'player' ? 'active' : '']">👤 Joueur</button>
                   <button @click="ruleDraft.subject_type = 'match'"
                     :class="['palette-btn', ruleDraft.subject_type === 'match' ? 'active' : '']">⚔️ Match</button>
+                  <button @click="ruleDraft.subject_type = 'duel'; ruleDraft.metric = 'winner'"
+                    :class="['palette-btn', ruleDraft.subject_type === 'duel' ? 'active' : '']">🥊 Duel H2H</button>
                 </div>
               </div>
 
-              <!-- Statistiques disponibles -->
+              <!-- Statistiques disponibles (adaptées au sujet choisi) -->
               <div>
                 <span class="text-[10px] text-white/40 uppercase font-bold block mb-1.5">Métrique Évaluée</span>
                 <div class="space-y-1">
-                  <button @click="ruleDraft.metric = 'total_stars'"
-                    :class="['palette-btn w-full text-left', ruleDraft.metric === 'total_stars' ? 'active' : '']">⭐
-                    Total Étoiles</button>
-                  <button @click="ruleDraft.metric = 'average_destruction'"
-                    :class="['palette-btn w-full text-left', ruleDraft.metric === 'average_destruction' ? 'active' : '']">💥
-                    Destruction Moyenne (%)</button>
-                  <button @click="ruleDraft.metric = 'three_star_count'"
-                    :class="['palette-btn w-full text-left', ruleDraft.metric === 'three_star_count' ? 'active' : '']">✨
-                    3 Étoiles (Perfections)</button>
-                  <button @click="ruleDraft.metric = 'stars'"
-                    :class="['palette-btn w-full text-left', ruleDraft.metric === 'stars' ? 'active' : '']">🌟 Étoiles
-                    Individuelles</button>
-                  <button @click="ruleDraft.metric = 'winner'"
-                    :class="['palette-btn w-full text-left', ruleDraft.metric === 'winner' ? 'active' : '']">🥇
-                    Vainqueur du Match</button>
+                  <!-- Métriques standard (équipe/joueur) -->
+                  <template v-if="ruleDraft.subject_type !== 'duel'">
+                    <button @click="ruleDraft.metric = 'total_stars'"
+                      :class="['palette-btn w-full text-left', ruleDraft.metric === 'total_stars' ? 'active' : '']">⭐
+                      Total Étoiles</button>
+                    <button @click="ruleDraft.metric = 'average_destruction'"
+                      :class="['palette-btn w-full text-left', ruleDraft.metric === 'average_destruction' ? 'active' : '']">💥
+                      Destruction Moy. (%)</button>
+                    <button @click="ruleDraft.metric = 'three_star_count'"
+                      :class="['palette-btn w-full text-left', ruleDraft.metric === 'three_star_count' ? 'active' : '']">✨
+                      Perfections 3★</button>
+                    <button @click="ruleDraft.metric = 'stars'"
+                      :class="['palette-btn w-full text-left', ruleDraft.metric === 'stars' ? 'active' : '']">🌟 Étoiles
+                      Individuelles</button>
+                    <button @click="ruleDraft.metric = 'winner'"
+                      :class="['palette-btn w-full text-left', ruleDraft.metric === 'winner' ? 'active' : '']">🥇
+                      Vainqueur du Match</button>
+                  </template>
+                  <!-- Métriques Duel H2H -->
+                  <template v-else>
+                    <button @click="ruleDraft.metric = 'winner'"
+                      :class="['palette-btn w-full text-left', ruleDraft.metric === 'winner' ? 'active' : '']">🏆
+                      Vainqueur du Duel</button>
+                    <button @click="ruleDraft.metric = 'stars_home'"
+                      :class="['palette-btn w-full text-left', ruleDraft.metric === 'stars_home' ? 'active' : '']">⭐
+                      Étoiles Joueur Local</button>
+                    <button @click="ruleDraft.metric = 'stars_away'"
+                      :class="['palette-btn w-full text-left', ruleDraft.metric === 'stars_away' ? 'active' : '']">⭐
+                      Étoiles Joueur Visiteur</button>
+                    <button @click="ruleDraft.metric = 'destruction_home'"
+                      :class="['palette-btn w-full text-left', ruleDraft.metric === 'destruction_home' ? 'active' : '']">💥
+                      Destruction Local (%)</button>
+                    <button @click="ruleDraft.metric = 'destruction_away'"
+                      :class="['palette-btn w-full text-left', ruleDraft.metric === 'destruction_away' ? 'active' : '']">💥
+                      Destruction Visiteur (%)</button>
+                  </template>
                 </div>
               </div>
 
@@ -393,8 +592,10 @@
 
                 <div class="grid grid-cols-2 gap-3 items-center">
                   <div>
-                    <label class="block font-bold text-white/50 uppercase mb-1 text-[10px]">Catégorie (Automatique)</label>
-                    <div class="px-3 py-2 bg-gold/10 border border-gold/30 rounded-xl font-black text-gold text-xs uppercase flex items-center gap-1.5">
+                    <label class="block font-bold text-white/50 uppercase mb-1 text-[10px]">Catégorie
+                      (Automatique)</label>
+                    <div
+                      class="px-3 py-2 bg-gold/10 border border-gold/30 rounded-xl font-black text-gold text-xs uppercase flex items-center gap-1.5">
                       <span v-if="builderForm.category === 'team'">🏆 Équipe</span>
                       <span v-else-if="builderForm.category === 'player'">👤 Joueur</span>
                       <span v-else>⚔️ Comparaison</span>
@@ -412,36 +613,57 @@
               <div class="bg-white/[0.02] border border-white/10 rounded-2xl p-4 space-y-3">
                 <div class="flex items-center justify-between border-b border-white/10 pb-2">
                   <span class="font-bold text-gold uppercase text-[11px]">
-                    ⚡ 2. Constructeur AST {{ isComposedRule ? `(Règle Composée ${logicalOperator})` : '(Règle Simple)' }}
+                    ⚡ 2. Constructeur AST {{ isComposedRule ? `(Règle Composée ${logicalOperator})` : '(Règle Simple)'
+                    }}
                   </span>
                   <span class="text-[9px] bg-gold/10 text-gold px-2 py-0.5 rounded font-mono">AST V2 Engine</span>
                 </div>
 
-                <!-- Sélection du Clan Cible par son VRAI NOM -->
-                <div>
+                <!-- Sélection du Clan Cible si Sujet = Équipe -->
+                <div v-if="ruleDraft.subject_type === 'team'">
                   <label class="block text-[10px] text-white/50 font-bold uppercase mb-1">Cible : Clan Officiel</label>
                   <div class="grid grid-cols-2 gap-2">
                     <button @click="selectedClanSide = 'home'"
                       :class="['p-2.5 rounded-xl border text-left flex items-center gap-2 transition-all', selectedClanSide === 'home' ? 'bg-gold/15 border-gold text-gold font-black' : 'bg-black/40 border-white/10 text-white/70 hover:border-white/20']">
-                      <img :src="selectedMatch?.clan_home_badge || '/default-clan.png'" class="w-5 h-5 object-contain" @error="$event.target.src = '/default-clan.png'" />
+                      <img :src="selectedMatch?.clan_home_badge || '/default-clan.png'" class="w-5 h-5 object-contain"
+                        @error="$event.target.src = '/default-clan.png'" />
                       <span class="truncate text-xs">{{ selectedMatch?.clan_home || 'Équipe Hôte' }}</span>
                     </button>
                     <button @click="selectedClanSide = 'away'"
                       :class="['p-2.5 rounded-xl border text-left flex items-center gap-2 transition-all', selectedClanSide === 'away' ? 'bg-gold/15 border-gold text-gold font-black' : 'bg-black/40 border-white/10 text-white/70 hover:border-white/20']">
-                      <img :src="selectedMatch?.clan_away_badge || '/default-clan.png'" class="w-5 h-5 object-contain" @error="$event.target.src = '/default-clan.png'" />
+                      <img :src="selectedMatch?.clan_away_badge || '/default-clan.png'" class="w-5 h-5 object-contain"
+                        @error="$event.target.src = '/default-clan.png'" />
                       <span class="truncate text-xs">{{ selectedMatch?.clan_away || 'Équipe Invitée' }}</span>
                     </button>
                   </div>
                 </div>
 
+                <!-- Mode Duel H2H : Sélecteur de Duel HDV -->
+                <div v-else-if="ruleDraft.subject_type === 'duel'" class="space-y-1">
+                  <label class="block text-[10px] text-gold font-bold uppercase">
+                    🥊 Cible : Sélection du Duel H2H (Niveau HDV)
+                  </label>
+                  <select v-model="selectedDuelHdv"
+                    class="w-full bg-black border border-gold/40 rounded-xl px-3 py-2 text-white font-bold text-xs">
+                    <option v-for="hdv in [14, 15, 16, 17, 18]" :key="hdv" :value="hdv">
+                      ⚔️ Duel HDV {{ hdv }} — {{(selectedMatch?.duels || []).find(d => Number(d.hdv_level) ===
+                        hdv)?.player_home_name || (selectedMatch?.clan_home || 'Local')}} VS {{(selectedMatch?.duels ||
+                        []).find(d => Number(d.hdv_level) === hdv)?.player_away_name || (selectedMatch?.clan_away ||
+                          'Visiteur')
+                      }}
+                    </option>
+                  </select>
+                </div>
+
                 <!-- Sélection Dynamique du Joueur si Sujet = Joueur -->
-                <div v-if="ruleDraft.subject_type === 'player'" class="space-y-1">
+                <div v-else-if="ruleDraft.subject_type === 'player'" class="space-y-1">
                   <label class="block text-[10px] text-white/50 font-bold uppercase">
                     👤 Joueur Sélectionné ({{ currentClanName }})
                   </label>
                   <select v-model="selectedPlayerId"
                     class="w-full bg-black border border-gold/30 rounded-xl px-3 py-2 text-white font-bold text-xs">
-                    <option v-if="currentClanPlayers.length === 0" disabled value="">Aucun joueur inscrit trouvé</option>
+                    <option v-if="currentClanPlayers.length === 0" disabled value="">Aucun joueur inscrit trouvé
+                    </option>
                     <option v-for="p in currentClanPlayers" :key="p.id" :value="p.id">
                       {{ p.name }} ({{ p.tag_coc || '#TAG' }}) — [{{ p.role_label }}]
                     </option>
@@ -450,17 +672,25 @@
 
                 <!-- Condition 1 : Opérateur et Valeur -->
                 <div class="p-3 bg-black/40 border border-white/10 rounded-xl space-y-2">
-                  <span class="text-[9px] text-gold font-bold uppercase block">Condition 1 (Métrique : {{ ruleDraft.metric }})</span>
+                  <span class="text-[9px] text-gold font-bold uppercase block">Condition 1 (Métrique : {{
+                    ruleDraft.metric
+                  }})</span>
                   <div class="grid grid-cols-2 gap-2">
                     <div>
                       <label class="block text-[10px] text-white/40 mb-1">Opérateur</label>
-                      <select v-model="ruleDraft.operator" class="w-full bg-black border border-white/20 rounded-lg p-2 text-gold font-mono font-bold text-xs">
+                      <select v-model="ruleDraft.operator" :disabled="ruleDraft.metric === 'winner'"
+                        class="w-full bg-black border border-white/20 rounded-lg p-2 text-gold font-mono font-bold text-xs disabled:opacity-50">
                         <option v-for="op in ['>=', '>', '=', '!=', '<=', '<']" :key="op" :value="op">{{ op }}</option>
                       </select>
                     </div>
                     <div>
-                      <label class="block text-[10px] text-white/40 mb-1">Valeur Seuil 1</label>
-                      <input v-model="ruleDraft.value" type="text" placeholder="ex: 10 ou 85.5"
+                      <label class="block text-[10px] text-white/40 mb-1">Valeur Cible</label>
+                      <select v-if="ruleDraft.metric === 'winner'" v-model="ruleDraft.value"
+                        class="w-full bg-black border border-gold/40 rounded-lg p-2 text-gold font-bold text-xs">
+                        <option value="home">🏆 Victoire de : {{ currentWinnerHomeLabel }}</option>
+                        <option value="away">🏆 Victoire de : {{ currentWinnerAwayLabel }}</option>
+                      </select>
+                      <input v-else v-model="ruleDraft.value" type="text" placeholder="ex: 10 ou 85.5"
                         class="w-full bg-black border border-white/20 rounded-lg p-2 text-white font-mono text-xs font-bold" />
                     </div>
                   </div>
@@ -479,7 +709,8 @@
                   <div class="grid grid-cols-3 gap-2">
                     <div class="col-span-3">
                       <label class="block text-[10px] text-white/40 mb-1">Métrique Condition 2</label>
-                      <select v-model="secondRuleDraft.metric" class="w-full bg-black border border-white/20 rounded-lg p-2 text-white text-xs">
+                      <select v-model="secondRuleDraft.metric"
+                        class="w-full bg-black border border-white/20 rounded-lg p-2 text-white text-xs">
                         <option value="total_stars">Total Étoiles</option>
                         <option value="average_destruction">Destruction Moyenne (%)</option>
                         <option value="three_star_count">3 Étoiles (Perfections)</option>
@@ -488,7 +719,8 @@
                     </div>
                     <div>
                       <label class="block text-[10px] text-white/40 mb-1">Opérateur 2</label>
-                      <select v-model="secondRuleDraft.operator" class="w-full bg-black border border-white/20 rounded-lg p-2 text-gold font-mono font-bold text-xs">
+                      <select v-model="secondRuleDraft.operator"
+                        class="w-full bg-black border border-white/20 rounded-lg p-2 text-gold font-mono font-bold text-xs">
                         <option v-for="op in ['>=', '>', '=', '!=', '<=', '<']" :key="op" :value="op">{{ op }}</option>
                       </select>
                     </div>
@@ -528,7 +760,8 @@
                   <!-- Header Match -->
                   <div class="flex items-center justify-between text-[10px]">
                     <span class="px-2 py-0.5 bg-gold/15 text-gold font-black rounded uppercase">
-                      {{ builderForm.category === 'team' ? '🏆 ÉQUIPE' : (builderForm.category === 'player' ? '👤 JOUEUR' : '⚔️ COMPARAISON') }}
+                      {{ builderForm.category === 'team' ? '🏆 ÉQUIPE' : (builderForm.category === 'player' ? '👤JOUEUR':
+                      '⚔️COMPARAISON') }}
                     </span>
                     <span class="text-white/40 font-mono">Match #{{ selectedMatch?.id || '?' }}</span>
                   </div>
@@ -557,19 +790,22 @@
 
                   <!-- Cotes Fixes YES / NO (Boutons P2P avec Intitulés Précis) -->
                   <div class="grid grid-cols-2 gap-2 pt-1">
-                    <div class="px-2.5 py-2 bg-green-500/10 border border-green-500/30 rounded-xl text-left space-y-0.5">
+                    <div
+                      class="px-2.5 py-2 bg-green-500/10 border border-green-500/30 rounded-xl text-left space-y-0.5">
                       <div class="flex items-center justify-between">
                         <span class="text-[9px] font-black text-green-400 uppercase">👍 OUI</span>
                         <span class="text-xs font-black text-gold">×2.00</span>
                       </div>
-                      <div class="text-[9.5px] text-white/90 font-semibold leading-tight line-clamp-2">{{ yesPositionTitle }}</div>
+                      <div class="text-[9.5px] text-white/90 font-semibold leading-tight line-clamp-2">{{
+                        yesPositionTitle }}</div>
                     </div>
                     <div class="px-2.5 py-2 bg-red-500/10 border border-red-500/30 rounded-xl text-left space-y-0.5">
                       <div class="flex items-center justify-between">
                         <span class="text-[9px] font-black text-red-400 uppercase">👎 NON</span>
                         <span class="text-xs font-black text-gold">×2.00</span>
                       </div>
-                      <div class="text-[9.5px] text-white/90 font-semibold leading-tight line-clamp-2">{{ noPositionTitle }}</div>
+                      <div class="text-[9.5px] text-white/90 font-semibold leading-tight line-clamp-2">{{
+                        noPositionTitle }}</div>
                     </div>
                   </div>
                 </div>
@@ -579,7 +815,8 @@
               <div class="bg-white/[0.02] border border-white/10 rounded-2xl p-3 space-y-2">
                 <span class="text-[10px] text-white/40 uppercase font-bold block">Arbre de Synthèse AST (Engine)</span>
                 <pre
-                  class="p-2.5 bg-black/90 rounded-xl border border-white/10 font-mono text-[9px] text-green-400 overflow-x-auto leading-relaxed">{{ JSON.stringify(buildFinalAST(), null, 2) }}</pre>
+                  class="p-2.5 bg-black/90 rounded-xl border border-white/10 font-mono text-[9px] text-green-400 overflow-x-auto leading-relaxed">
+            {{ JSON.stringify(buildFinalAST(), null, 2) }}</pre>
               </div>
 
             </div>
@@ -686,6 +923,161 @@ const simResult = ref(null);
 // --- MARKET BUILDER V2 STATE & COMPUTED ---
 const selectedClanSide = ref('home'); // 'home' or 'away'
 const selectedPlayerId = ref(null);
+const selectedDuelHdv = ref(16);
+
+// --- ETAT SELECTION MULTIPLE ET FILTRES DES MARCHES ADMIN ---
+const selectedMarketIds = ref([]);
+const marketStatusFilter = ref('all');
+const marketCategoryFilter = ref('all');
+
+const marketStatusFilters = [
+  { key: 'all', label: 'Tous' },
+  { key: 'open', label: '🟢 Open' },
+  { key: 'suspended', label: '⏸️ Suspendus' },
+  { key: 'settled', label: '✅ Réglés' },
+  { key: 'cancelled', label: '❌ Annulés' },
+];
+
+const marketCategoryFilters = [
+  { key: 'all', label: 'Toutes catégories' },
+  { key: 'team', label: '🏆 Équipe' },
+  { key: 'player', label: '👤 Joueur' },
+  { key: 'comparison', label: '⚔️ Comparaison' },
+  { key: 'duel', label: '🥊 Duel H2H' },
+];
+
+const marketsPagination = ref({ current_page: 1, last_page: 1, total: 0, per_page: 20 });
+
+const filteredMarkets = computed(() => {
+  const statusPriority = { 'open': 1, 'suspended': 2, 'settled': 3, 'cancelled': 4 };
+  return markets.value
+    .filter(m => {
+      const matchStatus = marketStatusFilter.value === 'all' || m.status === marketStatusFilter.value;
+      const matchCategory = marketCategoryFilter.value === 'all' || (m.category || 'team') === marketCategoryFilter.value;
+      return matchStatus && matchCategory;
+    })
+    .sort((a, b) => {
+      const pA = statusPriority[a.status] || 5;
+      const pB = statusPriority[b.status] || 5;
+      if (pA !== pB) return pA - pB;
+      return b.id - a.id;
+    });
+});
+
+const isAllMarketsSelected = computed(() => {
+  if (filteredMarkets.value.length === 0) return false;
+  return filteredMarkets.value.every(m => selectedMarketIds.value.includes(m.id));
+});
+
+const toggleSelectAllMarkets = () => {
+  if (isAllMarketsSelected.value) {
+    selectedMarketIds.value = [];
+  } else {
+    selectedMarketIds.value = filteredMarkets.value.map(m => m.id);
+  }
+};
+
+const toggleSelectMarket = (id) => {
+  const index = selectedMarketIds.value.indexOf(id);
+  if (index > -1) {
+    selectedMarketIds.value.splice(index, 1);
+  } else {
+    selectedMarketIds.value.push(id);
+  }
+};
+
+const toggleLiveBetting = async (market) => {
+  try {
+    const res = await $api(`/admin/clash-bet/markets/${market.id}/live-toggle`, { method: 'PUT' });
+    market.allow_during_match = res.allow_during_match;
+    $toast.success(res.message || 'Option Live Betting mise à jour.');
+  } catch (e) {
+    $toast.error('Erreur lors de la mise à jour du Live Betting.');
+  }
+};
+
+const bulkUpdateStatus = async (status) => {
+  if (selectedMarketIds.value.length === 0) return;
+  try {
+    await Promise.all(selectedMarketIds.value.map(id =>
+      $api(`/admin/clash-bet/markets/${id}/status`, { method: 'PUT', body: { status } })
+    ));
+    $toast.success(`Statut '${status}' appliqué à ${selectedMarketIds.value.length} marché(s).`);
+    selectedMarketIds.value = [];
+    fetchMarkets();
+  } catch (e) {
+    $toast.error('Erreur lors de la mise à jour en masse.');
+  }
+};
+
+const bulkCancelMarkets = async () => {
+  if (selectedMarketIds.value.length === 0) return;
+  if (!confirm(`Annuler définitivement ${selectedMarketIds.value.length} marché(s) ?`)) return;
+  try {
+    await Promise.all(selectedMarketIds.value.map(id =>
+      $api(`/admin/clash-bet/markets/${id}/cancel`, { method: 'POST', body: { reason: 'Annulation en masse admin' } })
+    ));
+    $toast.success(`${selectedMarketIds.value.length} marché(s) annulé(s) et remboursé(s).`);
+    selectedMarketIds.value = [];
+    fetchMarkets(); fetchStats();
+  } catch (e) {
+    $toast.error('Erreur lors de l\'annulation en masse.');
+  }
+};
+
+const bulkSettleAutoMarkets = async () => {
+  if (selectedMarketIds.value.length === 0) return;
+  try {
+    let successCount = 0;
+    for (const id of selectedMarketIds.value) {
+      const market = markets.value.find(m => m.id === id);
+      if (market && market.rule_definition && market.status !== 'settled') {
+        await triggerSettleAuto(market);
+        successCount++;
+      }
+    }
+    $toast.success(`Règlement auto exécuté sur ${successCount} marché(s).`);
+    selectedMarketIds.value = [];
+    fetchMarkets(); fetchStats();
+  } catch (e) {
+    $toast.error('Erreur lors du règlement en masse.');
+  }
+};
+
+const deleteMarket = async (market) => {
+  if (!confirm(`Supprimer définitivement le marché #${market.id} "${market.title || ''}" ?`)) return;
+  try {
+    const res = await $api(`/admin/clash-bet/markets/${market.id}/delete`, { method: 'POST' });
+    $toast.success(res.message || 'Marché supprimé avec succès.');
+    fetchMarkets();
+    fetchStats();
+  } catch (e) {
+    try {
+      const res = await $api(`/admin/clash-bet/markets/${market.id}`, { method: 'DELETE' });
+      $toast.success(res.message || 'Marché supprimé avec succès.');
+      fetchMarkets();
+      fetchStats();
+    } catch (err) {
+      $toast.error(err.data?.message || e.data?.message || 'Erreur lors de la suppression du marché.');
+    }
+  }
+};
+
+const bulkDeleteMarkets = async () => {
+  if (selectedMarketIds.value.length === 0) return;
+  if (!confirm(`Supprimer définitivement ${selectedMarketIds.value.length} marché(s) sélectionné(s) ?`)) return;
+  try {
+    await Promise.all(selectedMarketIds.value.map(id =>
+      $api(`/admin/clash-bet/markets/${id}/delete`, { method: 'POST' })
+    ));
+    $toast.success(`${selectedMarketIds.value.length} marché(s) supprimé(s) définitivement.`);
+    selectedMarketIds.value = [];
+    fetchMarkets();
+    fetchStats();
+  } catch (e) {
+    $toast.error('Erreur lors de la suppression en masse des marchés.');
+  }
+};
 
 // --- LOGIQUE COMPOSÉE (AND / OR) ---
 const isComposedRule = ref(false);
@@ -698,12 +1090,31 @@ const secondRuleDraft = ref({
   value: '80',
 });
 
-// Auto-assign category based on subject_type
+// Auto-assign category and reset metrics based on subject_type
 watch(() => ruleDraft.value.subject_type, (newType) => {
   if (newType === 'team') builderForm.value.category = 'team';
   else if (newType === 'player') builderForm.value.category = 'player';
   else if (newType === 'match') builderForm.value.category = 'comparison';
+  else if (newType === 'duel') {
+    builderForm.value.category = 'duel';
+    ruleDraft.value.metric = 'winner';
+    ruleDraft.value.operator = '=';
+    ruleDraft.value.value = 'home';
+    ruleDraft.value.target = Number(selectedDuelHdv.value || 16);
+  }
 }, { immediate: true });
+
+// Auto-reset operator and value when selecting 'winner' metric
+watch(() => ruleDraft.value.metric, (newMetric) => {
+  if (newMetric === 'winner') {
+    ruleDraft.value.operator = '=';
+    if (ruleDraft.value.value !== 'home' && ruleDraft.value.value !== 'away') {
+      ruleDraft.value.value = 'home';
+    }
+  } else if (ruleDraft.value.value === 'home' || ruleDraft.value.value === 'away') {
+    ruleDraft.value.value = '9';
+  }
+});
 
 const selectedMatch = computed(() => {
   if (!builderForm.value.match_id) return availableMatches.value[0] || null;
@@ -717,17 +1128,39 @@ const currentClanName = computed(() => {
 
 const currentClanPlayers = computed(() => {
   if (!selectedMatch.value) return [];
-  return selectedClanSide.value === 'home' 
+  return selectedClanSide.value === 'home'
     ? (selectedMatch.value.clan_home_players || [])
     : (selectedMatch.value.clan_away_players || []);
 });
 
-// Auto-sync player target when selecting player or side
-watch([selectedClanSide, selectedPlayerId, () => ruleDraft.value.subject_type], () => {
+const currentWinnerHomeLabel = computed(() => {
+  if (!selectedMatch.value) return 'Local';
+  if (ruleDraft.value.subject_type === 'duel') {
+    const hdv = Number(selectedDuelHdv.value || 16);
+    const duel = (selectedMatch.value.duels || []).find(d => Number(d.hdv_level) === hdv);
+    return duel?.player_home_name ? `${duel.player_home_name} (${selectedMatch.value.clan_home})` : `${selectedMatch.value.clan_home} (HDV${hdv})`;
+  }
+  return selectedMatch.value.clan_home || 'Clan Hôte';
+});
+
+const currentWinnerAwayLabel = computed(() => {
+  if (!selectedMatch.value) return 'Visiteur';
+  if (ruleDraft.value.subject_type === 'duel') {
+    const hdv = Number(selectedDuelHdv.value || 16);
+    const duel = (selectedMatch.value.duels || []).find(d => Number(d.hdv_level) === hdv);
+    return duel?.player_away_name ? `${duel.player_away_name} (${selectedMatch.value.clan_away})` : `${selectedMatch.value.clan_away} (HDV${hdv})`;
+  }
+  return selectedMatch.value.clan_away || 'Clan Invité';
+});
+
+// Auto-sync player/duel target when selecting player, duel or side
+watch([selectedClanSide, selectedPlayerId, selectedDuelHdv, () => ruleDraft.value.subject_type], () => {
   if (ruleDraft.value.subject_type === 'team') {
     ruleDraft.value.target = selectedClanSide.value;
   } else if (ruleDraft.value.subject_type === 'player') {
     ruleDraft.value.target = selectedPlayerId.value || (currentClanPlayers.value[0]?.id || 1);
+  } else if (ruleDraft.value.subject_type === 'duel') {
+    ruleDraft.value.target = Number(selectedDuelHdv.value || 16);
   }
 });
 
@@ -784,23 +1217,23 @@ const formatOperatorPhrase = (op, isNegated = false) => {
   if (!isNegated) {
     switch (op) {
       case '>=': return 'au moins';
-      case '>':  return 'strictement plus de';
-      case '=':  return 'exactement';
+      case '>': return 'strictement plus de';
+      case '=': return 'exactement';
       case '!=': return 'différent de';
       case '<=': return 'au maximum';
-      case '<':  return 'strictement moins de';
-      default:   return op;
+      case '<': return 'strictement moins de';
+      default: return op;
     }
   } else {
     // Inversion stricte (Lois de De Morgan pour position NON)
     switch (op) {
       case '>=': return 'strictement moins de';
-      case '>':  return 'au maximum';
-      case '=':  return 'différent de';
+      case '>': return 'au maximum';
+      case '=': return 'différent de';
       case '!=': return 'exactement';
       case '<=': return 'strictement plus de';
-      case '<':  return 'au moins';
-      default:   return op;
+      case '<': return 'au moins';
+      default: return op;
     }
   }
 };
@@ -809,33 +1242,151 @@ const generateSingleRuleTitle = (rule, isNegated = false) => {
   const match = selectedMatch.value;
   if (!match) return isNegated ? 'Position NON' : 'Position OUI';
 
-  // --- Cas Spécial : Vainqueur du Match ---
-  if (rule.metric === 'winner') {
-    // La valeur est 'home' ou 'away' (qui doit gagner)
-    const winnerSide = rule.value === 'home' ? 'home' : (rule.value === 'away' ? 'away' : rule.target);
-    const winnerClan = winnerSide === 'home' ? (match.clan_home || 'Équipe Hôte') : (match.clan_away || 'Équipe Invitée');
-    const loserClan  = winnerSide === 'home' ? (match.clan_away || 'Équipe Invitée') : (match.clan_home || 'Équipe Hôte');
-    if (!isNegated) {
-      return `${winnerClan} gagne le match`;
-    } else {
-      return `${winnerClan} ne gagne pas le match (${loserClan} gagne ou nul)`;
+  // --- Cas Spécial : Duel H2H ---
+  if (rule.subject_type === 'duel') {
+    const hdv = Number(selectedDuelHdv.value || rule.target || 16);
+    const duelObj = match.duels?.find(d => Number(d.hdv_level) === hdv);
+    const pHome = duelObj?.player_home_name ? `l'HDV${hdv} (${duelObj.player_home_name})` : `l'HDV${hdv} de ${match.clan_home || 'Clan Hôte'}`;
+    const pAway = duelObj?.player_away_name ? `l'HDV${hdv} (${duelObj.player_away_name})` : `l'HDV${hdv} de ${match.clan_away || 'Clan Invité'}`;
+
+    if (rule.metric === 'winner') {
+      const winnerName = rule.value === 'home' ? pHome : (rule.value === 'away' ? pAway : pHome);
+      const loserName = rule.value === 'home' ? pAway : pHome;
+      return isNegated
+        ? `[Duel HDV${hdv}] ${winnerName} ne remporte pas le duel face à ${loserName}`
+        : `[Duel HDV${hdv}] ${winnerName} remporte le duel face à ${loserName}`;
     }
+
+    const metricText = formatMetricName(rule.metric);
+    const opPhrase = formatOperatorPhrase(rule.operator, isNegated);
+    return `[Duel HDV${hdv}] ${pHome} VS ${pAway} : ${metricText} ${opPhrase} ${rule.value}`;
   }
 
-  const clanName = rule.target === 'home' ? (match.clan_home || 'Clan Hôte') : (match.clan_away || 'Clan Invité');
+  // --- Cas Spécial : Vainqueur du Match ---
+  if (rule.metric === 'winner') {
+    const winnerSide = rule.value === 'home' ? 'home' : (rule.value === 'away' ? 'away' : rule.target);
+    const winnerClan = winnerSide === 'home' ? (match.clan_home || 'Équipe Hôte') : (match.clan_away || 'Équipe Invitée');
+    const loserClan = winnerSide === 'home' ? (match.clan_away || 'Équipe Invitée') : (match.clan_home || 'Équipe Hôte');
+    return isNegated
+      ? `${winnerClan} ne gagne pas le match (${loserClan} gagne ou nul)`
+      : `${winnerClan} gagne le match`;
+  }
+
+  // Pour subject_type='team', rule.target est 'home' ou 'away'
+  // Pour subject_type='player', rule.target est un ID numérique → on recherche le joueur dans les deux listes
+  let clanName = match.clan_home || 'Clan Hôte';
+  let playerName = null;
+
+  if (rule.subject_type === 'player') {
+    const playerId = Number(selectedPlayerId.value || rule.target);
+    const homeP = (match.clan_home_players || []).find(p => p.id === playerId);
+    const awayP = (match.clan_away_players || []).find(p => p.id === playerId);
+
+    if (homeP) {
+      playerName = homeP.name ? `l'HDV (${homeP.name})` : `l'HDV de ${match.clan_home}`;
+      clanName = match.clan_home || 'Clan Hôte';
+    } else if (awayP) {
+      playerName = awayP.name ? `l'HDV (${awayP.name})` : `l'HDV de ${match.clan_away}`;
+      clanName = match.clan_away || 'Clan Invité';
+    } else {
+      clanName = selectedClanSide.value === 'home' ? (match.clan_home || 'Clan Hôte') : (match.clan_away || 'Clan Invité');
+      playerName = `l'HDV (Joueur #${rule.target || '?'})`;
+    }
+  } else {
+    clanName = rule.target === 'home' ? (match.clan_home || 'Clan Hôte') : (match.clan_away || 'Clan Invité');
+  }
+
   const metricText = formatMetricName(rule.metric);
   const opPhrase = formatOperatorPhrase(rule.operator, isNegated);
 
   if (rule.subject_type === 'team') {
     return `${clanName} aura ${opPhrase} ${rule.value} ${metricText}`;
   } else if (rule.subject_type === 'player') {
-    const playerList = rule.target === 'home' ? match.clan_home_players : match.clan_away_players;
-    const playerObj = playerList?.find(p => p.id === Number(selectedPlayerId.value));
-    const playerName = playerObj ? playerObj.name : `Joueur #${rule.target || '?'}`;
     return `${playerName} (${clanName}) aura ${opPhrase} ${rule.value} ${metricText}`;
   } else {
     return `Le match aura ${opPhrase} ${rule.value} ${metricText}`;
   }
+};
+
+const describeASTNode = (node, match, isNegated = false) => {
+  if (!node) return isNegated ? 'Position NON' : 'Position OUI';
+
+  if (node.type === 'logical') {
+    const op = node.operator || 'AND';
+    const linkWord = isNegated
+      ? (op === 'AND' ? ' OU ' : ' ET ')
+      : (op === 'AND' ? ' ET ' : ' OU ');
+    return (node.children || [])
+      .map(child => describeASTNode(child, match, isNegated))
+      .join(linkWord);
+  }
+
+  const subjectType = node.subject_type || 'team';
+  const target = node.target || 'home';
+  const metric = node.metric || 'total_stars';
+  const operator = node.operator || '>=';
+  const value = node.value;
+
+  const m = match || selectedMatch.value;
+
+  // Duel H2H
+  if (subjectType === 'duel') {
+    const hdv = Number(target || 16);
+    const duel = (m?.duels || []).find(d => Number(d.hdv_level) === hdv);
+    const pHome = duel?.player_home_name ? `l'HDV${hdv} (${duel.player_home_name})` : `l'HDV${hdv} de ${m?.clan_home || 'Clan Hôte'}`;
+    const pAway = duel?.player_away_name ? `l'HDV${hdv} (${duel.player_away_name})` : `l'HDV${hdv} de ${m?.clan_away || 'Clan Invité'}`;
+
+    if (metric === 'winner') {
+      const winnerName = value === 'home' ? pHome : (value === 'away' ? pAway : pHome);
+      const loserName = value === 'home' ? pAway : pHome;
+      return isNegated
+        ? `[Duel HDV${hdv}] ${winnerName} ne remporte pas le duel face à ${loserName}`
+        : `[Duel HDV${hdv}] ${winnerName} remporte le duel face à ${loserName}`;
+    }
+
+    const metricText = formatMetricName(metric);
+    const opPhrase = formatOperatorPhrase(operator, isNegated);
+    return `[Duel HDV${hdv}] ${pHome} VS ${pAway} : ${metricText} ${opPhrase} ${value}`;
+  }
+
+  // Match Winner
+  if (metric === 'winner') {
+    const winnerClan = value === 'home'
+      ? (m?.clan_home || m?.home || 'Clan Hôte')
+      : (m?.clan_away || m?.away || 'Clan Invité');
+    const loserClan = value === 'home'
+      ? (m?.clan_away || m?.away || 'Clan Invité')
+      : (m?.clan_home || m?.home || 'Clan Hôte');
+    return isNegated
+      ? `${winnerClan} ne gagne pas le match (${loserClan} gagne ou nul)`
+      : `${winnerClan} gagne le match`;
+  }
+
+  let entityName = 'L\'équipe';
+  if (subjectType === 'team') {
+    entityName = target === 'home'
+      ? (m?.clan_home || m?.home || 'Clan Hôte')
+      : (m?.clan_away || m?.away || 'Clan Invité');
+  } else if (subjectType === 'player') {
+    const playerId = Number(target);
+    const homeP = (m?.clan_home_players || []).find(p => p.id === playerId);
+    const awayP = (m?.clan_away_players || []).find(p => p.id === playerId);
+    if (homeP) entityName = `${homeP.name} (${m?.clan_home || 'Hôte'})`;
+    else if (awayP) entityName = `${awayP.name} (${m?.clan_away || 'Invité'})`;
+    else entityName = `Joueur #${target}`;
+  } else {
+    entityName = 'Le match';
+  }
+
+  const metricText = formatMetricName(metric);
+  const opPhrase = formatOperatorPhrase(operator, isNegated);
+
+  return `${entityName} aura ${opPhrase} ${value} ${metricText}`;
+};
+
+const selectedMatchForMarket = (market) => {
+  if (market.match) return market.match;
+  return availableMatches.value.find(m => m.id === market.match_id) || null;
 };
 
 const yesPositionTitle = computed(() => {
@@ -909,13 +1460,38 @@ const fetchStats = async () => {
   try { stats.value = await $api('/admin/clash-bet/stats'); } catch (e) { console.error(e); }
 };
 
-const fetchMarkets = async () => {
+const fetchMarkets = async (page = 1) => {
   loadingMarkets.value = true;
   try {
-    const res = await $api('/admin/clash-bet/markets');
-    markets.value = res.data || res || [];
-  } catch (e) { console.error(e); } finally { loadingMarkets.value = false; }
+    const params = { page };
+    if (marketStatusFilter.value && marketStatusFilter.value !== 'all') {
+      params.status = marketStatusFilter.value;
+    }
+    if (marketCategoryFilter.value && marketCategoryFilter.value !== 'all') {
+      params.category = marketCategoryFilter.value;
+    }
+    const res = await $api('/admin/clash-bet/markets', { params });
+    if (res && res.data) {
+      markets.value = res.data;
+      marketsPagination.value = {
+        current_page: res.current_page || 1,
+        last_page: res.last_page || 1,
+        total: res.total || res.data.length,
+        per_page: res.per_page || 10,
+      };
+    } else {
+      markets.value = res || [];
+    }
+  } catch (e) {
+    console.error(e);
+  } finally {
+    loadingMarkets.value = false;
+  }
 };
+
+watch([marketStatusFilter, marketCategoryFilter], () => {
+  fetchMarkets(1);
+});
 
 const fetchWithdrawals = async () => {
   loadingWithdrawals.value = true;
@@ -944,7 +1520,17 @@ const fetchAudits = async () => {
 
 const fetchSettings = async () => {
   loadingSettings.value = true;
-  try { settings.value = await $api('/admin/clash-bet/settings'); } catch { } finally { loadingSettings.value = false; }
+  try {
+    const res = await $api('/admin/clash-bet/settings');
+    if (res) {
+      res.clash_bet_public_enabled = res.clash_bet_public_enabled == true || res.clash_bet_public_enabled == '1' || res.clash_bet_public_enabled == 1;
+      settings.value = res;
+    }
+  } catch (e) {
+    console.error(e);
+  } finally {
+    loadingSettings.value = false;
+  }
 };
 
 const saveSettings = async () => {

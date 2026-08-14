@@ -22,7 +22,7 @@
 
 .main-content {
   flex: 1;
-  padding: 40px 40px;
+  padding: 5px 1px;
   max-width: 1400px;
   margin: 0 auto;
   width: 100%;

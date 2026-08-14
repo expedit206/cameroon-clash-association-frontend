@@ -21,7 +21,7 @@
         <NuxtLink to="/clans/cameroun" class="nav-link" active-class="active">Clans</NuxtLink>
         <NuxtLink to="/players/cameroun" class="nav-link" active-class="active">Joueurs</NuxtLink>
         <NuxtLink to="/tournaments" class="nav-link" active-class="active">Tournois</NuxtLink>
-        <NuxtLink v-if="user?.role === 'admin'" to="/clash-bet"
+        <NuxtLink v-if="canAccessClashBet" to="/clash-bet"
           class="nav-link text-gold font-bold flex items-center gap-1" active-class="active">🔥 Clash Bet</NuxtLink>
         <NuxtLink to="/rules" class="nav-link" active-class="active">Règlement</NuxtLink>
       </div>
@@ -200,12 +200,15 @@ const rankingsOpen = ref(false);
 const tournamentsMenuOpen = ref(false);
 const isMobile = ref(false);
 
+const { canAccessClashBet, fetchPublicConfig } = useClashBetConfig();
+
 const checkMobile = () => {
   if (process.client) isMobile.value = window.innerWidth <= 768;
 };
 onMounted(() => {
   checkMobile();
   window.addEventListener("resize", checkMobile);
+  fetchPublicConfig();
 });
 
 const toggleMenu = () => {
