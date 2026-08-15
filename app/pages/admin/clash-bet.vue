@@ -337,31 +337,74 @@
         <div v-if="loadingAdminTickets" class="text-center text-white/40 py-8">Chargement des tickets...</div>
         <div v-else-if="adminTickets.length === 0" class="glass-card !p-8 text-center text-white/40 text-xs">Aucun
           ticket pour ce filtre.</div>
-        <div v-else class="space-y-2">
+        <div v-else class="space-y-3">
           <div v-for="t in adminTickets" :key="t.id"
-            class="glass-card !p-4 border-white/10 flex items-center justify-between gap-4 text-xs">
-            <div>
-              <div class="flex items-center gap-2">
+            class="glass-card !p-5 border-white/10 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 text-xs">
+            <div class="space-y-1.5 flex-1">
+              <div class="flex items-center gap-2 flex-wrap">
                 <span :class="getStatusBadgeClass(t.status)">{{ t.status }}</span>
                 <span class="font-mono text-gold font-bold">#{{ t.ticket_number }}</span>
                 <span class="px-2 py-0.5 rounded text-[10px] font-black uppercase"
-                  :class="t.side === 'YES' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'">Position
-                  {{ t.side || 'YES' }}</span>
+                  :class="t.side === 'YES' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'">
+                  Position Créateur: {{ t.side || 'YES' }}
+                </span>
+                <span v-if="t.review_required"
+                  class="px-2 py-0.5 bg-red-500/20 text-red-400 border border-red-500/30 text-[10px] font-black rounded uppercase">
+                  ⚠️ ALERTE RISQUE #{{ t.risk_score }}
+                </span>
               </div>
-              <div class="text-white/80 font-bold mt-1">
-                {{ t.market_title || 'Marché P2P' }}
+              <div class="text-white font-black text-sm">
+                📌 {{ t.market_title || 'Marché P2P #' + t.market_id }}
               </div>
-              <div class="text-white/40 text-[10px] mt-0.5">
-                Créateur: User #{{ t.creator_id }} | Adversaire: {{ t.taker_id ? 'User #' + t.taker_id : 'En attente' }}
+              <div class="text-white/70 text-xs space-y-0.5">
+                <div>
+                  👤 <strong>Créateur :</strong> {{ t.creator?.name || 'User #' + t.creator_id }}
+                  <span class="text-green-400 font-bold">({{ t.side || 'YES' }})</span>
+                </div>
+                <div>
+                  🥊 <strong>Preneur :</strong>
+                  <span v-if="t.taker_id">{{ t.taker?.name || 'User #' + t.taker_id }} <span
+                      class="text-red-400 font-bold">({{ t.side === 'YES' ? 'NO' : 'YES' }})</span></span>
+                  <span v-else class="text-white/40 italic">En attente d'appariement</span>
+                </div>
+              </div>
+              <div v-if="t.winner" class="text-xs text-gold font-bold flex items-center gap-1 pt-1">
+                <span>🏆 Gagnant Tranché :</span>
+                <span class="px-2 py-0.5 bg-gold/15 text-gold rounded font-black">{{ t.winner.name }}</span>
               </div>
             </div>
-            <div class="text-right">
-              <div class="text-gold font-black italic">{{ formatFcfa(t.amount) }}</div>
-              <div class="text-[10px] text-white/40">Gain potentiel: {{ formatFcfa(t.net_payout) }}</div>
+
+            <div class="flex flex-col items-end gap-3 shrink-0">
+              <div class="text-right">
+                <div class="text-xs text-white/50 uppercase">Mise par joueur : <strong class="text-gold font-mono">{{
+                  formatFcfa(t.amount) }}</strong></div>
+                <div class="text-sm font-black text-green-400 italic">Pot Total / Gain Net : {{ formatFcfa(t.net_payout)
+                }}</div>
+              </div>
+
+              <!-- ACTIONS DE DÉPARTAGE EN DIRECT PAR L'ADMINISTRATEUR -->
+              <div v-if="t.status !== 'settled' && t.status !== 'cancelled' && t.status !== 'refunded'"
+                class="flex flex-wrap items-center gap-1.5 pt-1">
+                <button @click="settleSingleTicketAdmin(t, 'creator')"
+                  class="px-2.5 py-1.5 bg-green-500/20 text-green-300 border border-green-500/40 rounded-lg text-[11px] font-black hover:bg-green-500/30 transition-all flex items-center gap-1 cursor-pointer">
+                  👑 Gagnant : {{ t.creator?.name ? t.creator.name.split(' ')[0] : 'Créateur' }}
+                </button>
+
+                <button v-if="t.taker_id" @click="settleSingleTicketAdmin(t, 'taker')"
+                  class="px-2.5 py-1.5 bg-blue-500/20 text-blue-300 border border-blue-500/40 rounded-lg text-[11px] font-black hover:bg-blue-500/30 transition-all flex items-center gap-1 cursor-pointer">
+                  👑 Gagnant : {{ t.taker?.name ? t.taker.name.split(' ')[0] : 'Preneur' }}
+                </button>
+
+                <button @click="settleSingleTicketAdmin(t, 'refund')"
+                  class="px-2.5 py-1.5 bg-amber-500/20 text-amber-300 border border-amber-500/40 rounded-lg text-[11px] font-bold hover:bg-amber-500/30 transition-all flex items-center gap-1 cursor-pointer">
+                  ⚖️ Égalité / Rembourser
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </div>
+
 
       <!-- SECTION 3: Retraits -->
       <div v-if="activeSection === 'withdrawals'" class="space-y-4">
@@ -760,8 +803,9 @@
                   <!-- Header Match -->
                   <div class="flex items-center justify-between text-[10px]">
                     <span class="px-2 py-0.5 bg-gold/15 text-gold font-black rounded uppercase">
-                      {{ builderForm.category === 'team' ? '🏆 ÉQUIPE' : (builderForm.category === 'player' ? '👤JOUEUR':
-                      '⚔️COMPARAISON') }}
+                      {{ builderForm.category === 'team' ? '🏆 ÉQUIPE' : (builderForm.category === 'player' ?
+                        '👤JOUEUR' :
+                        '⚔️COMPARAISON') }}
                     </span>
                     <span class="text-white/40 font-mono">Match #{{ selectedMatch?.id || '?' }}</span>
                   </div>
@@ -1027,22 +1071,28 @@ const bulkCancelMarkets = async () => {
 
 const bulkSettleAutoMarkets = async () => {
   if (selectedMarketIds.value.length === 0) return;
+  if (!confirm(`Lancer le règlement automatique (Rule Engine AST) pour ${selectedMarketIds.value.length} marché(s) sélectionné(s) ?`)) return;
   try {
     let successCount = 0;
+    let errCount = 0;
     for (const id of selectedMarketIds.value) {
-      const market = markets.value.find(m => m.id === id);
-      if (market && market.rule_definition && market.status !== 'settled') {
-        await triggerSettleAuto(market);
+      try {
+        await $api(`/admin/clash-bet/markets/${id}/settle-auto`, { method: 'POST' });
         successCount++;
+      } catch (e) {
+        errCount++;
+        console.warn(`Règlement auto échoué pour marché #${id}:`, e?.data?.message || e);
       }
     }
-    $toast.success(`Règlement auto exécuté sur ${successCount} marché(s).`);
+    if (successCount > 0) $toast.success(`Règlement auto : ${successCount} marché(s) réglé(s).`);
+    if (errCount > 0) $toast.error(`${errCount} marché(s) en erreur (sans règle AST ou déjà réglé).`);
     selectedMarketIds.value = [];
     fetchMarkets(); fetchStats();
   } catch (e) {
     $toast.error('Erreur lors du règlement en masse.');
   }
 };
+
 
 const deleteMarket = async (market) => {
   if (!confirm(`Supprimer définitivement le marché #${market.id} "${market.title || ''}" ?`)) return;
@@ -1246,8 +1296,8 @@ const generateSingleRuleTitle = (rule, isNegated = false) => {
   if (rule.subject_type === 'duel') {
     const hdv = Number(selectedDuelHdv.value || rule.target || 16);
     const duelObj = match.duels?.find(d => Number(d.hdv_level) === hdv);
-    const pHome = duelObj?.player_home_name ? `l'HDV${hdv} (${duelObj.player_home_name})` : `l'HDV${hdv} de ${match.clan_home || 'Clan Hôte'}`;
-    const pAway = duelObj?.player_away_name ? `l'HDV${hdv} (${duelObj.player_away_name})` : `l'HDV${hdv} de ${match.clan_away || 'Clan Invité'}`;
+    const pHome = `l'HDV${hdv} de ${duelObj?.player_home_name ? `${duelObj.player_home_name} (${match.clan_home || 'Hôte'})` : (match.clan_home || 'Clan Hôte')}`;
+    const pAway = `l'HDV${hdv} de ${duelObj?.player_away_name ? `${duelObj.player_away_name} (${match.clan_away || 'Invité'})` : (match.clan_away || 'Clan Invité')}`;
 
     if (rule.metric === 'winner') {
       const winnerName = rule.value === 'home' ? pHome : (rule.value === 'away' ? pAway : pHome);
@@ -1333,8 +1383,8 @@ const describeASTNode = (node, match, isNegated = false) => {
   if (subjectType === 'duel') {
     const hdv = Number(target || 16);
     const duel = (m?.duels || []).find(d => Number(d.hdv_level) === hdv);
-    const pHome = duel?.player_home_name ? `l'HDV${hdv} (${duel.player_home_name})` : `l'HDV${hdv} de ${m?.clan_home || 'Clan Hôte'}`;
-    const pAway = duel?.player_away_name ? `l'HDV${hdv} (${duel.player_away_name})` : `l'HDV${hdv} de ${m?.clan_away || 'Clan Invité'}`;
+    const pHome = `l'HDV${hdv} de ${duel?.player_home_name ? `${duel.player_home_name} (${m?.clan_home || 'Hôte'})` : (m?.clan_home || 'Clan Hôte')}`;
+    const pAway = `l'HDV${hdv} de ${duel?.player_away_name ? `${duel.player_away_name} (${m?.clan_away || 'Invité'})` : (m?.clan_away || 'Clan Invité')}`;
 
     if (metric === 'winner') {
       const winnerName = value === 'home' ? pHome : (value === 'away' ? pAway : pHome);
@@ -1509,6 +1559,35 @@ const fetchAdminTickets = async () => {
     adminTickets.value = res.data || res || [];
   } catch (e) { console.error(e); } finally { loadingAdminTickets.value = false; }
 };
+
+const settleSingleTicketAdmin = async (ticket, outcome) => {
+  const creatorName = ticket.creator?.name || `User #${ticket.creator_id}`;
+  const takerName = ticket.taker?.name || `User #${ticket.taker_id}`;
+
+  let promptMsg = `Trancher le ticket #${ticket.ticket_number} ?`;
+  if (outcome === 'creator') {
+    promptMsg = `Confirmer ${creatorName} (Créateur) comme GAGNANT du ticket #${ticket.ticket_number} ?`;
+  } else if (outcome === 'taker') {
+    promptMsg = `Confirmer ${takerName} (Preneur) comme GAGNANT du ticket #${ticket.ticket_number} ?`;
+  } else if (outcome === 'refund') {
+    promptMsg = `Annuler le ticket #${ticket.ticket_number} et REMBOURSER intégralement les deux joueurs ?`;
+  }
+
+  if (!confirm(promptMsg)) return;
+
+  try {
+    const res = await $api(`/admin/clash-bet/tickets/${ticket.id}/settle`, {
+      method: 'POST',
+      body: { outcome },
+    });
+    $toast.success(res.message || 'Ticket tranché avec succès !');
+    fetchAdminTickets();
+    fetchStats();
+  } catch (e) {
+    $toast.error(e?.data?.message || 'Erreur lors du règlement du ticket.');
+  }
+};
+
 
 const fetchAudits = async () => {
   loadingAudits.value = true;

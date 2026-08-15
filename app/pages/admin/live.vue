@@ -40,6 +40,12 @@
             <span>{{ generating ? 'Génération...' : '⚡ Générer Demi-Finales' }}</span>
           </button>
 
+          <button @click="generateThirdPlaceMatch" :disabled="generating"
+            class="flex-1 md:flex-none py-2.5 px-3.5 bg-gradient-to-r from-amber-600 to-orange-500 hover:from-amber-500 hover:to-orange-400 text-white font-black text-xs rounded-xl shadow-lg shadow-amber-600/20 transition-all flex items-center justify-center gap-1.5">
+            <span>🥉</span>
+            <span>{{ generating ? 'Génération...' : '⚡ Match 3ème Place' }}</span>
+          </button>
+
           <button @click="fetchData"
             class="py-2.5 px-3 bg-white/10 hover:bg-white/20 text-white font-bold text-xs rounded-xl transition-all flex items-center justify-center"
             title="Actualiser les données">
@@ -565,6 +571,7 @@
                   class="w-full p-2.5 rounded-xl bg-black border border-white/20 text-white font-bold text-xs focus:border-gold">
                   <option value="group_stage">Phase de Groupes</option>
                   <option value="semi_final">Demi-Finale</option>
+                  <option value="third_place">Match 3ème Place (Petite Finale)</option>
                   <option value="final">Grande Finale</option>
                 </select>
               </div>
@@ -671,15 +678,37 @@
               </select>
             </div>
 
-            <div class="flex gap-2 pt-3 border-t border-white/10">
-              <button type="button" @click="showScoreModal = false"
-                class="flex-1 py-2.5 bg-white/10 text-white font-bold text-xs rounded-xl hover:bg-white/20">
-                Annuler
+            <div>
+              <label class="block text-[10px] uppercase font-bold text-gold mb-1">👑 Départage / Vainqueur du Match</label>
+              <select v-model="scoreForm.winner_clan_id"
+                class="w-full p-2.5 bg-black border border-gold/40 rounded-xl text-white font-bold text-xs focus:border-gold">
+                <option :value="null">⚡ Automatique (selon étoiles & % destruction)</option>
+                <option v-if="selectedMatch.clan_home" :value="selectedMatch.clan_home_id">
+                  🏆 {{ selectedMatch.clan_home.name }} (Victoire Domicile)
+                </option>
+                <option v-if="selectedMatch.clan_away" :value="selectedMatch.clan_away_id">
+                  🏆 {{ selectedMatch.clan_away.name }} (Victoire Extérieur)
+                </option>
+              </select>
+            </div>
+
+            <div class="pt-3 border-t border-white/10 space-y-2">
+              <button type="button" @click="deleteMatchMarkets(selectedMatch.id)"
+                class="w-full py-2 bg-red-500/10 border border-red-500/30 hover:bg-red-500/20 text-red-400 font-bold text-xs rounded-xl flex items-center justify-center gap-1.5 transition-all">
+                <span>🗑️</span>
+                <span>Supprimer tous les marchés P2P de ce match</span>
               </button>
-              <button type="submit"
-                class="flex-1 py-2.5 bg-gold text-black font-bold text-xs rounded-xl hover:bg-yellow-400">
-                Enregistrer
-              </button>
+
+              <div class="flex gap-2">
+                <button type="button" @click="showScoreModal = false"
+                  class="flex-1 py-2.5 bg-white/10 text-white font-bold text-xs rounded-xl hover:bg-white/20">
+                  Annuler
+                </button>
+                <button type="submit"
+                  class="flex-1 py-2.5 bg-gold text-black font-bold text-xs rounded-xl hover:bg-yellow-400">
+                  Enregistrer
+                </button>
+              </div>
             </div>
           </form>
         </div>
@@ -914,6 +943,7 @@ const openScoreModal = (match) => {
     total_stars_away: match.total_stars_away ?? 0,
     total_destruction_away: match.total_destruction_away ?? 0,
     status: match.status || 'completed',
+    winner_clan_id: match.winner_clan_id || null,
   };
   showScoreModal.value = true;
 };
@@ -977,6 +1007,39 @@ const generateSemiFinals = async () => {
     alert(e?.data?.message || 'Erreur lors de la génération des demi-finales.');
   } finally {
     generating.value = false;
+  }
+};
+
+const generateThirdPlaceMatch = async () => {
+  if (!confirm("Confirmer la génération du match pour la 3ème place (Petite Finale) entre les deux perdants des demi-finales ?")) return;
+
+  generating.value = true;
+  try {
+    const res = await $api('/admin/competitions/1/generate-third-place', {
+      method: 'POST',
+    });
+    alert(res.message || 'Match 3ème place généré avec succès !');
+    activeTab.value = 'matches';
+    await fetchData();
+  } catch (e) {
+    alert(e?.data?.message || 'Erreur lors de la génération du match 3ème place.');
+  } finally {
+    generating.value = false;
+  }
+};
+
+const deleteMatchMarkets = async (matchId) => {
+  if (!confirm("⚠️ Confirmer la suppression de TOUS les marchés P2P de ce match ? Tous les tickets d'utilisateur non résolus seront automatiquement annulés et remboursés.")) return;
+
+  try {
+    const res = await $api(`/admin/clash-bet/matches/${matchId}/markets`, {
+      method: 'DELETE',
+    });
+    alert(res.message || 'Marchés du match supprimés avec succès !');
+    showScoreModal.value = false;
+    fetchData();
+  } catch (e) {
+    alert(e?.data?.message || 'Erreur lors de la suppression des marchés du match.');
   }
 };
 

@@ -182,6 +182,20 @@
           </div>
 
           <div class="pt-6 border-t border-white/5">
+            <label class="text-[9px] font-black uppercase tracking-widest text-gold block mb-2 text-center">👑 Départage / Vainqueur du Match</label>
+            <select v-model="editForm.winner_clan_id"
+              class="w-full p-3 rounded-xl bg-black border border-gold/40 text-white font-bold text-xs focus:border-gold">
+              <option :value="null">⚡ Automatique (selon étoiles & % destruction)</option>
+              <option v-if="selectedMatch.clan_home" :value="selectedMatch.clan_home_id">
+                🏆 {{ selectedMatch.clan_home.name }} (Victoire Domicile)
+              </option>
+              <option v-if="selectedMatch.clan_away" :value="selectedMatch.clan_away_id">
+                🏆 {{ selectedMatch.clan_away.name }} (Victoire Extérieur)
+              </option>
+            </select>
+          </div>
+
+          <div class="pt-6 border-t border-white/5">
             <label class="text-[9px] font-black uppercase tracking-widest text-white/40 block mb-3 text-center">Status
               du match</label>
             <div class="flex gap-2">
@@ -217,7 +231,7 @@
 const { $api } = useNuxtApp();
 const matches = ref([]);
 const loading = ref(true);
-const currentRound = ref('r16');
+const currentRound = ref(1);
 const generating = ref(false);
 const saving = ref(false);
 
@@ -228,6 +242,7 @@ const editForm = ref({
   total_destruction_home: 0,
   total_destruction_away: 0,
   status: "scheduled",
+  winner_clan_id: null,
 });
 
 const COMPETITION_ID = 1;

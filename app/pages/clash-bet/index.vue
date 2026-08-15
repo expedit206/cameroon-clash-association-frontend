@@ -196,15 +196,11 @@
               </span>
             </div>
 
-            <!-- Ligne 2 : Titre du marché (si présent) -->
-            <div class="text-[11px] font-black text-white group-hover:text-gold transition-colors  mb-2">
-              {{ match.title || 'Victoire du Clan' }}
-            </div>
-
+         
             <!-- Ligne 3 : Confrontation & Cotes Compactes Style 1xBet -->
-            <div class="flex items-center flex-col justify-between gap-2">
+            <div class="flex items-center flex-col  gap-2">
               <!-- Clans & VS -->
-              <div class="flex items-center justify-between gap-2 w-full">
+              <div class="flex items-center justify-center gap-2 w-full">
                 <div class="flex items-center gap-1.5 ">
                   <img :src="match.match?.clan_home?.badge_url || '/default-clan.png'"
                     class="w-5 h-5 object-contain flex-shrink-0" @error="$event.target.src = '/default-clan.png'" />
@@ -217,6 +213,12 @@
                   <span class="text-[11px] font-bold text-white/90 ">{{ match.match?.clan_away?.name || 'Away' }}</span>
                 </div>
               </div>
+
+              <!-- Ligne 2 : Titre du marché (si présent) -->
+              <div class="text-[11px] font-black text-white group-hover:text-gold transition-colors  mb-2">
+                {{ match.title || 'Victoire du Clan' }}
+              </div>
+
 
               <!-- Boutons Cotes (YES / NO) 1xBet Style -->
               <div class="flex items-center justify-between px-3 gap-1 w-full">

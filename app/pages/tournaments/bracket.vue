@@ -640,6 +640,46 @@
 
           </div>
 
+          <!-- PETITE FINALE (Match 3ème Place) -->
+          <div v-if="thirdPlaceMatch" class="max-w-md mx-auto mt-8">
+            <div class="glass-card p-4 sm:p-5 border-amber-500/40 relative bg-gradient-to-b from-amber-950/30 to-black/80">
+              <div class="text-center mb-3">
+                <span
+                  class="text-[9px] uppercase font-black tracking-widest text-amber-400 bg-amber-500/10 px-2.5 py-0.5 rounded-full border border-amber-500/30 inline-block mb-1">
+                  🥉 PETITE FINALE (3ÈME PLACE)
+                </span>
+                <p class="text-[9px] text-white/50">Match pour la 3ème Place entre les perdants des Demi-Finales</p>
+                <p v-if="thirdPlaceMatch.scheduled_at" class="text-[10px] font-mono text-white/60 mt-1">
+                  📅 {{ formatDate(thirdPlaceMatch.scheduled_at) }}
+                </p>
+              </div>
+
+              <div class="space-y-2">
+                <div class="flex justify-between items-center p-2.5 rounded-xl bg-white/5 text-xs"
+                  :class="thirdPlaceMatch.winner_clan_id === thirdPlaceMatch.clan_home_id ? 'border border-amber-400 text-amber-400 font-bold bg-amber-500/10' : ''">
+                  <div class="flex items-center gap-2 truncate">
+                    <img :src="thirdPlaceMatch.clan_home?.badge_url || '/images/default-clan.png'"
+                      class="w-6 h-6 object-contain flex-shrink-0" />
+                    <span class="font-bold truncate max-w-[140px]">{{ thirdPlaceMatch.clan_home?.name || 'Perdant Demi 1' }}</span>
+                  </div>
+                  <span class="font-black text-base text-amber-400">{{ thirdPlaceMatch.total_stars_home ?? '-' }}</span>
+                </div>
+
+                <div class="text-center text-[9px] font-black text-amber-500/40 italic">VS</div>
+
+                <div class="flex justify-between items-center p-2.5 rounded-xl bg-white/5 text-xs"
+                  :class="thirdPlaceMatch.winner_clan_id === thirdPlaceMatch.clan_away_id ? 'border border-amber-400 text-amber-400 font-bold bg-amber-500/10' : ''">
+                  <div class="flex items-center gap-2 truncate">
+                    <img :src="thirdPlaceMatch.clan_away?.badge_url || '/images/default-clan.png'"
+                      class="w-6 h-6 object-contain flex-shrink-0" />
+                    <span class="font-bold truncate max-w-[140px]">{{ thirdPlaceMatch.clan_away?.name || 'Perdant Demi 2' }}</span>
+                  </div>
+                  <span class="font-black text-base text-amber-400">{{ thirdPlaceMatch.total_stars_away ?? '-' }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
         </div>
 
       </div>
@@ -661,7 +701,32 @@ const groupMatches = computed(() => allMatches.value.filter(m => m.phase === 'gr
 const semiFinals = computed(() => allMatches.value.filter(m => m.phase === 'semi_final'));
 const semiFinal1 = computed(() => semiFinals.value[0] || null);
 const semiFinal2 = computed(() => semiFinals.value[1] || null);
-const grandFinal = computed(() => allMatches.value.find(m => m.phase === 'final') || null);
+const grandFinal = computed(() => {
+  const match = allMatches.value.find(m => m.phase === 'final');
+  if (match && (match.clan_home || match.clan_home_id)) return match;
+
+  // Fallback dynamique automatique dès que les 2 demi-finales sont achevées
+  if (semiFinal1.value?.status === 'completed' && semiFinal2.value?.status === 'completed') {
+    const winner1 = semiFinal1.value.winner_clan_id === semiFinal1.value.clan_home_id ? semiFinal1.value.clan_home : semiFinal1.value.clan_away;
+    const winner2 = semiFinal2.value.winner_clan_id === semiFinal2.value.clan_home_id ? semiFinal2.value.clan_home : semiFinal2.value.clan_away;
+    if (winner1 && winner2) {
+      return {
+        id: match?.id || 'dynamic-final',
+        phase: 'final',
+        clan_home: winner1,
+        clan_away: winner2,
+        clan_home_id: winner1.id,
+        clan_away_id: winner2.id,
+        status: match?.status || 'scheduled',
+        total_stars_home: match?.total_stars_home ?? null,
+        total_stars_away: match?.total_stars_away ?? null,
+        scheduled_at: match?.scheduled_at || null,
+      };
+    }
+  }
+  return match || null;
+});
+const thirdPlaceMatch = computed(() => allMatches.value.find(m => m.phase === 'third_place') || null);
 
 /**
  * Retourne la priorité d'un match selon la date programmée :
