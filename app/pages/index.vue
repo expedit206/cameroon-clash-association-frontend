@@ -637,7 +637,7 @@
               Déterminés
             </span>
             <span class="px-4 py-2 rounded-full bg-[#d4af37]/10 border border-[#d4af37]/40
-                   text-[0.7rem] font-extrabold uppercase tracking-[2px] text-[#d4af37]">
+                   text-[0.7rem]  font-extrabold uppercase tracking-[2px] text-[#d4af37]">
               Légendaires
             </span>
           </div>
