@@ -7,7 +7,7 @@
         class="absolute inset-0 z-0 overflow-hidden pointer-events-none opacity-20"
       >
         <img
-          src="/images/tournaments/hero-bg.png"
+          src="/images/hero-bg.png"
           class="w-full h-full object-cover scale-105"
         />
         <div class="absolute inset-0 bg-[#06070a]/80"></div>

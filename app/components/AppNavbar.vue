@@ -23,8 +23,11 @@
         <NuxtLink to="/tournaments" class="nav-link" active-class="active">Tournois</NuxtLink>
         <NuxtLink v-if="canAccessClashBet" to="/clash-bet"
           class="nav-link text-gold font-bold flex items-center gap-1.5" active-class="active">
-          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline">
-            <rect x="2" y="10" width="20" height="14" rx="2" /><circle cx="12" cy="17" r="2" /><path d="M6 10V6a6 6 0 0 1 12 0v4" />
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline">
+            <rect x="2" y="10" width="20" height="14" rx="2" />
+            <circle cx="12" cy="17" r="2" />
+            <path d="M6 10V6a6 6 0 0 1 12 0v4" />
           </svg>
           Clash Bet
         </NuxtLink>
@@ -40,7 +43,7 @@
 
         <button class="mobile-inline-link" :class="{ active: rankingsOpen }" @click="toggleRankings">
           <LucideBarChart3 :size="20" class="inline icon" />
-          <span class="label-text">Rang  <span class="tiny-chevron">▾</span></span>
+          <span class="label-text">Rang <span class="tiny-chevron">▾</span></span>
         </button>
 
 
@@ -49,8 +52,11 @@
           <span class="label-text">Tournoi <span class="tiny-chevron">▾</span></span>
         </button>
         <NuxtLink v-if="canAccessClashBet" to="/clash-bet" class="mobile-inline-link" active-class="active">
-          <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="2" y="10" width="20" height="12" rx="2" /><circle cx="12" cy="17" r="2" /><path d="M6 10V6a6 6 0 0 1 12 0v4" />
+          <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="10" width="20" height="12" rx="2" />
+            <circle cx="12" cy="17" r="2" />
+            <path d="M6 10V6a6 6 0 0 1 12 0v4" />
           </svg>
           <span class="label-text">Clash Bet</span>
         </NuxtLink>
@@ -70,14 +76,14 @@
                 <div v-else class="avatar-initials" :class="roleBadgeClass">
                   {{ user?.name?.charAt(0) }}
                 </div>
-                <div class="avatar-text">
+                <div class="avatar-text flex flex-col ">
                   <span class="avatar-name">{{ user?.name }}</span>
-                  <!-- <span class="avatar-tag">{{ user?.tag_coc }}</span> -->
+                  <span class="avatar-tag">{{ user?.tag_coc }}</span>
                 </div>
                 <span class="avatar-chevron">▾</span>
               </button>
               <Transition name="dropdown">
-                <div v-if="dropdownOpen" class="avatar-dropdown flex flex-col ">
+                <div v-if="dropdownOpen" class="avatar-dropdown flex flex-col gap-1 ">
                   <NuxtLink to="/profile" class="dropdown-item" @click="dropdownOpen = false">
                     <LucideUser :size="18" class="inline mr-1" /> Profil
                   </NuxtLink>
@@ -100,21 +106,24 @@
                     @click="dropdownOpen = false"
                     ><LucideTicket :size="18" class="inline mr-1" /> Mes Paris</NuxtLink
                   >-->
-                  <NuxtLink
+                  <!-- <NuxtLink
                     v-if="user?.role === 'admin'"
                     to="/admin/clash-bet"
                     class="dropdown-item text-gold font-semibold"
                     @click="dropdownOpen = false"
-                    ><LucideDices :size="18" class="inline mr-1" /> Admin Bet</NuxtLink
-                  > 
-                  <NuxtLink v-if="dashboardPath" :to="dashboardPath" class="dropdown-item text-gold"
+                    ><LucideDices :size="18" class="inline mr-1" /> Admin Bet</NuxtLink -->
+                  <!-- >  -->
+                  <NuxtLink v-if="dashboardPath" :to="dashboardPath" class="dropdown-item "
                     @click="dropdownOpen = false">
                     <LucideHome :size="18" class="inline mr-1" /> Dashboard
                   </NuxtLink>
                   <!-- <div class="dropdown-divider"></div> -->
-                  <button class="dropdown-item text-red-300" @click="handleLogout">
-                    <LucideLogOut :size="18" class="inline mr-1" /> Déconnexion
-                  </button>
+                  <span>
+
+                    <button class="dropdown-item text-red-300 !padding-0 !margin-0" @click="handleLogout">
+                      <LucideLogOut :size="18" class="inline mr-1" /> Déconnexion
+                    </button>
+                  </span>
                 </div>
               </Transition>
             </div>
@@ -171,9 +180,11 @@
           <NuxtLink v-if="showMyClan" to="/my-clan" class="mobile-link" @click="closeAll">
             <LucideCastle :size="18" class="inline mr-1" /> Mon Clan
           </NuxtLink>
+          <!-- 🚫 CLASH BET SUSPENDU — lien Admin Bet masqué
           <NuxtLink v-if="user?.role === 'admin'" to="/admin/clash-bet" class="mobile-link text-gold font-bold" @click="closeAll">
             <LucideDices :size="18" class="inline mr-1" /> Admin Bet
           </NuxtLink>
+          -->
           <NuxtLink v-if="dashboardPath" :to="dashboardPath" class="mobile-link text-gold" @click="closeAll">
             <LucideHome :size="18" class="inline mr-1" /> {{ dashboardLabel }}
           </NuxtLink>

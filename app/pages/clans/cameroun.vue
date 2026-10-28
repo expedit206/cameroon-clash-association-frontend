@@ -2,92 +2,63 @@
   <div class="discovery-page">
     <div class="container-fluid py-10 px-4 lg:px-10">
       <!-- Header Hero -->
-      <header class="discovery-header text-center mb-16 animate-float">
-        <h1 class="heading text-6xl font-black italic tracking-tighter">
-          CLANS <span class="text-gold">CAMEROUNAIS</span> 🇨🇲
+      <header class="discovery-header text-center mb-12 animate-float">
+        <div class="inline-block px-4 py-1.5 rounded-full bg-gold/10 border border-gold/30 text-gold text-xs font-black tracking-widest uppercase mb-4">
+          🏆 SAISON 1 — CCA NATIONAL LEAGUE
+        </div>
+        <h1 class="heading text-4xl sm:text-6xl font-black italic tracking-tighter">
+          CLASSEMENT DES <span class="text-gold">CLANS</span> 🇨🇲
         </h1>
-        <p
-          class="subtitle mt-2 text-xl opacity-60 uppercase tracking-[0.3em] font-light"
-        >
-          Analyse du Territoire National
+        <p class="subtitle mt-2 text-sm sm:text-xl opacity-60 uppercase tracking-[0.2em] font-light">
+          Classement Officiel basé sur les Performances en Tournoi
         </p>
       </header>
 
       <!-- Filters Bar -->
-      <div class="filters-wrapper mb-12">
-        <div
-          class="filters-bar glass-card p-6 flex flex-wrap gap-6 items-end border-gold/10 shadow-2xl"
-        >
-          <div class="filter-group flex-1 min-w-[280px]">
-            <label
-              class="block text-[10px] uppercase tracking-widest text-gold mb-2 font-bold"
-              >Rechercher un Clan</label
-            >
+      <div class="filters-wrapper mb-10">
+        <div class="filters-bar glass-card p-4 sm:p-6 flex flex-wrap gap-4 items-end border-gold/10 shadow-2xl">
+          <div class="filter-group flex-1 min-w-[220px]">
+            <label class="block text-[10px] uppercase tracking-widest text-gold mb-2 font-bold">
+              Rechercher un Clan
+            </label>
             <input
               v-model="filters.name"
               type="text"
-              placeholder="Nom du clan..."
+              placeholder="Nom ou tag du clan..."
               class="filter-input w-full"
               @input="handleSearch"
             />
           </div>
-          <div class="filter-group w-32">
-            <label
-              class="block text-[10px] uppercase tracking-widest text-gold mb-2 font-bold"
-              >Niveau Min.</label
-            >
+          <div class="filter-group w-40">
+            <label class="block text-[10px] uppercase tracking-widest text-gold mb-2 font-bold">
+              Groupe
+            </label>
             <select
-              v-model="filters.minClanLevel"
+              v-model="filters.group"
               class="filter-input w-full"
-              @change="resetAndFetch"
+              @change="fetchClans"
             >
-              <option :value="2">Lvl 2+</option>
-              <option v-for="n in 23" :key="n + 2" :value="n + 2" class="bg-gray-800">
-                {{ n + 2 }}+
-              </option>
+              <option value="">Tous les Groupes</option>
+              <option value="A">Groupe A</option>
+              <option value="B">Groupe B</option>
             </select>
           </div>
-          <div class="filter-group w-32">
-            <label
-              class="block text-[10px] uppercase tracking-widest text-gold mb-2 font-bold"
-              >Membres</label
-            >
-            <select
-              v-model="filters.minMembers"
-              class="filter-input w-full"
-              @change="resetAndFetch"
-            >
-              <option :value="2" class="bg-gray-800">2+</option>
-              <option :value="10" class="bg-gray-800">10+</option>
-              <option :value="20" class="bg-gray-800">20+</option>
-              <option :value="30" class="bg-gray-800">30+</option>
-              <option :value="40" class="bg-gray-800">40+</option>
-            </select>
-          </div>
-          <button @click="resetFilters" class="btn-reset">↺</button>
+          <button @click="resetFilters" class="btn-reset" title="Réinitialiser">↺</button>
         </div>
       </div>
 
       <!-- Clans Content -->
-      <div
-        v-if="loading && clans.length === 0"
-        class="loader-container py-32 text-center bg-black/20 rounded-3xl"
-      >
+      <div v-if="loading && clans.length === 0" class="loader-container py-32 text-center bg-black/20 rounded-3xl">
         <div class="spinner mx-auto mb-6"></div>
-        <p
-          class="text-gold font-bold tracking-[0.5em] animate-pulse uppercase text-xs"
-        >
-          Décodage des signaux...
+        <p class="text-gold font-bold tracking-[0.5em] animate-pulse uppercase text-xs">
+          Calcul du classement officiel...
         </p>
       </div>
 
-      <div
-        v-else-if="clans.length === 0"
-        class="empty-state py-32 text-center bg-black/20 rounded-3xl border border-white/5"
-      >
-        <div class="text-6xl mb-6">🏰</div>
+      <div v-else-if="clans.length === 0" class="empty-state py-32 text-center bg-black/20 rounded-3xl border border-white/5">
+        <div class="text-6xl mb-6">🛡️</div>
         <p class="opacity-40 text-xl font-black uppercase tracking-widest">
-          Zone déserte... aucun clan repéré
+          Aucun clan ne correspond aux critères
         </p>
         <button @click="resetFilters" class="mt-8 btn-premium btn-sm">
           Réinitialiser les filtres
@@ -96,22 +67,19 @@
 
       <div v-else class="clans-results">
         <!-- Desktop/Tablet Table View -->
-        <div
-          class="hidden md:block clans-container shadow-2xl border border-white/5 overflow-hidden rounded-3xl"
-        >
+        <div class="hidden md:block clans-container shadow-2xl border border-white/5 overflow-hidden rounded-3xl">
           <div class="table-responsive">
             <table class="clans-table w-full">
               <thead>
-                <tr
-                  class="text-gold text-[11px] uppercase tracking-[0.25em] font-black border-b border-white/10 text-left"
-                >
-                  <th class="p-6 w-24 text-center">Blason</th>
-                  <th class="p-6">Clan</th>
-                  <th class="p-6 w-32 text-center hidden md:table-cell">Niv</th>
-                  <th class="p-6 w-48 text-center hidden md:table-cell">
-                    Membres
-                  </th>
-                  <th class="p-6 text-right w-48">Pts</th>
+                <tr class="text-gold text-[11px] uppercase tracking-[0.25em] font-black border-b border-white/10 text-left">
+                  <th class="p-5 w-16 text-center">Rang</th>
+                  <th class="p-5 w-20 text-center">Blason</th>
+                  <th class="p-5">Clan</th>
+                  <th class="p-5 text-center">Groupe</th>
+                  <th class="p-5 text-center">Bilan (V-N-D)</th>
+                  <th class="p-5 text-center">Étoiles</th>
+                  <th class="p-5 text-center">% Destruction</th>
+                  <th class="p-5 text-right w-36">Points CCA</th>
                 </tr>
               </thead>
               <tbody>
@@ -121,46 +89,81 @@
                   class="clan-row transition-all duration-300 border-b border-white/5 hover:bg-white/5 cursor-pointer"
                   @click="navigateToClan(clan.tag)"
                 >
-                  <td class="p-6 text-center">
+                  <!-- Rang -->
+                  <td class="p-5 text-center">
+                    <span
+                      class="rank-number font-black text-lg"
+                      :class="{
+                        'text-gold font-extrabold text-xl': clan.rank === 1,
+                        'text-gray-300': clan.rank === 2,
+                        'text-amber-600': clan.rank === 3,
+                        'text-white/40': clan.rank > 3
+                      }"
+                    >
+                      #{{ clan.rank }}
+                    </span>
+                  </td>
+
+                  <!-- Blason -->
+                  <td class="p-5 text-center">
                     <img
-                      :src="clan.badgeUrls.medium"
+                      :src="clan.badge_url"
                       alt=""
                       class="clan-badge-table"
-                      @error="
-                        (e) =>
-                          (e.target.src =
-                            'https://api-assets.clashofclans.com/badges/200/uofw477qfC2pT5E5K4H9fE44-S8y6E7u8H7u5u7u.png')
-                      "
+                      @error="(e) => (e.target.src = 'https://api-assets.clashofclans.com/badges/200/uofw477qfC2pT5E5K4H9fE44-S8y6E7u8H7u5u7u.png')"
                     />
                   </td>
-                  <td class="p-6">
-                    <div
-                      class="name text-xl font-black text-white group-hover:text-gold transition-colors leading-tight mb-1"
-                    >
+
+                  <!-- Nom & Tag -->
+                  <td class="p-5">
+                    <div class="name text-lg font-black text-white group-hover:text-gold transition-colors leading-tight">
                       {{ clan.name }}
                     </div>
-                    <div
-                      class="tag text-[10px] font-mono opacity-30 mt-1 uppercase tracking-tighter"
-                    >
+                    <div class="tag text-[11px] font-mono text-gold/60 mt-0.5 uppercase tracking-tighter">
                       {{ clan.tag }}
                     </div>
                   </td>
-                  <td class="p-6 text-center hidden md:table-cell">
-                    <div class="level-badge">{{ clan.clanLevel }}</div>
+
+                  <!-- Groupe -->
+                  <td class="p-5 text-center">
+                    <span v-if="clan.group" class="group-pill">Groupe {{ clan.group }}</span>
+                    <span v-else class="text-white/20 text-xs italic">-</span>
                   </td>
-                  <td class="p-6 text-center hidden md:table-cell">
-                    <div class="members-display font-bold text-white/60">
-                      <span class="text-white">{{ clan.members }}</span> / 50
+
+                  <!-- Bilan -->
+                  <td class="p-5 text-center">
+                    <div class="font-bold text-white/80 text-sm">
+                      <span class="text-emerald-400 font-extrabold">{{ clan.won }}V</span> -
+                      <span class="text-amber-400 font-extrabold">{{ clan.drawn }}N</span> -
+                      <span class="text-rose-400 font-extrabold">{{ clan.lost }}D</span>
+                    </div>
+                    <div class="text-[10px] text-white/30 font-bold uppercase tracking-wider mt-0.5">
+                      {{ clan.played }} match{{ clan.played > 1 ? 's' : '' }}
                     </div>
                   </td>
-                  <td class="p-6 text-right">
-                    <div class="points-meta inline-flex items-center gap-3">
-                      <div
-                        class="points-val text-3xl font-black italic tracking-tighter"
-                      >
-                        {{ clan.clanPoints }}
+
+                  <!-- Étoiles -->
+                  <td class="p-5 text-center">
+                    <div class="inline-flex items-center gap-1 text-gold font-black text-base">
+                      <span>{{ clan.total_stars }}</span>
+                      <span class="text-xs">⭐️</span>
+                    </div>
+                  </td>
+
+                  <!-- Destruction % -->
+                  <td class="p-5 text-center">
+                    <div class="font-bold text-white/90 text-sm">
+                      {{ clan.avg_destruction }}%
+                    </div>
+                  </td>
+
+                  <!-- Points CCA -->
+                  <td class="p-5 text-right">
+                    <div class="points-meta inline-flex items-center gap-2">
+                      <div class="points-val text-2xl font-black italic tracking-tighter text-gold">
+                        {{ clan.points }}
                       </div>
-                      <span class="text-gold text-xl">🛡️</span>
+                      <span class="text-gold text-sm font-bold">PTS</span>
                     </div>
                   </td>
                 </tr>
@@ -169,58 +172,84 @@
           </div>
         </div>
 
-        <!-- Mobile Horizontal Cards (Ultra-Minimalist) -->
-       <!-- Mobile Horizontal Cards (Ultra-Minimalist) -->
-        <div class="sm:hidden flex flex-col gap-3">
-          <div v-for="clan in clans" :key="clan.tag"
-            class="mobile-clan-card glass-card border-white/5 flex items-start p-3 gap-4"
-            @click="navigateToClan(clan.tag)">
-            <!-- Badge avec niveau (inchangé) -->
-            <div class="relative w-14 h-14 flex-shrink-0">
-              <img :src="clan.badgeUrls.medium" class="w-full h-full object-contain filter drop-shadow-md" @error="
-                (e) =>
-                (e.target.src =
-                  'https://api-assets.clashofclans.com/badges/200/uofw477qfC2pT5E5K4H9fE44-S8y6E7u8H7u5u7u.png')
-              " />
-              <div
-                class="absolute -bottom-1 -right-1 bg-black/80 border border-white/20 text-gold text-[9px] font-black px-1.5 py-0.5 rounded-md min-w-[20px] text-center">
-                {{ clan.clanLevel }}
+        <!-- Mobile Cards -->
+        <div class="md:hidden flex flex-col gap-3">
+          <div
+            v-for="clan in clans"
+            :key="clan.tag"
+            class="mobile-clan-card glass-card border-white/5 p-4 flex flex-col gap-3 cursor-pointer"
+            @click="navigateToClan(clan.tag)"
+          >
+            <div class="flex items-center gap-3">
+              <!-- Rang -->
+              <span
+                class="font-black text-lg min-w-[28px] text-center"
+                :class="{
+                  'text-gold font-extrabold text-xl': clan.rank === 1,
+                  'text-gray-300': clan.rank === 2,
+                  'text-amber-600': clan.rank === 3,
+                  'text-white/40': clan.rank > 3
+                }"
+              >
+                #{{ clan.rank }}
+              </span>
+
+              <!-- Badge -->
+              <img
+                :src="clan.badge_url"
+                class="w-12 h-12 object-contain filter drop-shadow-md flex-shrink-0"
+                @error="(e) => (e.target.src = 'https://api-assets.clashofclans.com/badges/200/uofw477qfC2pT5E5K4H9fE44-S8y6E7u8H7u5u7u.png')"
+              />
+
+              <!-- Nom & Tag -->
+              <div class="flex-1 min-w-0">
+                <div class="text-white font-black text-base leading-tight truncate">
+                  {{ clan.name }}
+                </div>
+                <div class="text-[10px] font-mono text-gold/70 mt-0.5">
+                  {{ clan.tag }}
+                </div>
               </div>
+
+              <!-- Groupe -->
+              <span v-if="clan.group" class="group-pill text-[10px] py-0.5 px-2">
+                Gr. {{ clan.group }}
+              </span>
             </div>
 
-            <!-- Colonne principale : nom + infos en deux lignes -->
-            <div class="flex-1 min-w-0">
-              <!-- Nom du clan (sans truncate, retour à la ligne si nécessaire) -->
-              <div class="text-white font-black text-lg leading-tight break-words">
-                {{ clan.name }}
-              </div>
-
-              <!-- Deuxième ligne : membres à gauche, score à droite -->
-              <div class="flex items-center justify-between mt-1">
-                <span class="text-[10px] font-bold text-white/40 uppercase tracking-widest">
-                  {{ clan.members }} / 50
-                </span>
-                <span class="text-white font-black text-base italic tracking-tighter">
-                  Pts: {{ clan.clanPoints }}
+            <!-- Stats Bar mobile -->
+            <div class="grid grid-cols-4 gap-2 pt-2 border-t border-white/5 text-center">
+              <div>
+                <span class="text-[9px] uppercase tracking-wider text-white/40 block font-bold">Bilan</span>
+                <span class="text-xs font-bold text-white">
+                  {{ clan.won }}V-{{ clan.drawn }}N-{{ clan.lost }}D
                 </span>
               </div>
 
-              <!-- (Optionnel) "National Score" peut être placé sous le score ou supprimé -->
-              <div class="text-[9px] font-bold text-gold opacity-50 uppercase tracking-tighter text-right mt-0.5">
-                National Score
+              <div>
+                <span class="text-[9px] uppercase tracking-wider text-white/40 block font-bold">Étoiles</span>
+                <span class="text-xs font-black text-gold">
+                  {{ clan.total_stars }} ⭐️
+                </span>
+              </div>
+
+              <div>
+                <span class="text-[9px] uppercase tracking-wider text-white/40 block font-bold">Destr.</span>
+                <span class="text-xs font-bold text-white/80">
+                  {{ clan.avg_destruction }}%
+                </span>
+              </div>
+
+              <div>
+                <span class="text-[9px] uppercase tracking-wider text-gold block font-bold">Points</span>
+                <span class="text-sm font-black text-gold italic">
+                  {{ clan.points }} Pts
+                </span>
               </div>
             </div>
           </div>
         </div>
       </div>
-
-      <!-- Loading Footer for Infinite Scroll -->
-      <div v-if="loading && clans.length > 0" class="py-10 text-center">
-        <div class="spinner-sm mx-auto"></div>
-      </div>
-
-      <!-- Infinite Scroll Anchor -->
-      <div ref="scrollAnchor" class="h-20"></div>
     </div>
   </div>
 </template>
@@ -228,66 +257,36 @@
 <script setup>
 const { $api } = useNuxtApp();
 const clans = ref([]);
-const loading = ref(false);
+const loading = ref(true);
 
 useHead({
-  title: "Clans Camerounais — Annuaire National | CCA League 🇨🇲",
+  title: "Classement des Clans — CCA National League 🇨🇲",
   meta: [
     {
       name: "description",
-      content:
-        "Explorez l'annuaire complet des clans Clash of Clans actifs au Cameroun. Suivez leur niveau, le nombre de membres et leurs points défensifs.",
-    },
-    {
-      name: "keywords",
-      content:
-        "clans camerounais, coc cameroun, clan clash of clans, meilleur clan cameroun, cca league, cameroun ranking",
-    },
-    {
-      property: "og:title",
-      content: "Clans Camerounais — Annuaire National | CCA 🛡️",
-    },
-    {
-      property: "og:description",
-      content:
-        "Trouvez un clan ou comparez vos statistiques par rapport au score national.",
-    },
-    {
-      property: "og:image",
-      content: "/images/cca-affiche1.png",
+      content: "Découvrez le classement officiel des clans de la CCA National League basé sur les points, les étoiles et la destruction.",
     },
   ],
 });
-const nextMarker = ref(null);
-const hasMore = ref(true);
-const scrollAnchor = ref(null);
 
 const filters = ref({
   name: "",
-  minClanLevel: 2,
-  minMembers: 2,
+  group: "",
 });
 
 let searchTimeout = null;
 
-const fetchClans = async (isNew = false) => {
-  if (loading.value || (!hasMore.value && !isNew)) return;
-
+const fetchClans = async () => {
   loading.value = true;
   try {
-    const params = { limit: 24, ...filters.value };
-    if (!isNew && nextMarker.value) params.after = nextMarker.value;
-    if (!params.name) delete params.name;
+    const params = {};
+    if (filters.value.name) params.name = filters.value.name;
+    if (filters.value.group) params.group = filters.value.group;
 
     const data = await $api("/clans/cameroun", { params });
-
-    if (isNew) clans.value = data.items || [];
-    else clans.value.push(...(data.items || []));
-
-    nextMarker.value = data.paging?.cursors?.after || null;
-    hasMore.value = !!nextMarker.value && (data.items?.length || 0) > 0;
+    clans.value = data.items || [];
   } catch (e) {
-    console.error("Error discovery clans:", e);
+    console.error("Error loading tournament standings:", e);
   } finally {
     loading.value = false;
   }
@@ -295,34 +294,22 @@ const fetchClans = async (isNew = false) => {
 
 const handleSearch = () => {
   clearTimeout(searchTimeout);
-  searchTimeout = setTimeout(() => resetAndFetch(), 500);
-};
-
-const resetAndFetch = () => {
-  nextMarker.value = null;
-  hasMore.value = true;
-  fetchClans(true);
+  searchTimeout = setTimeout(() => fetchClans(), 400);
 };
 
 const resetFilters = () => {
-  filters.value = { name: "", minClanLevel: 2, minMembers: 2 };
-  resetAndFetch();
+  filters.value = { name: "", group: "" };
+  fetchClans();
 };
 
 const navigateToClan = (tag) => {
-  navigateTo(`/clans/${tag.replace("#", "")}`);
+  if (!tag) return;
+  const cleanTag = tag.replace("#", "");
+  navigateTo(`/clans/${cleanTag}`);
 };
 
 onMounted(() => {
-  fetchClans(true);
-  const observer = new IntersectionObserver(
-    (entries) => {
-      if (entries[0].isIntersecting && !loading.value && hasMore.value)
-        fetchClans();
-    },
-    { threshold: 0.1 },
-  );
-  if (scrollAnchor.value) observer.observe(scrollAnchor.value);
+  fetchClans();
 });
 </script>
 

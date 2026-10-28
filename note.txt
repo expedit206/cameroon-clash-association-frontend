@@ -2,3 +2,42 @@
 #2GGLPPL8L CLAN 
 QVQYOGY20 expedit
 89.116.147.5
+
+
+
+migrer la saison 2 table competition 
+INSERT INTO competitions (
+    name,
+    slug,
+    season_number,
+    format,
+    max_teams,
+    registration_fee,
+    status,
+    registration_opens_at,
+    registration_closes_at,
+    starts_at,
+    ends_at,
+    prize_1st,
+    prize_2nd,
+    prize_3rd,
+    created_at,
+    updated_at
+) VALUES (
+    'CCA National League',
+    'cca-national-league-saison-2',
+    2,
+    'elimination_directe',
+    16,
+    1000,                          -- Frais d'inscription (FCFA)
+    'draft',                       -- Avant le 10 novembre
+    '2026-11-10 00:00:00',         -- Ouverture des inscriptions
+    '2026-11-25 23:59:59',         -- Fermeture des inscriptions (à ajuster si besoin)
+    NULL,                         -- Début des matches (à définir plus tard)
+    NULL,                         -- Fin de la compétition
+    50000,                         -- Champion
+    20000,                         -- Finaliste
+    10000,                         -- Semi-finaliste
+    NOW(),
+    NOW()
+);

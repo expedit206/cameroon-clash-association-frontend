@@ -2,6 +2,26 @@
   <div class="bracket-page min-h-screen pb-20 text-white">
     <div class="container mx-auto px-3 sm:px-6 py-4 sm:py-8 max-w-7xl">
 
+      <!-- ═══ BANNIÈRE CHAMPION ═══════════════════════════════════════ -->
+      <div v-if="bracketChampion" class="champion-banner mb-8">
+        <div class="champion-banner-bg"></div>
+        <div class="champion-banner-content">
+          <div class="champion-banner-crown">👑</div>
+          <div class="champion-banner-info">
+            <span class="champion-banner-tag">CHAMPION CCA NATIONAL LEAGUE — SAISON 1</span>
+            <div class="flex items-center gap-3 mt-1">
+              <img :src="bracketChampion.badge_url" :alt="bracketChampion.name" class="champion-banner-badge" />
+              <h2 class="champion-banner-name">{{ bracketChampion.name }}</h2>
+            </div>
+          </div>
+          <div class="champion-banner-stars" v-if="bracketChampionStars !== null">
+            <span class="text-3xl font-black text-gold">{{ bracketChampionStars }}</span>
+            <span class="text-lg">⭐️</span>
+            <p class="text-[10px] text-white/40 uppercase tracking-widest font-bold">Étoiles Finale</p>
+          </div>
+        </div>
+      </div>
+
       <!-- Responsive Header -->
       <header class="page-header text-center mb-6 sm:mb-10">
         <h1 class="heading text-2xl sm:text-4xl md:text-5xl font-black italic tracking-tighter uppercase leading-tight">
@@ -728,6 +748,20 @@ const grandFinal = computed(() => {
 });
 const thirdPlaceMatch = computed(() => allMatches.value.find(m => m.phase === 'third_place') || null);
 
+const champion_winner_id = computed(() => grandFinal.value?.winner_clan_id || null);
+
+const bracketChampion = computed(() => {
+  if (!grandFinal.value?.winner_clan_id) return null;
+  const isHome = grandFinal.value.winner_clan_id === grandFinal.value.clan_home_id;
+  return isHome ? grandFinal.value.clan_home : grandFinal.value.clan_away;
+});
+
+const bracketChampionStars = computed(() => {
+  if (!grandFinal.value?.winner_clan_id) return null;
+  const isHome = grandFinal.value.winner_clan_id === grandFinal.value.clan_home_id;
+  return isHome ? grandFinal.value.total_stars_home : grandFinal.value.total_stars_away;
+});
+
 /**
  * Retourne la priorité d'un match selon la date programmée :
  * - 'urgent' : dans moins de 24h
@@ -791,6 +825,90 @@ onMounted(fetchData);
 </script>
 
 <style scoped>
+/* ═══ BANNIÈRE CHAMPION ════════════════════════════════════════════ */
+.champion-banner {
+  position: relative;
+  border-radius: 20px;
+  overflow: hidden;
+  border: 2px solid rgba(212, 175, 55, 0.6);
+  box-shadow: 0 0 40px rgba(212, 175, 55, 0.2), 0 0 80px rgba(212, 175, 55, 0.1);
+}
+.champion-banner-bg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 20% 50%, rgba(212, 175, 55, 0.15) 0%, transparent 60%),
+    linear-gradient(135deg, rgba(30, 20, 0, 0.9) 0%, rgba(10, 11, 18, 0.95) 100%);
+  z-index: 0;
+}
+.champion-banner-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 20px 28px;
+}
+.champion-banner-crown {
+  font-size: 3rem;
+  flex-shrink: 0;
+  filter: drop-shadow(0 0 16px rgba(212, 175, 55, 0.8));
+  animation: float-crown 3s ease-in-out infinite;
+}
+@keyframes float-crown {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+.champion-banner-info {
+  flex: 1;
+  min-width: 0;
+}
+.champion-banner-tag {
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--secondary);
+  opacity: 0.8;
+}
+.champion-banner-badge {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 12px rgba(212, 175, 55, 0.6));
+  flex-shrink: 0;
+}
+.champion-banner-name {
+  font-family: var(--font-heading), sans-serif;
+  font-size: 1.8rem;
+  font-weight: 900;
+  color: var(--secondary);
+  text-shadow: 0 0 24px rgba(212, 175, 55, 0.6);
+  text-transform: uppercase;
+  letter-spacing: -0.5px;
+  truncate: true;
+}
+.champion-banner-stars {
+  flex-shrink: 0;
+  text-align: center;
+  padding: 10px 20px;
+  border-left: 1px solid rgba(212, 175, 55, 0.3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+/* winner glow on final match card */
+.winner-glow {
+  box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+  animation: winner-pulse 2s ease-in-out infinite;
+}
+@keyframes winner-pulse {
+  0%, 100% { box-shadow: 0 0 15px rgba(212, 175, 55, 0.3); }
+  50% { box-shadow: 0 0 30px rgba(212, 175, 55, 0.5); }
+}
+
 .bracket-page {
   background:
     radial-gradient(circle at 50% 0%, rgba(212, 175, 55, 0.12) 0%, transparent 60%),

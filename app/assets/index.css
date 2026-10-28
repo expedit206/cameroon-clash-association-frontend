@@ -234,7 +234,7 @@ h4,
   border-radius: var(--radius-sm);
   font-weight: 900;
   font-size: 0.85rem;
-  text-transform: uppercase;
+  /* text-transform: ; */
   letter-spacing: 0.05em;
   transition: all 0.3s ease;
   text-decoration: none;
