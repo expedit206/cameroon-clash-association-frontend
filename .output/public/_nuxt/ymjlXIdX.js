@@ -1,0 +1,1 @@
+import{h as l,g as n,S as e,q as u}from"./B2pGv-SF.js";const p=()=>{l();const{$api:o}=n(),a=e("clash_bet_public_enabled",()=>!1),s=e("clash_bet_public_loading",()=>!1),t=async()=>{{s.value=!1;return}},c=u(()=>!1);return{publicEnabled:a,loading:s,canAccessClashBet:c,fetchPublicConfig:t}};export{p as u};
