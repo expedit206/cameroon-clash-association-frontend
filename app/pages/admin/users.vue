@@ -135,6 +135,11 @@
               <LucideCrown :size="14" class="inline mr-1" /> Promouvoir Capitaine
             </button>
 
+            <button v-else-if="user.role === 'captain'" class="py-2 px-3 rounded-md font-ui font-bold text-xs uppercase tracking-wide bg-red-600/20 text-red-400 border border-red-600/40 hover:bg-red-600/40 transition-all text-left"
+              @click="removeCaptainRole(user.id, user.name)" :disabled="processing === user.id">
+              <LucideCrown :size="14" class="inline mr-1 -mt-0.5" /> Retirer rôle Capitaine
+            </button>
+
             <button class="py-2 px-3 rounded-md font-ui font-bold text-xs uppercase tracking-wide bg-orange-600/20 text-orange-500 border border-orange-600/40 hover:bg-orange-600/40 transition-all text-left" 
               @click="openResetPasswordModal(user)" :disabled="processing === user.id">
               <LucideKey :size="14" class="inline mr-1 -mt-0.5" /> Réinitialiser Mot de passe
@@ -384,6 +389,20 @@ const promoteUserToCaptain = async (id, name) => {
     fetchUsers();
   } catch (e) {
     alert("Erreur lors de la promotion.");
+  } finally {
+    processing.value = null;
+  }
+};
+
+const removeCaptainRole = async (id, name) => {
+  if (!confirm(`Voulez-vous vraiment retirer le rôle de capitaine à ${name} ?`)) return;
+  processing.value = id;
+  try {
+    await $api(`/admin/users/${id}/remove-captain`, { method: "PUT" });
+    alert(`${name} n'est plus capitaine.`);
+    fetchUsers();
+  } catch (e) {
+    alert("Erreur lors de la suppression du rôle de capitaine.");
   } finally {
     processing.value = null;
   }

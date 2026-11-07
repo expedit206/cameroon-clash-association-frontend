@@ -6,6 +6,15 @@ export const useApi = () => {
     path: "/",
   });
 
+  const getAuthToken = () => {
+    if (process.client) {
+      const localToken = localStorage.getItem("cca_auth_token") || localStorage.getItem("auth_token");
+      if (localToken) return localToken;
+    }
+
+    return token.value || null;
+  };
+
   const fetchApi = async (url: string, options: any = {}) => {
     let baseUrl = config.public.apiBase || "http://localhost:8000/api";
 
@@ -15,10 +24,8 @@ export const useApi = () => {
         baseUrl = "https://api.clashkamer.com/api";
       }
     }
-    let tokenValue = token.value;
-    if (process.client && !tokenValue) {
-      tokenValue = localStorage.getItem("auth_token");
-    }
+
+    const tokenValue = getAuthToken();
 
     return $fetch(url, {
       baseURL: baseUrl,
@@ -34,5 +41,6 @@ export const useApi = () => {
   return {
     fetchApi,
     token,
+    getAuthToken,
   };
 };

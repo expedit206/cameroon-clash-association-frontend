@@ -1,4 +1,4 @@
-<template>
+D<template>
   <div class="rules-page">
     <!-- ── EN-TÊTE ─────────────────────────────────── -->
     <section class="rules-header">
@@ -96,29 +96,28 @@
                 Le joueur initiant l'inscription doit être
                 <strong>HDV 14 minimum</strong>.
               </li>
-              <li>
-                L'éligibilité est confirmée instantanément avant de passer au
-                vote.
-              </li>
+             
             </ul>
           </div>
 
-          <div class="phase-block">
+        <div class="phase-block">
             <p class="phase-title">
-              <LucidePin :size="18" class="inline mr-1" /> Étape 2 — Élection du Capitaine
+              <LucidePin :size="18" class="inline mr-1" /> Étape 2 — Désignation du Capitaine
             </p>
             <ul>
               <li>
-                Tout joueur pourra être capitaine si ce dernier a été designé
-                par les membre de son clan .
+               Les membres du clan se concertent en amont et
+                communiquent à l'administrateur CCA (via WhatsApp) le nom du joueur choisi
+                pour les représenter comme capitaine.
               </li>
               <li>
-                les membres du clan devrons informer l'administrateur(whatsapp)
-                pour le choix de leur capitaine.
+                Dès réception de cette décision, l'administrateur <strong>attribue officiellement le rôle de
+                  capitaine</strong>
+                au joueur désigné sur la plateforme.
               </li>
               <li>
-                À l'issue de cette decision l'administrateur attribuera le rôle
-                de capitaine au joueur concerné.
+                Le capitaine ainsi nommé devient le <strong>seul interlocuteur habilité</strong>
+                à composer et soumettre le roster de son clan.
               </li>
             </ul>
           </div>
@@ -130,7 +129,7 @@
             <ul>
               <li>
                 Le Capitaine élu sélectionne les
-                <strong>5 titulaires + 5 remplaçants</strong>.
+                <strong>5 titulaires</strong>.
               </li>
               <li>
                 Il doit s'assurer que son équipe couvre les paliers HDV requis.
@@ -140,30 +139,45 @@
               </li>
             </ul>
           </div>
-
-          <div class="phase-block">
+         <div class="phase-block">
             <p class="phase-title">
-              <LucidePin :size="18" class="inline mr-1" /> Étape 4 — Validation & Confirmation
+              <LucidePin :size="18" class="inline mr-1" /> Étape 4 — Paiement & Validation Finale
             </p>
             <ul>
               <li>
-                Chaque joueur titulaire doit valider sa participation sur la
-                plateforme.
+                Après soumission du roster, chaque joueur titulaire confirme sa participation sur la plateforme,
+                puis le clan procède au règlement des frais de participation.
               </li>
               <li>
-                Un administrateur CCA vérifie la composition et valide l'équipe
-                sous 24h.
+                <strong>Frais : 1 000 FCFA par joueur titulaire</strong>
               </li>
               <li>
-                Dès que les 5 titulaires sont validés, l'équipe est
-                <strong>"Confirmée"</strong> pour la compétition.
+                <strong>Option A — Individuelle :</strong> chaque joueur règle ses
+                <strong>1 000 FCFA</strong> de son côté via Mobile Money
+                (MTN MoMo ou Orange Money).
+              </li>
+              <li>
+                <strong>Option B — Capitaine :</strong> le capitaine peut régler
+                <strong>5 000 FCFA en une seule fois</strong> pour l'ensemble de l'équipe.
+              </li>
+              <li>
+                Un administrateur CCA vérifie la composition et le paiement, puis valide officiellement l'équipe.
+              </li>
+              <li>
+                La place dans le bracket est <strong>définitivement acquise</strong> uniquement quand les 5 titulaires
+                sont validés et le paiement complet confirmé.
+              </li>
+              <li>
+                Les frais ne sont <strong>pas remboursables</strong> après validation du roster par la CCA.
               </li>
             </ul>
-          </div>
+          </div>  
+
+
         </div>
       </article>
 
-      <!-- 3. COMPOSITION -->
+    <!-- 3. COMPOSITION -->
       <article id="composition" class="glass-card rule-block">
         <div class="rule-num text-gradient-purple">03</div>
         <img src="/imagescoc/all heros.webp" alt="" class="rule-icon" />
@@ -171,73 +185,163 @@
           <h2 class="text-gold">Composition de l'Équipe</h2>
           <ul>
             <li>
-              Chaque équipe comprend <strong>5 titulaires obligatoires</strong>,
-              un par niveau HDV (14, 15, 16, 17, 18).
+              Chaque équipe comprend <strong>5 titulaires obligatoires</strong>, avec
+              <strong>exactement un joueur par niveau HDV</strong> : HDV 14, HDV 15,
+              HDV 16, HDV 17 et HDV 18.
             </li>
             <li>
-              Jusqu'à <strong>5 remplaçants</strong> peuvent être enregistrés,
-              de HDV 14 minimum.
+              Le <strong>capitaine fait partie des 5 titulaires</strong> et doit lui-même
+              posséder une base dans l'un des paliers HDV requis.
             </li>
             <li>
-              Un remplaçant ne peut entrer en jeu que si le titulaire de son HDV
-              est indisponible.
+              La composition doit couvrir <strong>l'intégralité des 5 paliers HDV</strong>.
+              Un clan alignant deux joueurs du même HDV ou laissant un palier vide est
+              <strong>inéligible</strong> et son roster est rejeté.
             </li>
             <li>
-              Aucun remplacement n'est autorisé
-              <strong>après le debut d'un match</strong>.
+              Aucun remplaçant n'est autorisé. Le roster soumis est
+              <strong>définitif pour toute la durée de la compétition</strong> —
+              aucun ajout, retrait ou substitution de joueur n'est possible après
+              validation par la CCA.
+            </li>
+        
+            <li>
+              Tout joueur ne peut être inscrit que dans <strong>un seul clan par saison</strong>.
+              Un joueur déjà engagé avec un autre clan ne peut pas être ajouté à un roster.
             </li>
             <li>
-              En cas de désistement d'un titulaire avant le match, le capitaine
-              doit notifier l'arbitre <strong>au moins 1h à l'avance</strong>.
+              Toute modification non autorisée du roster après validation (changement de
+              compte CoC, ajout d'un joueur non déclaré, etc.) entraîne une
+              <strong>sanction immédiate</strong> selon la section « Fair-play & Sanctions ».
             </li>
           </ul>
         </div>
-      </article>
+      </article> 
 
-      <!-- 4. FORMAT DU TOURNOI -->
+   <!-- 4. FORMAT DU TOURNOI -->
       <article id="format" class="glass-card rule-block featured">
         <div class="rule-num text-gold">04</div>
         <img src="/imagescoc/machine de combat.webp" alt="" class="rule-icon rule-icon-lg" />
         <div class="rule-content">
-          <h2 class="text-gold">Format du Tournoi & Phase de Poules</h2>
-          <ul>
-            <li>
-              <strong>11 clans engagés</strong> répartis en 2 poules :
-              <strong>Groupe A (6 clans)</strong> et <strong>Groupe B (5 clans)</strong>.
-            </li>
-            <li>
-              <strong>Garantie de 4 matchs par clan :</strong> Chaque clan dispute exactement 4 rencontres lors de la
-              phase de groupes.
-            </li>
-            <li>
-              <strong>Qualification :</strong> Les <strong>2 premiers clans de chaque groupe (Top 2)</strong> se
-              qualifient pour le Carré Final (Demi-finales).
-            </li>
-            <li>
-              <strong>Phase Finale :</strong> Demi-finales croisées (1er Groupe A vs 2e Groupe B, 1er Groupe B vs 2e
-              Groupe A) puis Grande Finale & Petite Finale.
-            </li>
-            <li>
-              Chaque rencontre = <strong>1 Guerre Amicale 5v5</strong> sur Clash of Clans.
-            </li>
-            <li>
-              Le clan désigné "Hôte" par le système envoie l'invitation de guerre amicale.
-            </li>
-            <li>Durée de préparation : <strong>15 minutes</strong>.</li>
-            <li>Durée de la guerre : <strong>1 heure</strong>.</li>
-            <li>
-              En cas d'égalité de score :
-              <strong>nombre d'étoiles</strong> total, puis
-              <strong>pourcentage de destruction (dommages)</strong>.
-            </li>
-            <li>
-              Si l'égalité persiste : l'équipe gagnante est celle ayant cumulé le <strong>moins de temps cumulé en
-                attaque</strong>.
-            </li>
-          </ul>
+          <h2 class="text-gold">Format du Tournoi — 16 Clans</h2>
+
+          <!-- Vue d'ensemble -->
+          <div class="phase-block">
+            <p class="phase-title">
+              <LucideLayoutGrid :size="18" class="inline mr-1" /> Vue d'ensemble
+            </p>
+            <ul>
+              <li>
+                <strong>16 clans engagés</strong> répartis en
+                <strong>4 poules de 4 clans</strong> (Poule A, B, C, D).
+              </li>
+              <li>
+                La répartition est effectuée par tirage au sort, sous supervision de la CCA,
+                et publiée avant le premier match.
+              </li>
+              <li>
+                Le tournoi se joue en <strong>2 phases</strong> : phase de poules (round-robin)
+                puis phase finale à élimination directe.
+              </li>
+              <li>
+                Au total, <strong>32 matchs</strong> sont disputés sur l'ensemble de la compétition.
+              </li>
+            </ul>
+          </div>
+
+          <!-- Phase de poules -->
+          <div class="phase-block">
+            <p class="phase-title">
+              <LucideUsers :size="18" class="inline mr-1" /> Phase de Poules (Round-Robin)
+            </p>
+            <ul>
+              <li>
+                Dans chaque poule, les <strong>4 clans s'affrontent tous entre eux</strong>
+                en match simple (aller uniquement).
+              </li>
+              <li>
+                Chaque clan dispute donc <strong>exactement 3 matchs</strong> lors de la
+                phase de poules — soit 6 matchs par poule, 24 au total.
+              </li>
+              <li>
+                <strong>Système de points :</strong> victoire = <strong>3 points</strong>,
+                défaite = <strong>0 point</strong> , Nul = <strong>1 point</strong>
+              </li>
+              <li>
+                <strong>Départage en cas d'égalité de points :</strong> différence d'étoiles
+                cumulées, puis pourcentage de destruction cumulée, puis confrontation directe,
+                puis tirage au sort.
+              </li>
+              <li>
+                <strong>Qualification :</strong> les <strong>2 premiers de chaque poule</strong>
+                (Top 2 de A, B, C et D) accèdent aux quarts de finale — soit
+                <strong>8 clans qualifiés</strong>.
+              </li>
+            </ul>
+          </div>
+
+          <!-- Phase finale -->
+          <div class="phase-block">
+            <p class="phase-title">
+              <LucideTrophy :size="18" class="inline mr-1" /> Phase Finale (Élimination Directe)
+            </p>
+            <ul>
+              <li>
+                <strong>Quarts de finale (4 matchs)</strong> — croisement inter-poules pour éviter
+                les retrouvailles :
+                <br />
+                <span class="text-white/60 text-sm ml-4">
+                  1er A vs 2e B · 1er C vs 2e D · 1er B vs 2e A · 1er D vs 2e C
+                </span>
+              </li>
+              <li>
+                <strong>Demi-finales (2 matchs)</strong> — les vainqueurs des quarts s'affrontent
+                en croisement : vainqueur QF1 vs vainqueur QF2, vainqueur QF3 vs vainqueur QF4.
+              </li>
+              <li>
+                <strong>Petite finale (1 match)</strong> — les perdants des demies s'affrontent
+                pour la <strong>3e place</strong>.
+              </li>
+              <li>
+                <strong>Grande finale (1 match)</strong> — les vainqueurs des demies se
+                disputent le titre de <strong>Champion CCA Saison 2</strong>.
+              </li>
+              <li>
+                <strong>Aucune prolongation :</strong> en cas d'égalité, le départage suit les
+                règles ci-dessous.
+              </li>
+            </ul>
+          </div>
+
+          <!-- Règles de match -->
+          <div class="phase-block">
+            <p class="phase-title">
+              <LucideSwords :size="18" class="inline mr-1" /> Règles d'un Match
+            </p>
+            <ul>
+              <li>
+                Chaque rencontre = <strong>1 Guerre Amicale 5v5</strong> en mode E-sport
+                sur Clash of Clans.
+              </li>
+              <li>
+                Le clan désigné <strong>« Hôte »</strong> par l'admin envoie l'invitation
+                de guerre amicale.
+              </li>
+              <li>Durée de préparation : <strong>15 minutes</strong>.</li>
+              <li>Durée de la guerre : <strong>1 heure</strong>.</li>
+              <li>
+                <strong>Départage en cas d'égalité :</strong>
+                <br />
+                <span class="text-white/60 text-sm ml-2">
+                  1. Nombre d'étoiles total<br />
+                  2. Pourcentage de destruction cumulé<br />
+                  3. Temps cumulé d'attaque le plus court
+                </span>
+              </li>
+            </ul>
+          </div>
         </div>
       </article>
-
       <!-- 5. DÉROULEMENT D'UN MATCH -->
       <article id="match" class="glass-card rule-block">
         <div class="rule-num text-gradient-purple">05</div>
@@ -263,7 +367,7 @@
             </li>
             <li>
               Les joueurs doivent utiliser
-              <strong>leurs bases CoC enregistrées enregistré dans la plateforme</strong>. Toute substitution
+              <strong>leurs comptes CoC enregistrés dans la plateforme</strong>. Toute substitution
               non déclarée est sanctionnée.
             </li>
             <li>

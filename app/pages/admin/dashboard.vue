@@ -87,6 +87,14 @@
             </div>
           </NuxtLink>
 
+          <NuxtLink to="/admin/payments" class="admin-action-btn border-emerald-500/30 bg-emerald-500/5">
+            <span class="btn-icon">💰</span>
+            <div class="btn-text">
+              <p>Paiements Joueurs (S2)</p>
+              <small>Valider les paiements individuels des joueurs</small>
+            </div>
+          </NuxtLink>
+
           <NuxtLink to="/admin/live" class="admin-action-btn border-gold/50 bg-gold/10">
             <span class="btn-icon">🎰</span>
             <div class="btn-text">

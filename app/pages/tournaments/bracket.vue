@@ -95,7 +95,7 @@
                 <img :src="groupSummary.top_attack.badge_url" class="w-8 h-8 object-contain" />
                 <div>
                   <p class="font-black text-sm text-white truncate max-w-[120px]">{{ groupSummary.top_attack.clan_name
-                    }}</p>
+                  }}</p>
                   <p class="text-xs font-bold text-gold">{{ groupSummary.top_attack.total_stars }} ⭐️ Étoiles</p>
                 </div>
               </div>
@@ -263,7 +263,7 @@
                       <td class="text-center text-red-400 font-bold">{{ row.lost }}</td>
                       <td class="text-center text-gold font-bold">{{ row.total_stars }}</td>
                       <td class="text-center">{{ Number(row.avg_destruction ?? row.total_destruction ?? 0).toFixed(2)
-                      }}%</td>
+                        }}%</td>
                       <td class="text-right font-black text-sm text-gold">{{ row.points }}</td>
                     </tr>
                   </tbody>
@@ -396,7 +396,7 @@
                       <td class="text-center text-red-400 font-bold">{{ row.lost }}</td>
                       <td class="text-center text-gold font-bold">{{ row.total_stars }}</td>
                       <td class="text-center">{{ Number(row.avg_destruction ?? row.total_destruction ?? 0).toFixed(2)
-                        }}%</td>
+                      }}%</td>
                       <td class="text-right font-black text-sm text-gold">{{ row.points }}</td>
                     </tr>
                   </tbody>
@@ -560,7 +560,7 @@
                     <img :src="semiFinal1?.clan_home?.badge_url || '/images/default-clan.png'"
                       class="w-6 h-6 object-contain flex-shrink-0" />
                     <span class="font-bold truncate max-w-[120px]">{{ semiFinal1?.clan_home?.name || '1er Groupe A'
-                      }}</span>
+                    }}</span>
                   </div>
                   <span class="font-black text-base text-gold">{{ semiFinal1?.total_stars_home ?? '-' }}</span>
                 </div>
@@ -573,7 +573,7 @@
                     <img :src="semiFinal1?.clan_away?.badge_url || '/images/default-clan.png'"
                       class="w-6 h-6 object-contain flex-shrink-0" />
                     <span class="font-bold truncate max-w-[120px]">{{ semiFinal1?.clan_away?.name || '2ème Groupe B'
-                      }}</span>
+                    }}</span>
                   </div>
                   <span class="font-black text-base text-gold">{{ semiFinal1?.total_stars_away ?? '-' }}</span>
                 </div>
@@ -638,7 +638,7 @@
                     <img :src="semiFinal2?.clan_home?.badge_url || '/images/default-clan.png'"
                       class="w-6 h-6 object-contain flex-shrink-0" />
                     <span class="font-bold truncate max-w-[120px]">{{ semiFinal2?.clan_home?.name || '1er Groupe B'
-                      }}</span>
+                    }}</span>
                   </div>
                   <span class="font-black text-base text-gold">{{ semiFinal2?.total_stars_home ?? '-' }}</span>
                 </div>
@@ -651,7 +651,7 @@
                     <img :src="semiFinal2?.clan_away?.badge_url || '/images/default-clan.png'"
                       class="w-6 h-6 object-contain flex-shrink-0" />
                     <span class="font-bold truncate max-w-[120px]">{{ semiFinal2?.clan_away?.name || '2ème Groupe A'
-                      }}</span>
+                    }}</span>
                   </div>
                   <span class="font-black text-base text-gold">{{ semiFinal2?.total_stars_away ?? '-' }}</span>
                 </div>
@@ -662,7 +662,8 @@
 
           <!-- PETITE FINALE (Match 3ème Place) -->
           <div v-if="thirdPlaceMatch" class="max-w-md mx-auto mt-8">
-            <div class="glass-card p-4 sm:p-5 border-amber-500/40 relative bg-gradient-to-b from-amber-950/30 to-black/80">
+            <div
+              class="glass-card p-4 sm:p-5 border-amber-500/40 relative bg-gradient-to-b from-amber-950/30 to-black/80">
               <div class="text-center mb-3">
                 <span
                   class="text-[9px] uppercase font-black tracking-widest text-amber-400 bg-amber-500/10 px-2.5 py-0.5 rounded-full border border-amber-500/30 inline-block mb-1">
@@ -680,8 +681,7 @@
                   <div class="flex items-center gap-2 truncate">
                     <img :src="thirdPlaceMatch.clan_home?.badge_url || '/images/default-clan.png'"
                       class="w-6 h-6 object-contain flex-shrink-0" />
-                    <span class="font-bold truncate max-w-[140px]">{{ thirdPlaceMatch.clan_home?.name || 'Perdant Demi 1' }}</span>
-                  </div>
+                    <span class="font-bold truncate max-w-[140px]">{{ thirdPlaceMatch.clan_home?.name || 'Perdant Demi 1' }}</span>                  </div>
                   <span class="font-black text-base text-amber-400">{{ thirdPlaceMatch.total_stars_home ?? '-' }}</span>
                 </div>
 
@@ -802,7 +802,7 @@ const fetchData = async () => {
   try {
     const [groupData, matchesData, summaryData] = await Promise.all([
       $api('/tournament/groups'),
-      $api('/tournament/matches').catch(() => $api('/admin/competitions/1/matches').catch(() => [])),
+      $api('/tournament/matches').catch(() => $api('/admin/competitions/2/matches').catch(() => [])),
       $api('/tournament/group-stage-summary').catch(() => null),
     ]);
 
@@ -833,6 +833,7 @@ onMounted(fetchData);
   border: 2px solid rgba(212, 175, 55, 0.6);
   box-shadow: 0 0 40px rgba(212, 175, 55, 0.2), 0 0 80px rgba(212, 175, 55, 0.1);
 }
+
 .champion-banner-bg {
   position: absolute;
   inset: 0;
@@ -841,6 +842,7 @@ onMounted(fetchData);
     linear-gradient(135deg, rgba(30, 20, 0, 0.9) 0%, rgba(10, 11, 18, 0.95) 100%);
   z-index: 0;
 }
+
 .champion-banner-content {
   position: relative;
   z-index: 1;
@@ -849,20 +851,31 @@ onMounted(fetchData);
   gap: 20px;
   padding: 20px 28px;
 }
+
 .champion-banner-crown {
   font-size: 3rem;
   flex-shrink: 0;
   filter: drop-shadow(0 0 16px rgba(212, 175, 55, 0.8));
   animation: float-crown 3s ease-in-out infinite;
 }
+
 @keyframes float-crown {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-5px); }
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-5px);
+  }
 }
+
 .champion-banner-info {
   flex: 1;
   min-width: 0;
 }
+
 .champion-banner-tag {
   font-size: 0.65rem;
   font-weight: 800;
@@ -871,6 +884,7 @@ onMounted(fetchData);
   color: var(--secondary);
   opacity: 0.8;
 }
+
 .champion-banner-badge {
   width: 48px;
   height: 48px;
@@ -878,6 +892,7 @@ onMounted(fetchData);
   filter: drop-shadow(0 0 12px rgba(212, 175, 55, 0.6));
   flex-shrink: 0;
 }
+
 .champion-banner-name {
   font-family: var(--font-heading), sans-serif;
   font-size: 1.8rem;
@@ -888,6 +903,7 @@ onMounted(fetchData);
   letter-spacing: -0.5px;
   truncate: true;
 }
+
 .champion-banner-stars {
   flex-shrink: 0;
   text-align: center;
@@ -904,9 +920,17 @@ onMounted(fetchData);
   box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
   animation: winner-pulse 2s ease-in-out infinite;
 }
+
 @keyframes winner-pulse {
-  0%, 100% { box-shadow: 0 0 15px rgba(212, 175, 55, 0.3); }
-  50% { box-shadow: 0 0 30px rgba(212, 175, 55, 0.5); }
+
+  0%,
+  100% {
+    box-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
+  }
+
+  50% {
+    box-shadow: 0 0 30px rgba(212, 175, 55, 0.5);
+  }
 }
 
 .bracket-page {

@@ -510,7 +510,7 @@
             <!-- Grille Groupe B -->
             <div v-if="groupB.length >= 2" class="overflow-x-auto">
               <p class="text-[9px] text-purple-400 font-black uppercase mb-1.5">Groupe B — {{ groupMatrixCount(groupB)
-              }} matchs</p>
+                }} matchs</p>
               <table class="text-[9px] border-collapse">
                 <thead>
                   <tr>
@@ -679,7 +679,8 @@
             </div>
 
             <div>
-              <label class="block text-[10px] uppercase font-bold text-gold mb-1">👑 Départage / Vainqueur du Match</label>
+              <label class="block text-[10px] uppercase font-bold text-gold mb-1">👑 Départage / Vainqueur du
+                Match</label>
               <select v-model="scoreForm.winner_clan_id"
                 class="w-full p-2.5 bg-black border border-gold/40 rounded-xl text-white font-bold text-xs focus:border-gold">
                 <option :value="null">⚡ Automatique (selon étoiles & % destruction)</option>
@@ -886,9 +887,9 @@ watch([() => createForm.value.phase, () => createForm.value.group], () => {
 const fetchData = async () => {
   try {
     const [regs, groupData, matches] = await Promise.all([
-      $api('/admin/competitions/1/confirmed-clans'),
+      $api('/admin/competitions/2/confirmed-clans'),
       $api('/tournament/groups'),
-      $api('/admin/competitions/1/matches'),
+      $api('/admin/competitions/2/matches'),
     ]);
 
     confirmedRegistrations.value = regs || [];
@@ -901,7 +902,7 @@ const fetchData = async () => {
 
 const assignGroup = async (clanId, group) => {
   try {
-    await $api('/admin/competitions/1/assign-group', {
+    await $api('/admin/competitions/2/assign-group', {
       method: 'POST',
       body: { clan_id: clanId, group },
     });
@@ -924,7 +925,7 @@ const createMatch = async () => {
   }
 
   try {
-    await $api('/admin/competitions/1/matches', {
+    await $api('/admin/competitions/2/matches', {
       method: 'POST',
       body: createForm.value,
     });
@@ -980,7 +981,7 @@ const generateAllGroupMatches = async () => {
   generating.value = true;
   generateSuccess.value = '';
   try {
-    const res = await $api('/admin/competitions/1/generate-group-matches', {
+    const res = await $api('/admin/competitions/2/generate-group-matches', {
       method: 'POST',
     });
     generateSuccess.value = res.message || 'Matchs de poule générés avec succès !';
@@ -997,7 +998,7 @@ const generateSemiFinals = async () => {
 
   generating.value = true;
   try {
-    const res = await $api('/admin/competitions/1/generate-semi-finals', {
+    const res = await $api('/admin/competitions/2/generate-semi-finals', {
       method: 'POST',
     });
     alert(res.message || 'Demi-Finales générées avec succès !');
@@ -1015,7 +1016,7 @@ const generateThirdPlaceMatch = async () => {
 
   generating.value = true;
   try {
-    const res = await $api('/admin/competitions/1/generate-third-place', {
+    const res = await $api('/admin/competitions/2/generate-third-place', {
       method: 'POST',
     });
     alert(res.message || 'Match 3ème place généré avec succès !');

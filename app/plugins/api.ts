@@ -26,17 +26,11 @@ export default defineNuxtPlugin((nuxtApp) => {
         });
       }
 
-      // Ajouter le token Bearer depuis le localStorage (SPA uniquement)
+      // Compatibilité totale avec les anciens et nouveaux noms de stockage du token.
       if (import.meta.client) {
-        const tokenValue = localStorage.getItem("cca_auth_token");
+        const tokenValue = localStorage.getItem("cca_auth_token") || localStorage.getItem("auth_token");
         if (tokenValue) {
           headers["Authorization"] = `Bearer ${tokenValue}`;
-          console.log(
-            "[API] Token ajouté aux headers:",
-            tokenValue.substring(0, 20) + "...",
-          );
-        } else {
-          console.warn("[API] Aucun token trouvé dans localStorage");
         }
       }
 

@@ -211,7 +211,7 @@ const { user } = useAuth();
 const router = useRouter();
 const { ctaLabel, ctaTo, ctaIcon } = useTournamentCta();
 
-const competitionId = 1;
+const competitionId = 2;
 const loading = ref(true);
 const registration = ref(null);
 const matches = ref([]);

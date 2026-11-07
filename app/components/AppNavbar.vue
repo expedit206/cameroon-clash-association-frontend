@@ -10,6 +10,8 @@
       'has-subnav': showSubNav && !isMobile,
     },
   ]">
+
+  <TournamentInvitationBanner />
     <div class="nav-inner">
       <!-- Zone Logo -->
       <img src="/images/logo cca.png" alt="Logo" class="!h-[3rem] !w-[3rem]" />
@@ -113,6 +115,7 @@
                     @click="dropdownOpen = false"
                     ><LucideDices :size="18" class="inline mr-1" /> Admin Bet</NuxtLink -->
                   <!-- >  -->
+                   
                   <NuxtLink v-if="dashboardPath" :to="dashboardPath" class="dropdown-item "
                     @click="dropdownOpen = false">
                     <LucideHome :size="18" class="inline mr-1" /> Dashboard

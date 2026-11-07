@@ -58,7 +58,7 @@ export const useTournamentCta = () => {
     loading.value = true;
     try {
       // Vérifier l'état d'inscription du clan
-      const response: any = await $api(`/competitions/1/registration/status`);
+      const response: any = await $api(`/competitions/2/registration/status`);
 
       // Si registration est null, le joueur ou son clan n'est pas encore inscrit
       const reg =

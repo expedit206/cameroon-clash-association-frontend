@@ -1,5 +1,6 @@
 <template>
   <div class="layout-default">
+    <!-- Banner d'invitation visible avant la navbar pour les joueurs concernés -->
     <!-- Navbar réutilisable (mode sticky + responsive) -->
     <AppNavbar />
     <StatusBanner />
