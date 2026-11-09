@@ -33,7 +33,7 @@
           <div
             class="anim-fade anim-d1 inline-flex items-center gap-2 px-[14px] py-[5px] bg-[#d4af37]/[0.08] border border-[#d4af37]/25 rounded-full text-[0.7rem] font-bold tracking-[0.5px] text-[#d4af37]/85 w-fit">
             <span class="season-badge-dot w-1.5 h-1.5 rounded-full bg-[#d4af37] flex-shrink-0"></span>
-            Saison 2 — Inscriptions le 10 novembre
+            Saison 2 — Inscriptions ouvertes
           </div>
 
           <!-- Title -->
@@ -61,41 +61,23 @@
             Une nouvelle saison, seize clans, un seul champion.
           </p>
 
-          <!-- Countdown -->
+          <!-- Inscriptions -->
           <div class="anim-fade anim-d4 flex flex-col gap-2.5">
-            <p class="text-[0.65rem] font-bold tracking-[3px] text-white/30">Ouverture des inscriptions dans</p>
-            <div class="flex items-center gap-1.5 max-[768px]:gap-1">
-              <div v-for="(val, i) in [countdown.days, countdown.hours, countdown.minutes, countdown.seconds]" :key="i"
-                class="contents">
-                <div
-                  class="countdown-tile relative overflow-hidden flex flex-col items-center bg-white/[0.04] border border-white/[0.08] rounded-[10px] px-4 py-3 min-w-[62px] max-[768px]:px-2.5 max-[768px]:py-2 max-[768px]:min-w-[50px] backdrop-blur-md">
-                  <!-- ⬇ NOUVEAU : la tuile "sec" pulse à chaque tick via :key -->
-                  <span v-if="i === 3" :key="countdown.seconds"
-                    class="countdown-tick font-heading text-[1.7rem] max-[768px]:text-[1.3rem] font-extrabold text-white leading-none tracking-tight">{{
-                      val }}</span>
-                  <span v-else
-                    class="font-heading text-[1.7rem] max-[768px]:text-[1.3rem] font-extrabold text-white leading-none tracking-tight">{{
-                      val }}</span>
-                  <span class="text-[0.55rem] font-bold uppercase tracking-[1.5px] text-white/30 mt-1">{{ ['jours',
-                    'heures', 'min', 'sec'][i] }}</span>
-                </div>
-                <div v-if="i < 3" class="w-[3px] h-[3px] rounded-full bg-[#d4af37]/40 mx-0.5 self-center mb-[14px]" />
-              </div>
-            </div>
+            <p class="text-[0.65rem] font-bold tracking-[3px] text-[#d4af37]">Les inscriptions sont officiellement ouvertes</p>
+            <p class="text-sm text-white/50">16 places sont disponibles pour la Saison 2.</p>
           </div>
 
           <!-- Actions -->
           <div class="anim-fade anim-d5 flex gap-3 flex-wrap pt-1">
-            <!-- ⬇ shimmer : classe btn-hero-primary déjà présente, CSS mis à jour -->
-            <!-- <NuxtLink :to="ctaTo"
+            <NuxtLink :to="ctaTo"
               class="btn-hero-primary relative overflow-hidden inline-flex items-center gap-2.5 px-[30px] py-[14px] bg-gradient-to-br from-[#d4af37]/20 to-[#bb00ff]/15 border border-[#d4af37]/50 hover:border-[#d4af37]/80 rounded-[10px] text-[#d4af37] font-extrabold text-[0.82rem] tracking-wide no-underline cursor-pointer transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(212,175,55,0.2)]">
-              Inscrire mon clan
+              {{ ctaLabel }}
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                 stroke-linecap="round" stroke-linejoin="round">
                 <line x1="5" y1="12" x2="19" y2="12" />
                 <polyline points="12 5 19 12 12 19" />
               </svg>
-            </NuxtLink> -->
+            </NuxtLink>
             <NuxtLink to="/tournaments/bracket"
               class="inline-flex items-center px-7 py-[14px] bg-transparent border border-white/[0.12] hover:border-white/30 hover:bg-white/[0.04] rounded-[10px] text-white/60 hover:text-white font-bold text-[0.82rem] no-underline cursor-pointer transition-all duration-300">
               Palmarès saison 1
@@ -162,8 +144,7 @@
             max-[1100px]:min-w-[140px]">
             <LucideCalendar class="w-5 h-5 flex-shrink-0" style="color:rgba(255,255,255,0.55)" />
             <div>
-              <p class="font-heading font-extrabold text-[0.85rem] text-white whitespace-nowrap leading-tight">10
-                novembre</p>
+              <p class="font-heading font-extrabold text-[0.85rem] text-white whitespace-nowrap leading-tight">Ouvertes</p>
               <p class="text-[0.6rem] uppercase tracking-[0.5px] text-white/50 whitespace-nowrap">Inscriptions</p>
             </div>
           </div>
@@ -592,12 +573,12 @@
               <span class="text-[#d4af37]">seront de retour.</span>
             </h2>
             <p class="text-white/50 text-base mb-7 leading-[1.7]">
-              Les seize places s'ouvrent le 10 novembre. Votre clan doit être prêt.
+              Les inscriptions de la Saison 2 sont officiellement ouvertes. Réservez l'une des 16 places pour votre clan.
             </p>
-            <!-- <div class="flex gap-4 flex-wrap max-[1100px]:justify-center">
+            <div class="flex gap-4 flex-wrap max-[1100px]:justify-center">
               <NuxtLink :to="ctaTo" class="btn-premium btn-secondary btn-hero">{{ ctaLabel }}</NuxtLink>
-              <NuxtLink to="/clans/cameroun" class="btn-premium btn-outline btn-hero">Voir les clans</NuxtLink>
-            </div> -->
+              <NuxtLink to="/tournaments" class="btn-premium btn-outline btn-hero">Découvrir le tournoi</NuxtLink>
+            </div>
           </div>
         </div>
       </section>
@@ -683,40 +664,15 @@ onMounted(async () => {
     }
   } catch { /* Pas encore de champion */ }
 
-  startCountdown();
 });
-
-const countdown = ref({ days: '00', hours: '00', minutes: '00', seconds: '00' });
-let countdownTimer = null;
-const pad = (n) => String(n).padStart(2, '0');
-
-function startCountdown() {
-  const target = new Date('2026-11-10T00:00:00+01:00').getTime();
-  const tick = () => {
-    const diff = target - Date.now();
-    if (diff <= 0) {
-      countdown.value = { days: '00', hours: '00', minutes: '00', seconds: '00' };
-      return;
-    }
-    countdown.value = {
-      days: pad(Math.floor(diff / 86400000)),
-      hours: pad(Math.floor((diff % 86400000) / 3600000)),
-      minutes: pad(Math.floor((diff % 3600000) / 60000)),
-      seconds: pad(Math.floor((diff % 60000) / 1000)),
-    };
-  };
-  tick();
-  countdownTimer = setInterval(tick, 1000);
-}
-onBeforeUnmount(() => countdownTimer && clearInterval(countdownTimer));
 
 useHead({
   title: 'CCA National League Saison 2 — Tournoi Clash of Clans Cameroun',
   meta: [
-    { name: 'description', content: 'Les inscriptions pour la CCA National League Saison 2 ouvrent le 10 novembre. 80 000 FCFA de cashprize, 16 clans d\'élite, un seul champion.' },
+    { name: 'description', content: 'Les inscriptions pour la CCA National League Saison 2 sont officiellement ouvertes. 80 000 FCFA de cashprize, 16 clans d\'élite, un seul champion.' },
     { name: 'keywords', content: 'tournoi camerounais, coc cameroun, cca saison 2, clash of clans cameroun, cca league' },
     { property: 'og:title', content: 'CCA National League Saison 2 — Championnat CoC du Cameroun' },
-    { property: 'og:description', content: 'Inscriptions ouvertes le 10 novembre. 16 clans, une seule couronne.' },
+    { property: 'og:description', content: 'Inscriptions officiellement ouvertes. 16 clans, une seule couronne.' },
     { property: 'og:image', content: '/images/cca-affiche1.png' },
   ],
 });

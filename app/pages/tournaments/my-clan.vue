@@ -20,7 +20,7 @@
               </h1>
               <span
                 class="px-3 py-1 bg-gold text-black text-[9px] font-black rounded-full uppercase tracking-widest">Saison
-                1</span>
+                2</span>
             </div>
             <p class="text-white/40 text-[10px] uppercase tracking-[0.4em] font-mono">
               {{ registration.clan?.tag_coc }}
