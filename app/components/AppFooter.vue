@@ -10,7 +10,7 @@
         <p class="footer-tagline">
           La compétition Clash of Clans la plus sérieuse du Cameroun.
         </p>
-        <div class="footer-badge">⚔️ Saison 1 · Juillet 2026</div>
+        <div class="footer-badge">⚔️ Saison 2 · Novembre 2026</div>
       </div>
 
       <!-- Colonne 2 : Navigation -->

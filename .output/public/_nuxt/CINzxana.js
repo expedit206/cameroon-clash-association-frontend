@@ -1,0 +1,1 @@
+import{a1 as s,h as i,I as e}from"./B39kEhzd.js";const u=s(t=>{const{user:a,isLoggedIn:r}=i();if(!r.value)return e("/login");if(t.path.startsWith("/admin")&&a.value?.role!=="admin")return e("/tournaments/register")});export{u as default};

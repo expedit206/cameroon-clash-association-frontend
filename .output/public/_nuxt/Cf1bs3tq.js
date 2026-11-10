@@ -1,1 +1,0 @@
-import{c as e,o as t}from"./B_-H6dtr.js";const s={class:"min-h-screen bg-[#06070a] flex items-center justify-center text-white/40 text-xs"},a={__name:"mes-tickets",setup(c){return(n,r)=>(t(),e("div",s," Chargement de vos tickets... "))}};export{a as default};

@@ -13,7 +13,7 @@
         <!-- Badge statut -->
         <div class="inline-flex items-center gap-2 px-4 py-1.5 mb-5 bg-gold/10 border border-gold/25 rounded-full text-[0.7rem] font-bold tracking-widest text-gold/90">
           <span class="w-1.5 h-1.5 rounded-full bg-gold animate-pulse"></span>
-          Inscriptions ouvertes — Du 9 au 20 novembre
+          Inscriptions ouvertes — Du 10 au 20 novembre
         </div>
 
         <h1 class="text-3xl md:text-5xl font-black italic tracking-tighter text-white uppercase mb-3">
@@ -28,7 +28,7 @@
         <div class="flex flex-wrap justify-center gap-3">
           <!-- Bouton d'inscription -->
           <NuxtLink to="/tournaments/register" class="btn-premium btn-secondary btn-hero">
-            <LucideSwords class="w-4 h-4 mr-1.5" /> Inscrire mon clan (5 000 FCFA)
+            <LucideSwords class="w-4 h-4 mr-1.5" /> Inscrire mon clan 
           </NuxtLink>
 
           <NuxtLink to="/rules" class="btn-premium btn-outline btn-hero">
@@ -114,7 +114,7 @@
                 <span class="text-[10px] font-black tracking-widest uppercase text-white/30">Inscriptions</span>
               </div>
               <div class="text-sm font-black text-white ml-7 tracking-tight">
-                Du 9 au 20 novembre 2026
+                Du 10 au 20 novembre 2026
               </div>
             </div>
             <div v-if="competition?.start_date">
@@ -179,7 +179,7 @@
         <!-- CTA bas de section -->
         <div class="mt-8 text-center">
           <NuxtLink to="/tournaments/register" class="btn-premium btn-secondary">
-            Inscrire mon clan — 5 000 FCFA
+            Inscrire mon clan 
           </NuxtLink>
         </div>
       </div>
@@ -193,7 +193,7 @@ const { $api } = useNuxtApp();
 useHead({
   title: "Inscriptions Ouvertes — CCA National League Saison 2",
   meta: [
-    { name: "description", content: "Les inscriptions de la CCA National League Saison 2 sont ouvertes du 9 au 20 novembre. 16 clans d'élite, mode E-sport, 80 000 FCFA de cashprize." },
+    { name: "description", content: "Les inscriptions de la CCA National League Saison 2 sont ouvertes du 10s au 20 novembre. 16 clans d'élite, mode E-sport, 80 000 FCFA de cashprize." },
   ],
 });
 

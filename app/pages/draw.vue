@@ -63,7 +63,7 @@
               </div>
               <div class="text-4xl mb-4">🛡️</div>
               <h3 class="font-black uppercase text-lg mb-2 text-white/90">Phase de Groupes</h3>
-              <p class="text-sm text-white/60">11 Clans répartis en deux groupes. <br /><b>Groupe A (6)</b> | <b>Groupe
+              <p class="text-sm text-white/60">16 Clans répartis en deux groupes. <br /><b>Groupe A (6)</b> | <b>Groupe
                   B (5)</b>.</p>
               <p class="text-[10px] text-gold mt-3 font-bold uppercase">4 Matchs exactement par clan</p>
             </div>
@@ -231,7 +231,7 @@
           <div v-if="groupA.length === 6 && groupB.length === 5" class="mt-8 pt-8 border-t border-white/10 text-center">
             <h3 class="text-xl sm:text-2xl font-black text-gold uppercase italic mb-2 animate-bounce">Tirage Terminé !
               🎉</h3>
-            <p class="text-sm text-white/60 max-w-md mx-auto mb-6">Les 11 clans sont assignés. La phase de poules peut
+            <p class="text-sm text-white/60 max-w-md mx-auto mb-6">Les 16 clans sont assignés. La phase de poules peut
               officiellement commencer.</p>
             <NuxtLink to="/tournaments/bracket"
               class="px-8 py-3 bg-white text-black font-black uppercase text-sm rounded-lg hover:bg-gold transition-colors inline-block tracking-widest shadow-[0_0_15px_rgba(255,255,255,0.2)]">

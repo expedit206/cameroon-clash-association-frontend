@@ -28,7 +28,7 @@
           TABLEAU DU <span class="text-gold">TOURNOI</span>
         </h1>
         <p class="subtitle mt-1 text-[11px] sm:text-sm text-white/50 uppercase tracking-widest font-semibold px-2">
-          Phase de Poules (11 Clans) & Arbre de Combat Knockout
+          Phase de Poules (16 Clans) & Arbre de Combat Knockout
         </p>
       </header>
 

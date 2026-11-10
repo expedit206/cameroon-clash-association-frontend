@@ -3,7 +3,7 @@
     <header class="page-header animate-float">
       <h1 class="heading">Les <span class="text-gold">16 Éclaireurs</span></h1>
       <p class="subtitle">
-        Découvrez les clans d'élite sélectionnés pour la Saison 1.
+        Découvrez les clans d'élite sélectionnés pour la Saison 2.
       </p>
     </header>
 

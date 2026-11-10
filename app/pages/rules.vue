@@ -1,4 +1,4 @@
-D<template>
+<template>
   <div class="rules-page">
     <!-- ── EN-TÊTE ─────────────────────────────────── -->
     <section class="rules-header">
@@ -513,8 +513,8 @@ D<template>
           Vous avez tout lu. Vous êtes <span class="text-gold">prêts</span>.
         </h2>
         <p>
-          Engagez votre clan et rejoignez les 11 clans de la CCA National League
-          Saison 1.
+          Engagez votre clan et rejoignez les 16 clans de la CCA National League
+          Saison 2.
         </p>
         <div class="cta-btns">
           <NuxtLink :to="ctaTo" class="btn-premium btn-primary">⚔️ {{ ctaLabel }}</NuxtLink>
@@ -536,7 +536,7 @@ useHead({
     {
       name: "description",
       content:
-        "Règlement complet de la CCA National League Saison 1 : format 11 clans (Groupe A & B), 4 matchs garantis, qualifications Top 2 pour les demi-finales, arbitrage et cashprize de 50.000 FCFA.",
+        "Règlement complet de la CCA National League Saison 2 : format 16 clans (Groupe A & B), 4 matchs garantis, qualifications Top 2 pour les demi-finales, arbitrage et cashprize de 50.000 FCFA.",
     },
     {
       name: "keywords",
@@ -545,7 +545,7 @@ useHead({
     },
     {
       property: "og:title",
-      content: "Règlement Officiel — CCA National League saison 1 📜",
+      content: "Règlement Officiel — CCA National League saison 2 📜",
     },
     {
       property: "og:description",
